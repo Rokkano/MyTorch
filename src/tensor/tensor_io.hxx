@@ -16,6 +16,19 @@ std::string Tensor<T>::tensorDataToStr(std::vector<std::size_t> shape, T *buffer
     return str;
 }
 
+template <>
+std::string Tensor<bool>::tensorDataToStr(std::vector<std::size_t> shape, bool *buffer)
+{
+    if (shape.empty())
+        return *buffer ? "true" : "false";
+    std::size_t step = std::reduce(shape.begin() + 1, shape.end(), 1, std::multiplies<int>());
+    std::string str = "[";
+    for (std::size_t i = 0; i < shape[0]; i++)
+        str += tensorDataToStr(std::vector<std::size_t>(shape.begin() + 1, shape.end()), buffer + i * step) + (i != shape[0] - 1 ? "," : "");
+    str = str + "]";
+    return str;
+}
+
 template <typename T>
 std::string Tensor<T>::tensorShapeToStr(std::vector<std::size_t> shape)
 {

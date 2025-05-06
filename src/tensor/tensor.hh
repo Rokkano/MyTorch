@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <optional>
 
 template <typename T>
 class Tensor
@@ -19,6 +20,7 @@ public:
     ~Tensor();
 
     std::size_t numel() const;
+    Tensor<T> *flatten();
     void fill(T value);
 
     std::size_t coordToAbs(std::vector<std::size_t> coord) const;
@@ -41,20 +43,48 @@ public:
     template <typename U>
     friend Tensor<U> *operator+(const Tensor<U> &, const U &);
     template <typename U>
+    friend Tensor<U> *operator+(const U &, const Tensor<U> &);
+    template <typename U>
     friend Tensor<U> *operator+(const Tensor<U> &);
     template <typename U>
     friend Tensor<U> *operator-(const Tensor<U> &, const Tensor<U> &);
     template <typename U>
     friend Tensor<U> *operator-(const Tensor<U> &, const U &);
     template <typename U>
+    friend Tensor<U> *operator-(const U &, const Tensor<U> &);
+    template <typename U>
     friend Tensor<U> *operator-(const Tensor<U> &);
     template <typename U>
     friend Tensor<U> *operator*(const Tensor<U> &, const Tensor<U> &);
     template <typename U>
     friend Tensor<U> *operator*(const Tensor<U> &, const U &);
+    template <typename U>
+    friend Tensor<U> *operator*(const U &, const Tensor<U> &);
 
 private:
     bool validateSameShape(std::vector<std::size_t>) const;
+
+    // ###### TENSOR BOOL ######
+public:
+    explicit operator bool() const;
+    bool all() const;
+    bool any() const;
+    bool none() const;
+
+    template <typename U>
+    friend Tensor<bool> *operator==(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<bool> *operator<(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<bool> *operator<=(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<bool> *operator>(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<bool> *operator>=(const Tensor<U> &, const Tensor<U> &);
+
+    // ###### TENSOR OP FUNCTIONAL ######
+public:
+    static Tensor<T> *affine(const Tensor<T> &rhs, std::optional<T> a, std::optional<T> b);
 
     // ###### TENSOR IO ######
 private:
@@ -68,5 +98,7 @@ public:
 };
 
 #include "tensor.hxx"
-#include "tensor_io.hxx"
 #include "tensor_op.hxx"
+#include "tensor_functional.hxx"
+#include "tensor_bool.hxx"
+#include "tensor_io.hxx"

@@ -9,12 +9,13 @@ int main()
         buffer[i] = i;
 
     Tensor<int> *tensor1 = new Tensor<int>({3, 5, 5}, buffer);
+    Tensor<int> *tensor2 = Tensor<int>::affine(*tensor1, 2, 0);
+    Tensor<bool> *tensor3 = (*tensor1 == *tensor1);
 
-    Tensor<int> *tensor2 = *tensor1 + 5;
+    std::cout << (*tensor3).none() << std::endl;
 
-    std::cout << +*tensor2 << std::endl;
-
-    std::free(tensor1);
-    std::free(tensor2);
+    delete tensor1;
+    delete tensor2;
+    delete tensor3;
     return 0;
 }

@@ -102,3 +102,10 @@ std::size_t Tensor<T>::numel() const
         num_e *= e;
     return num_e;
 }
+
+template <typename T>
+Tensor<T> *Tensor<T>::flatten()
+{
+    this->shape_ = std::vector({this->numel()});
+    return this;
+}

@@ -18,10 +18,8 @@ Tensor<T> *operator+(const Tensor<T> &rhs, const Tensor<T> &lhs)
         throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for addition.");
 
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] + lhs.buffer_[i];
-
     return tensor;
 }
 
@@ -29,17 +27,27 @@ template <typename T>
 Tensor<T> *operator+(const Tensor<T> &rhs, const T &lhs)
 {
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] + lhs;
+    return tensor;
+}
 
+template <typename T>
+Tensor<T> *operator+(const T &rhs, const Tensor<T> &lhs)
+{
+    Tensor<T> *tensor = new Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor->numel(); i++)
+        tensor->buffer_[i] = lhs.buffer_[i] + rhs;
     return tensor;
 }
 
 template <typename T>
 Tensor<T> *operator+(const Tensor<T> &lhs)
 {
-    return lhs;
+    Tensor<T> *tensor = new Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < lhs.numel(); i++)
+        tensor->buffer_[i] = lhs.buffer_[i];
+    return tensor;
 }
 
 template <typename T>
@@ -49,10 +57,8 @@ Tensor<T> *operator-(const Tensor<T> &rhs, const Tensor<T> &lhs)
         throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for addition.");
 
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] - lhs.buffer_[i];
-
     return tensor;
 }
 
@@ -60,19 +66,27 @@ template <typename T>
 Tensor<T> *operator-(const Tensor<T> &rhs, const T &lhs)
 {
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] - lhs;
+    return tensor;
+}
 
+template <typename T>
+Tensor<T> *operator-(const T &rhs, const Tensor<T> &lhs)
+{
+    Tensor<T> *tensor = new Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor->numel(); i++)
+        tensor->buffer_[i] = lhs.buffer_[i] - rhs;
     return tensor;
 }
 
 template <typename T>
 Tensor<T> *operator-(const Tensor<T> &lhs)
 {
+    Tensor<T> *tensor = new Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < lhs.numel(); i++)
-        lhs.buffer_[i] = -lhs.buffer_[i];
-    return lhs;
+        tensor->buffer_[i] = -lhs.buffer_[i];
+    return tensor;
 }
 
 template <typename T>
@@ -82,10 +96,8 @@ Tensor<T> *operator*(const Tensor<T> &rhs, const Tensor<T> &lhs)
         throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for addition.");
 
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] * lhs.buffer_[i];
-
     return tensor;
 }
 
@@ -93,9 +105,16 @@ template <typename T>
 Tensor<T> *operator*(const Tensor<T> &rhs, const T &lhs)
 {
     Tensor<T> *tensor = new Tensor<T>(rhs.shape_);
-
     for (std::size_t i = 0; i < tensor->numel(); i++)
         tensor->buffer_[i] = rhs.buffer_[i] * lhs;
+    return tensor;
+}
 
+template <typename T>
+Tensor<T> *operator*(const T &rhs, const Tensor<T> &lhs)
+{
+    Tensor<T> *tensor = new Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor->numel(); i++)
+        tensor->buffer_[i] = lhs.buffer_[i] * rhs;
     return tensor;
 }
