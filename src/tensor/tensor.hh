@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <functional>
 
 template <typename T>
 class Tensor
@@ -10,6 +11,8 @@ class Tensor
 private:
     std::vector<std::size_t> shape_;
     T *buffer_;
+    template <typename>
+    friend class Tensor;
 
     bool validateCoord(std::vector<std::size_t>) const;
     bool validateAbs(std::size_t abs) const;
@@ -82,9 +85,18 @@ public:
     template <typename U>
     friend Tensor<bool> *operator>=(const Tensor<U> &, const Tensor<U> &);
 
-    // ###### TENSOR OP FUNCTIONAL ######
+    // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
-    static Tensor<T> *affine(const Tensor<T> &rhs, std::optional<T> a, std::optional<T> b);
+    static Tensor<T> *affine(const Tensor<T> &rhs, std::optional<T> a, std::optional<T> b)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> *exp(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> *pow(const Tensor<T> &t, const double exponent)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> *sqrt(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> *dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
@@ -95,6 +107,13 @@ private:
 public:
     template <typename U>
     friend std::ostream &operator<<(std::ostream &, const Tensor<U> &);
+
+    // ###### TENSOR UTILS ######
+public:
+    template <typename U>
+    Tensor<U> *to_type();
+    static Tensor<T> *from_function(std::function<size_t(T)> lambda, std::vector<std::size_t> shape);
+    static Tensor<T> *from_vector(std::vector<T> buffer, std::vector<std::size_t> shape);
 };
 
 #include "tensor.hxx"
@@ -102,3 +121,4 @@ public:
 #include "tensor_functional.hxx"
 #include "tensor_bool.hxx"
 #include "tensor_io.hxx"
+#include "tensor_utils.hxx"
