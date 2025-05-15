@@ -9,7 +9,7 @@ SRCS=src/main.cpp
 OBJS=$(subst .cc,.o,$(SRCS))
 
 main: $(OBJS)
-	$(CXX) $(LDFLAGS) -fsanitize=address -ggdb3 -o main $(OBJS) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -fsanitize=address -ggdb3 -std=c++20 -o main $(OBJS) $(LDLIBS)
 
 clean:
 	rm src/**/*.o main
