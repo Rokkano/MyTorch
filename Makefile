@@ -1,17 +1,22 @@
 CC=gcc
 CXX=g++
 RM=rm -f
-CPPFLAGS=-g $(shell root-config --cflags)
-LDFLAGS=-g $(shell root-config --ldflags)
-LDLIBS=$(shell root-config --libs)
+CXXFLAGS=-fsanitize=address -ggdb3 -std=c++20 
+LDLIBS=-fsanitize=address
 
-SRCS=src/main.cpp
+SRCS=
+TST_SRCS=tests/tensor/tensor.cc
 OBJS=$(subst .cc,.o,$(SRCS))
+TST_OBJS=$(subst .cc,.o,$(TST_SRCS))
 
-main: $(OBJS)
-	$(CXX) $(LDFLAGS) -fsanitize=address -ggdb3 -std=c++20 -o main $(OBJS) $(LDLIBS)
+main: $(OBJS) src/main.cpp
+	$(CXX) -o main $(OBJS) $(LDLIBS)
+
+test: $(TST_OBJS)
+	$(CXX) -lcriterion -o test $(OBJS) $(TST_OBJS) $(LDLIBS)
+	./test
 
 clean:
 	rm src/**/*.o main
 
-.PHONY: clean
+.PHONY: clean test main
