@@ -12,62 +12,107 @@ Tensor<bool>::operator bool() const
 }
 
 template <typename T>
-Tensor<bool> *operator==(const Tensor<T> &rhs, const Tensor<T> &lhs)
+Tensor<bool> Tensor<T>::operator==(const Tensor<T> &other)
 {
-    if (!rhs.validateSameShape(lhs.shape_))
-        throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for comparison.");
+    if (!this->validateSameShape(other.shape_))
+        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for comparison.");
 
-    Tensor<bool> *tensor = new Tensor<bool>(rhs.shape_);
-    for (std::size_t i = 0; i < tensor->numel(); i++)
-        tensor->buffer_[i] = (bool)(rhs.buffer_[i] == lhs.buffer_[i]);
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] == other.buffer_[i]);
     return tensor;
 }
 
 template <typename T>
-Tensor<bool> *operator<(const Tensor<T> &rhs, const Tensor<T> &lhs)
+Tensor<bool> Tensor<T>::operator==(const T &other)
 {
-    if (!rhs.validateSameShape(lhs.shape_))
-        throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for comparison.");
-
-    Tensor<bool> *tensor = new Tensor<bool>(rhs.shape_);
-    for (std::size_t i = 0; i < tensor->numel(); i++)
-        tensor->buffer_[i] = (bool)(rhs.buffer_[i] < lhs.buffer_[i]);
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] == other);
     return tensor;
 }
 
 template <typename T>
-Tensor<bool> *operator<=(const Tensor<T> &rhs, const Tensor<T> &lhs)
+Tensor<bool> Tensor<T>::operator<(const Tensor<T> &other)
 {
-    if (!rhs.validateSameShape(lhs.shape_))
-        throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for comparison.");
+    if (!this->validateSameShape(other.shape_))
+        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for comparison.");
 
-    Tensor<bool> *tensor = new Tensor<bool>(rhs.shape_);
-    for (std::size_t i = 0; i < tensor->numel(); i++)
-        tensor->buffer_[i] = (bool)(rhs.buffer_[i] <= lhs.buffer_[i]);
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] < other.buffer_[i]);
     return tensor;
 }
 
 template <typename T>
-Tensor<bool> *operator>(const Tensor<T> &rhs, const Tensor<T> &lhs)
+Tensor<bool> Tensor<T>::operator<(const T &other)
 {
-    if (!rhs.validateSameShape(lhs.shape_))
-        throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for comparison.");
-
-    Tensor<bool> *tensor = new Tensor<bool>(rhs.shape_);
-    for (std::size_t i = 0; i < tensor->numel(); i++)
-        tensor->buffer_[i] = (bool)(rhs.buffer_[i] > lhs.buffer_[i]);
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] < other);
     return tensor;
 }
 
 template <typename T>
-Tensor<bool> *operator>=(const Tensor<T> &rhs, const Tensor<T> &lhs)
+Tensor<bool> Tensor<T>::operator<=(const Tensor<T> &other)
 {
-    if (!rhs.validateSameShape(lhs.shape_))
-        throw std::invalid_argument("Shape " + rhs.tensorShapeToStr(rhs.shape_) + " and " + lhs.tensorShapeToStr(lhs.shape_) + " are invalid for comparison.");
+    if (!this->validateSameShape(other.shape_))
+        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for comparison.");
 
-    Tensor<bool> *tensor = new Tensor<bool>(rhs.shape_);
-    for (std::size_t i = 0; i < tensor->numel(); i++)
-        tensor->buffer_[i] = (bool)(rhs.buffer_[i] >= lhs.buffer_[i]);
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] <= other.buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<bool> Tensor<T>::operator<=(const T &other)
+{
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] <= other);
+    return tensor;
+}
+
+template <typename T>
+Tensor<bool> Tensor<T>::operator>(const Tensor<T> &other)
+{
+    if (!this->validateSameShape(other.shape_))
+        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for comparison.");
+
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] > other.buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<bool> Tensor<T>::operator>(const T &other)
+{
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] > other);
+    return tensor;
+}
+
+template <typename T>
+Tensor<bool> Tensor<T>::operator>=(const Tensor<T> &other)
+{
+    if (!this->validateSameShape(other.shape_))
+        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for comparison.");
+
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] >= other.buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<bool> Tensor<T>::operator>=(const T &other)
+{
+    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = (bool)(this->buffer_[i] >= other);
     return tensor;
 }
 

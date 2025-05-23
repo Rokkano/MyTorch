@@ -4,7 +4,7 @@
 #include "../utils.hxx"
 
 template <typename T>
-bool Tensor<T>::validateCoord(std::vector<std::size_t> coord) const
+bool Tensor<T>::validateCoord(const std::vector<std::size_t> &coord) const
 {
     if (coord.size() < 1 || coord.size() != this->shape_.size())
         return false;
@@ -23,7 +23,7 @@ bool Tensor<T>::validateAbs(std::size_t abs) const
 }
 
 template <typename T>
-std::size_t Tensor<T>::coordToAbs(std::vector<std::size_t> coord) const
+std::size_t Tensor<T>::coordToAbs(const std::vector<std::size_t> &coord) const
 {
     // [x] with [x_m] -> x
     // [y,x] with [y_m,x_m] -> y * x_m + x
@@ -68,23 +68,22 @@ std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
 }
 
 template <typename T>
-Tensor<T>::Tensor(std::vector<std::size_t> shape) : shape_(shape)
+Tensor<T>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
     std::size_t num_e = this->numel();
-    this->buffer_ = (T *)std::malloc(num_e * sizeof(T));
+    this->buffer_ = std::vector<T>(num_e);
 }
 
 template <typename T>
-Tensor<T>::Tensor(std::vector<std::size_t> shape, T *buffer) : shape_(shape), buffer_(buffer) {}
+Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &buffer) : shape_(shape), buffer_(buffer) {}
 
 template <typename T>
 Tensor<T>::~Tensor()
 {
-    std::free(this->buffer_);
 }
 
 template <typename T>
-void Tensor<T>::fill(T value)
+void Tensor<T>::fill(const T &value)
 {
     for (std::size_t i = 0; i < this->numel(); i++)
         this->buffer_[i] = value;

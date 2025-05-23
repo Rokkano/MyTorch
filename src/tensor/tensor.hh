@@ -10,62 +10,39 @@ class Tensor
 {
 private:
     std::vector<std::size_t> shape_;
-    T *buffer_;
+    std::vector<T> buffer_;
+
     template <typename>
     friend class Tensor;
 
-    bool validateCoord(std::vector<std::size_t>) const;
-    bool validateAbs(std::size_t abs) const;
+    bool validateCoord(const std::vector<std::size_t> &) const;
+    bool validateAbs(std::size_t) const;
 
 public:
-    Tensor(std::vector<std::size_t>);
-    Tensor(std::vector<std::size_t>, T *);
+    Tensor(const std::vector<std::size_t> &);
+    Tensor(const std::vector<std::size_t> &, const std::vector<T> &);
     ~Tensor();
 
     std::size_t numel() const;
     Tensor<T> *flatten();
-    void fill(T value);
+    void fill(const T &);
 
-    std::size_t coordToAbs(std::vector<std::size_t> coord) const;
-    std::vector<std::size_t> absToCoord(std::size_t abs) const;
-
-    Tensor<T> *operator[](size_t index)
-    {
-        std::vector<std::size_t> new_shape = std::vector<std::size_t>(this->shape_.begin() + 1, this->shape_.end());
-        std::size_t step = 1;
-        for (std::size_t j = 1; j < this->shape_.size(); j++)
-            step *= this->shape_[j];
-        T *new_buffer = &this->buffer_[index * step];
-        return new Tensor<T>(new_shape, new_buffer);
-    }
+    std::size_t coordToAbs(const std::vector<std::size_t> &) const;
+    std::vector<std::size_t> absToCoord(std::size_t) const;
 
     // ###### TENSOR OP ######
 public:
-    template <typename U>
-    friend Tensor<U> *operator+(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator+(const Tensor<U> &, const U &);
-    template <typename U>
-    friend Tensor<U> *operator+(const U &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator+(const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator-(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator-(const Tensor<U> &, const U &);
-    template <typename U>
-    friend Tensor<U> *operator-(const U &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator-(const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator*(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<U> *operator*(const Tensor<U> &, const U &);
-    template <typename U>
-    friend Tensor<U> *operator*(const U &, const Tensor<U> &);
+    Tensor<T> operator+(const Tensor<T> &);
+    Tensor<T> operator+(const T &);
+    Tensor<T> operator+();
+    Tensor<T> operator-(const Tensor<T> &);
+    Tensor<T> operator-(const T &);
+    Tensor<T> operator-();
+    Tensor<T> operator*(const Tensor<T> &);
+    Tensor<T> operator*(const T &);
 
 private:
-    bool validateSameShape(std::vector<std::size_t>) const;
+    bool validateSameShape(const std::vector<std::size_t> &) const;
 
     // ###### TENSOR BOOL ######
 public:
@@ -74,35 +51,35 @@ public:
     bool any() const;
     bool none() const;
 
-    template <typename U>
-    friend Tensor<bool> *operator==(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<bool> *operator<(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<bool> *operator<=(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<bool> *operator>(const Tensor<U> &, const Tensor<U> &);
-    template <typename U>
-    friend Tensor<bool> *operator>=(const Tensor<U> &, const Tensor<U> &);
+    Tensor<bool> operator==(const Tensor<T> &);
+    Tensor<bool> operator==(const T &);
+    Tensor<bool> operator<(const Tensor<T> &);
+    Tensor<bool> operator<(const T &);
+    Tensor<bool> operator<=(const Tensor<T> &);
+    Tensor<bool> operator<=(const T &);
+    Tensor<bool> operator>(const Tensor<T> &);
+    Tensor<bool> operator>(const T &);
+    Tensor<bool> operator>=(const Tensor<T> &);
+    Tensor<bool> operator>=(const T &);
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
-    static Tensor<T> *affine(const Tensor<T> &rhs, std::optional<T> a, std::optional<T> b)
+    static Tensor<T> affine(const Tensor<T> &, std::optional<T>, std::optional<T>)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> *exp(const Tensor<T> &)
+    static Tensor<T> exp(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> *pow(const Tensor<T> &t, const double exponent)
+    static Tensor<T> pow(const Tensor<T> &t, const double)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> *sqrt(const Tensor<T> &)
+    static Tensor<T> sqrt(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> *dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
+    static Tensor<T> dot(const Tensor<T> &lhs, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
-    static std::string tensorDataToStr(std::vector<std::size_t>, T *);
-    static std::string tensorShapeToStr(std::vector<std::size_t>);
-    static std::string tensorToStr(std::vector<std::size_t>, T *);
+    static std::string tensorDataToStr(const std::vector<std::size_t> &, const std::vector<T> &);
+    static std::string tensorShapeToStr(const std::vector<std::size_t> &);
+    static std::string tensorToStr(const std::vector<std::size_t> &, const std::vector<T> &);
 
 public:
     template <typename U>
@@ -111,9 +88,9 @@ public:
     // ###### TENSOR UTILS ######
 public:
     template <typename U>
-    Tensor<U> *to_type();
-    static Tensor<T> *from_function(std::function<size_t(T)> lambda, std::vector<std::size_t> shape);
-    static Tensor<T> *from_vector(std::vector<T> buffer, std::vector<std::size_t> shape);
+    Tensor<U> to_type();
+    static Tensor<T> from_function(std::function<size_t(T)>, const std::vector<std::size_t> &);
+    static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
 
 #include "tensor.hxx"
