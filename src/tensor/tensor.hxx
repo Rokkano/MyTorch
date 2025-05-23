@@ -1,4 +1,5 @@
 #include <iostream>
+#include <format>
 
 #include "tensor.hh"
 #include "../utils.hxx"
@@ -75,7 +76,13 @@ Tensor<T>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 }
 
 template <typename T>
-Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &buffer) : shape_(shape), buffer_(buffer) {}
+Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &buffer) : shape_(shape), buffer_(buffer)
+{
+    std::size_t shape_size = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<int>());
+    std::size_t buffer_size = buffer.size();
+    if (shape_size != buffer_size)
+        throw std::invalid_argument(std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
+}
 
 template <typename T>
 Tensor<T>::~Tensor()
