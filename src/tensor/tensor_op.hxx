@@ -15,7 +15,7 @@ template <typename T>
 Tensor<T> Tensor<T>::operator+(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for addition.");
+        throw std::invalid_argument(std::format("Shape {} and {} are invalid for addition.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -44,7 +44,7 @@ template <typename T>
 Tensor<T> Tensor<T>::operator-(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for addition.");
+        throw std::invalid_argument(std::format("Shape {} and {} are invalid for substraction.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -74,7 +74,7 @@ template <typename T>
 Tensor<T> Tensor<T>::operator*(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument("Shape " + this->tensorShapeToStr(this->shape_) + " and " + other.tensorShapeToStr(other.shape_) + " are invalid for addition.");
+        throw std::invalid_argument(std::format("Shape {} and {} are invalid for multiplication.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)

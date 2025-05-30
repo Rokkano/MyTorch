@@ -24,7 +24,9 @@ public:
     ~Tensor();
 
     std::size_t numel() const;
-    Tensor<T> *flatten();
+    Tensor<T> flatten();
+    Tensor<T> unsqueeze(size_t);
+    Tensor<T> squeeze(size_t);
     void fill(const T &);
 
     std::size_t coordToAbs(const std::vector<std::size_t> &) const;
@@ -73,6 +75,8 @@ public:
     static Tensor<T> sqrt(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
     static Tensor<T> dot(const Tensor<T> &lhs, const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> matmul(const Tensor<T> &lhs, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######

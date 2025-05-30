@@ -57,11 +57,11 @@ Tensor<T> Tensor<T>::dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
     requires std::is_arithmetic_v<T>
 {
     if (lhs.shape_.size() != 1)
-        throw std::invalid_argument("Dot product only applies for 1-dimensional tensors : " + Tensor<T>::tensorShapeToStr(lhs.shape_) + ".");
+        throw std::invalid_argument(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() != 1)
-        throw std::invalid_argument("Dot product only applies for 1-dimensional tensors : " + Tensor<T>::tensorShapeToStr(rhs.shape_) + ".");
+        throw std::invalid_argument(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[0] != rhs.shape_[0])
-        throw std::invalid_argument("Lengths are incompatible for dot product : " + Tensor<T>::tensorShapeToStr(rhs.shape_) + " and " + Tensor<T>::tensorShapeToStr(lhs.shape_) + ".");
+        throw std::invalid_argument(std::format("Lengths are incompatible for dot product : {} and {}.", Tensor<T>::tensorShapeToStr(rhs.shape_), Tensor<T>::tensorShapeToStr(lhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({1});
     tensor.buffer_[0] = 0;
@@ -73,9 +73,12 @@ Tensor<T> Tensor<T>::dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
 // MULTIPLIER X et X.T (pour faire ligne x ligne)
 
 // template <typename T>
-// Tensor<T> *Tensor<T>::matmul(const Tensor<T> &lhs, const Tensor<T> &rhs)
+// Tensor<T> Tensor<T>::matmul(const Tensor<T> &lhs, const Tensor<T> &rhs)
 //     requires std::is_arithmetic_v<T>
 // {
 //     if (lhs.shape_.size() == 1 && rhs.shape_.size() == 1)
-//         return Tensor<T>::dot(lhs, rhs)
+//         return Tensor<T>::dot(lhs, rhs) if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
+//         {
+//             rhs.unsqueeze()
+//         }
 // }

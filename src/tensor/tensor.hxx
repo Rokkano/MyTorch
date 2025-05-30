@@ -30,9 +30,8 @@ std::size_t Tensor<T>::coordToAbs(const std::vector<std::size_t> &coord) const
     // [y,x] with [y_m,x_m] -> y * x_m + x
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateCoord(coord))
-    {
-        throw std::invalid_argument("Coordinates " + this->tensorShapeToStr(coord) + " are invalid for tensor of shape" + this->tensorShapeToStr(this->shape_) + ".");
-    }
+        throw std::invalid_argument(std::format("Coordinates {} are invalid for tensor of shape {}.", this->tensorShapeToStr(coord), this->tensorShapeToStr(this->shape_)));
+
     std::size_t abs = 0;
     for (std::size_t i = 0; i < coord.size(); i++)
     {
@@ -51,7 +50,7 @@ std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
     // [y,x] with [y_m,x_m] -> y * x_m + x
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateAbs(abs))
-        throw std::invalid_argument("Absolute " + std::to_string(abs) + " is invalid for tensor of shape" + this->tensorShapeToStr(this->shape_) + " (" + std::to_string(this->numel()) + "elements).");
+        throw std::invalid_argument(std::format("Absolute {} is invalid for tensor of shape {} ({} elements).", std::to_string(abs), this->tensorShapeToStr(this->shape_), std::to_string(this->numel())));
     std::vector<std::size_t> coord = std::vector<std::size_t>();
     for (std::size_t i = 0; i < this->shape_.size(); i++)
     {
@@ -110,8 +109,24 @@ std::size_t Tensor<T>::numel() const
 }
 
 template <typename T>
-Tensor<T> *Tensor<T>::flatten()
+Tensor<T> Tensor<T>::flatten()
 {
     this->shape_ = std::vector({this->numel()});
-    return this;
+    return &this;
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::unsqueeze(size_t dim = 0)
+{
+    this->shape_.insert(this->shape_.begin() + dim, 1);
+    return &this;
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::squeeze(size_t dim = 0)
+{
+    if (this->shape_[dim] != 1)
+        throw std::invalid_argument(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
+    this->shape_.erase(this->shape_.begin() + dim);
+    return &this;
 }
