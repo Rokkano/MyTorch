@@ -23,11 +23,14 @@ public:
     Tensor(const std::vector<std::size_t> &, const std::vector<T> &);
     ~Tensor();
 
+    std::vector<std::size_t> shape() const;
     std::size_t numel() const;
     Tensor<T> flatten();
-    Tensor<T> unsqueeze(size_t);
-    Tensor<T> squeeze(size_t);
+    Tensor<T> unsqueeze(std::size_t dim = 0);
+    Tensor<T> squeeze(std::size_t dim = 0);
     void fill(const T &);
+    // Tensor<T> broadcast(const std::vector<std::size_t> &);
+    // Tensor<T> broadcast(Tensor<T> &);
 
     std::size_t coordToAbs(const std::vector<std::size_t> &) const;
     std::vector<std::size_t> absToCoord(std::size_t) const;
@@ -74,10 +77,12 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> sqrt(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> dot(const Tensor<T> &lhs, const Tensor<T> &)
+    static Tensor<T> dot(const Tensor<T> &, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
-    static Tensor<T> matmul(const Tensor<T> &lhs, const Tensor<T> &)
-        requires std::is_arithmetic_v<T>;
+    // static Tensor<T> matmul(const Tensor<T> &, const Tensor<T> &)
+    //     requires std::is_arithmetic_v<T>;
+    // friend Tensor<T> matmatproduct(const Tensor<T> &, const Tensor<T> &)
+    //     requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
@@ -93,7 +98,7 @@ public:
 public:
     template <typename U>
     Tensor<U> to_type();
-    static Tensor<T> from_function(std::function<size_t(T)>, const std::vector<std::size_t> &);
+    static Tensor<T> from_function(std::function<std::size_t(T)>, const std::vector<std::size_t> &);
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
 

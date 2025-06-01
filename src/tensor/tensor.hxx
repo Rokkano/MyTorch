@@ -89,6 +89,12 @@ Tensor<T>::~Tensor()
 }
 
 template <typename T>
+std::vector<size_t> Tensor<T>::shape() const
+{
+    return this->shape_;
+}
+
+template <typename T>
 void Tensor<T>::fill(const T &value)
 {
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -116,17 +122,17 @@ Tensor<T> Tensor<T>::flatten()
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::unsqueeze(size_t dim = 0)
+Tensor<T> Tensor<T>::unsqueeze(std::size_t dim)
 {
     this->shape_.insert(this->shape_.begin() + dim, 1);
-    return &this;
+    return *this;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::squeeze(size_t dim = 0)
+Tensor<T> Tensor<T>::squeeze(std::size_t dim)
 {
     if (this->shape_[dim] != 1)
         throw std::invalid_argument(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
     this->shape_.erase(this->shape_.begin() + dim);
-    return &this;
+    return *this;
 }

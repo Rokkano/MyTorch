@@ -71,14 +71,25 @@ Tensor<T> Tensor<T>::dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
 }
 
 // MULTIPLIER X et X.T (pour faire ligne x ligne)
+// template <typename T>
+// Tensor<T> matmatproduct(const Tensor<T> &lhs, const Tensor<T> &rhs)
+// {
+//     return lhs
+// }
 
 // template <typename T>
 // Tensor<T> Tensor<T>::matmul(const Tensor<T> &lhs, const Tensor<T> &rhs)
 //     requires std::is_arithmetic_v<T>
 // {
 //     if (lhs.shape_.size() == 1 && rhs.shape_.size() == 1)
-//         return Tensor<T>::dot(lhs, rhs) if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
-//         {
-//             rhs.unsqueeze()
-//         }
+//         return Tensor<T>::dot(lhs, rhs);
+//     if (lhs.shape_.size() == 2 && rhs.shape_.size() == 2)
+//         return matmatproduct(lhs, rhs);
+//     if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
+//     {
+//         rhs = rhs.unsqueeze();
+//         tensor = matmatproduct(lhs, rhs);
+//         tensor = tensor.squeeze();
+//         return tensor;
+//     }
 // }

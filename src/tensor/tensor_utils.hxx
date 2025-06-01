@@ -15,7 +15,7 @@ Tensor<U> Tensor<T>::to_type()
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::from_function(std::function<size_t(T)> lambda, const std::vector<std::size_t> &shape)
+Tensor<T> Tensor<T>::from_function(std::function<std::size_t(T)> lambda, const std::vector<std::size_t> &shape)
 {
     Tensor<T> tensor = Tensor<T>(shape);
     for (std::size_t i = 0; i < tensor.numel(); i++)
