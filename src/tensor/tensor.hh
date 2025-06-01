@@ -29,8 +29,8 @@ public:
     Tensor<T> unsqueeze(std::size_t dim = 0);
     Tensor<T> squeeze(std::size_t dim = 0);
     void fill(const T &);
-    // Tensor<T> broadcast(const std::vector<std::size_t> &);
-    // Tensor<T> broadcast(Tensor<T> &);
+    Tensor<T> broadcast(const std::vector<std::size_t> &);
+    Tensor<T> broadcast(Tensor<T> &);
 
     std::size_t coordToAbs(const std::vector<std::size_t> &) const;
     std::vector<std::size_t> absToCoord(std::size_t) const;

@@ -136,3 +136,39 @@ Tensor<T> Tensor<T>::squeeze(std::size_t dim)
     this->shape_.erase(this->shape_.begin() + dim);
     return *this;
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::broadcast(Tensor<T> &tensor)
+{
+    return this->broadcast(tensor.shape_);
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape)
+{
+    // unsqueeze both dimensions until same number of dim
+    std::vector<size_t> tensor_shape = this->shape_;
+    std::vector<size_t> target_shape = shape;
+    while (tensor_shape.size() < target_shape.size())
+        tensor_shape.insert(tensor_shape.begin(), 1);
+    while (target_shape.size() < tensor_shape.size())
+        target_shape.insert(target_shape.begin(), 1);
+
+    std::vector<std::size_t> new_shape = std::vector<std::size_t>();
+    for (std::size_t i = 0; i < tensor_shape.size(); i++)
+    {
+        if (tensor_shape[i] != target_shape[i] && tensor_shape[i] != 1 && target_shape[i] != 1)
+            throw std::invalid_argument(std::format("Tensor is not broadcastable to this shape : {} to {} at index {}.", this->tensorShapeToStr(tensor_shape), this->tensorShapeToStr(target_shape), i));
+        new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
+    }
+
+    Tensor<T> new_tensor = Tensor<T>(new_shape);
+    for (std::size_t i = 0; i < new_tensor.numel(); i++)
+    {
+        std::vector<std::size_t> coords = new_tensor.absToCoord(i);
+        for (std::size_t j = 0; j < coords.size(); j++)
+            coords[j] = tensor_shape[j] != 1 ? coords[j] : 0;
+        new_tensor.buffer_[i] = this->buffer_[this->coordToAbs(coords)];
+    }
+    return new_tensor;
+}
