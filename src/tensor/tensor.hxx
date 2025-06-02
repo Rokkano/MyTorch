@@ -138,6 +138,31 @@ Tensor<T> Tensor<T>::squeeze(std::size_t dim)
 }
 
 template <typename T>
+Tensor<T> Tensor<T>::t(std::size_t dim0, std::size_t dim1)
+{
+    return this->transpose(dim0, dim1);
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::transpose(std::size_t dim0, std::size_t dim1)
+{
+    if (this->shape_.size() < 2)
+        throw std::invalid_argument("Cannot transpose tensor with less than 2 dimensions");
+
+    std::vector<std::size_t> new_shape = this->shape_;
+    std::swap(new_shape[dim0], new_shape[dim1]);
+    Tensor<T> tensor = Tensor<T>(new_shape);
+    std::cout << tensor << std::endl;
+    for (std::size_t i = 0; i < this->numel(); i++)
+    {
+        std::vector<std::size_t> target_coord = this->absToCoord(i);
+        std::swap(target_coord[dim0], target_coord[dim1]);
+        tensor.buffer_[tensor.coordToAbs(target_coord)] = this->buffer_[i];
+    }
+    return tensor;
+}
+
+template <typename T>
 Tensor<T> Tensor<T>::broadcast(Tensor<T> &tensor)
 {
     return this->broadcast(tensor.shape_);

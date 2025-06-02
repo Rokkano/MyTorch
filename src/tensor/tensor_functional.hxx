@@ -70,9 +70,17 @@ Tensor<T> Tensor<T>::dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
     return tensor;
 }
 
-// MULTIPLIER X et X.T (pour faire ligne x ligne)
+// // MULTIPLIER X et X.T (pour faire ligne x ligne)
 // template <typename T>
-// Tensor<T> matmatproduct(const Tensor<T> &lhs, const Tensor<T> &rhs)
+// Tensor<T> mm(const Tensor<T> &lhs, const Tensor<T> &rhs)
+// {
+//     // matrix multiplication (2x2 tensors)
+//     return lhs
+// }
+
+// // MULTIPLIER X et X.T (pour faire ligne x ligne)
+// template <typename T>
+// Tensor<T> bmm(const Tensor<T> &lhs, const Tensor<T> &rhs)
 // {
 //     return lhs
 // }

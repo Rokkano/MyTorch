@@ -28,6 +28,8 @@ public:
     Tensor<T> flatten();
     Tensor<T> unsqueeze(std::size_t dim = 0);
     Tensor<T> squeeze(std::size_t dim = 0);
+    Tensor<T> t(std::size_t dim0 = 0, std::size_t dim1 = 1);
+    Tensor<T> transpose(std::size_t dim0 = 0, std::size_t dim1 = 1);
     void fill(const T &);
     Tensor<T> broadcast(const std::vector<std::size_t> &);
     Tensor<T> broadcast(Tensor<T> &);
@@ -81,7 +83,9 @@ public:
         requires std::is_arithmetic_v<T>;
     // static Tensor<T> matmul(const Tensor<T> &, const Tensor<T> &)
     //     requires std::is_arithmetic_v<T>;
-    // friend Tensor<T> matmatproduct(const Tensor<T> &, const Tensor<T> &)
+    // friend Tensor<T> mm(const Tensor<T> &, const Tensor<T> &)
+    //     requires std::is_arithmetic_v<T>;
+    // friend Tensor<T> bmm(const Tensor<T> &, const Tensor<T> &)
     //     requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
