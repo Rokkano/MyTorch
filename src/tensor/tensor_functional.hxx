@@ -164,28 +164,26 @@ Tensor<T> Tensor<T>::matmul(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     if (lhs.shape_.size() == 1 && rhs.shape_.size() == 1)
         return Tensor<T>::dot(lhs, rhs);
-    else if (lhs.shape_.size() == 2 && rhs.shape_.size() == 2)
+    if (lhs.shape_.size() == 2 && rhs.shape_.size() == 2)
         return Tensor<T>::mm(lhs, rhs);
-    else if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
+    if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
         return Tensor<T>::mm(lhs.unsqueeze(), rhs).squeeze();
-    else if (lhs.shape_.size() == 2 && rhs.shape_.size() == 1)
+    if (lhs.shape_.size() == 2 && rhs.shape_.size() == 1)
         return Tensor<T>::mvm(lhs, rhs);
-    else
-    {
-        if (lhs.shape_.size() == 1)
-            lhs = lhs.unsqueeze(0);
-        if (rhs.shape_.size() == 1)
-            rhs = rhs.unsqueeze(1);
 
-        Tensor<T> lhs_b = lhs.batch_broadcast(rhs);
-        Tensor<T> rhs_b = lhs.batch_broadcast(lhs);
+    if (lhs.shape_.size() == 1)
+        lhs = lhs.unsqueeze(0);
+    if (rhs.shape_.size() == 1)
+        rhs = rhs.unsqueeze(1);
 
-        Tensor<T> tensor = Tensor<T>::bmm(lhs, rhs);
+    Tensor<T> lhs_b = lhs.batch_broadcast(rhs);
+    Tensor<T> rhs_b = lhs.batch_broadcast(lhs);
 
-        if (lhs.shape_.size() == 1)
-            tensor = tensor.unsqueeze(tensor.shape_.size() - 2);
-        if (rhs.shape_.size() == 1)
-            tensor = tensor.unsqueeze(tensor.shape_.size() - 1);
-        return tensor;
-    }
+    Tensor<T> tensor = Tensor<T>::bmm(lhs, rhs);
+
+    if (lhs.shape_.size() == 1)
+        tensor = tensor.unsqueeze(tensor.shape_.size() - 2);
+    if (rhs.shape_.size() == 1)
+        tensor = tensor.unsqueeze(tensor.shape_.size() - 1);
+    return tensor;
 }
