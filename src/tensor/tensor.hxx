@@ -196,3 +196,21 @@ Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape)
     }
     return new_tensor;
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::batch_broadcast(Tensor<T> &tensor)
+{
+    return this->batch_broadcast(tensor.shape_);
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::batch_broadcast(const std::vector<std::size_t> &shape)
+{
+    // broadcast only on non-matrix dimensions (ie batch, channels...)
+    std::vector<std::size_t> new_shape = shape;
+    if (new_shape[new_shape.size() - 1] == 1)
+        new_shape[new_shape.size() - 1] = this->shape_[this->shape_.size() - 1];
+    if (new_shape[new_shape.size() - 2] == 2)
+        new_shape[new_shape.size() - 2] = this->shape_[this->shape_.size() - 2];
+    return this->broadcast(new_shape);
+}

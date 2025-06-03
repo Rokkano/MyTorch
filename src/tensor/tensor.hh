@@ -33,6 +33,8 @@ public:
     void fill(const T &);
     Tensor<T> broadcast(const std::vector<std::size_t> &);
     Tensor<T> broadcast(Tensor<T> &);
+    Tensor<T> batch_broadcast(const std::vector<std::size_t> &);
+    Tensor<T> batch_broadcast(Tensor<T> &);
 
     std::size_t coordToAbs(const std::vector<std::size_t> &) const;
     std::vector<std::size_t> absToCoord(std::size_t) const;
@@ -89,8 +91,8 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> omm(const Tensor<T> &, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
-    // friend Tensor<T> bmm(const Tensor<T> &, const Tensor<T> &)
-    //     requires std::is_arithmetic_v<T>;
+    static Tensor<T> bmm(const Tensor<T> &, const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
