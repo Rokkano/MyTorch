@@ -147,14 +147,14 @@ Tensor<T> Tensor<T>::bmm(const Tensor<T> &lhs, const Tensor<T> &rhs)
             throw std::invalid_argument(std::format("Tensors dimensions are not compatible for batched matrix multiplication (use broadcasting) : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     std::vector<std::size_t> new_shape = std::vector(rhs.shape_.begin(), rhs.shape_.end() - 2);
-    new_shape.push_back(lhs.shape_.end() - 2);
-    new_shape.push_back(rhs.shape_.end() - 1);
+    new_shape.push_back(*(lhs.shape_.end() - 2));
+    new_shape.push_back(*(rhs.shape_.end() - 1));
     Tensor<T> tensor = Tensor<T>(new_shape);
 
-    std::size_t p = tensor.shape_.end() - 1;
+    std::size_t p = *(tensor.shape_.end() - 1);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        for (std::size_t k = 0; k < lhs.shape_[1]; k++)
-            tensor.buffer_[i] += lhs.buffer_[k + (i / p) * lhs.shape_[1]] * rhs.buffer_[(i % p) + k * rhs.shape_[1]];
+        for (std::size_t k = 0; k < lhs.shape_[lhs.shape_.size() - 1]; k++)
+            tensor.buffer_[i] += lhs.buffer_[k + (i / p) * lhs.shape_[lhs.shape_.size() - 1]] * rhs.buffer_[(i % p) + k * rhs.shape_[rhs.shape_.size() - 1]];
     return tensor;
 }
 
