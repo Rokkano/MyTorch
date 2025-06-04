@@ -5,6 +5,8 @@
 #include <optional>
 #include <functional>
 
+#include "../exception/exception.hh"
+
 template <typename T>
 class Tensor
 {
