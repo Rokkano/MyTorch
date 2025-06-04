@@ -6,7 +6,7 @@ template <>
 Tensor<bool>::operator bool() const
 {
     if (this->numel() != 1)
-        throw std::invalid_argument("Boolean cast of a Tensor is ambiguous. Use .all() or .any() depending on the behaviour you want.");
+        throw CastException("Boolean cast of a Tensor is ambiguous. Use .all() or .any() depending on the behaviour you want.");
     else
         return this->buffer_[0];
 }
@@ -15,7 +15,7 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator==(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -36,7 +36,7 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator<(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -57,7 +57,7 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator<=(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -78,7 +78,7 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator>(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -99,7 +99,7 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator>=(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw std::invalid_argument(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)

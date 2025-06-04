@@ -57,11 +57,11 @@ Tensor<T> Tensor<T>::dot(const Tensor<T> &lhs, const Tensor<T> &rhs)
     requires std::is_arithmetic_v<T>
 {
     if (lhs.shape_.size() != 1)
-        throw std::invalid_argument(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() != 1)
-        throw std::invalid_argument(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Dot product only applies for 1-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[0] != rhs.shape_[0])
-        throw std::invalid_argument(std::format("Lengths are incompatible for dot product : {} and {}.", Tensor<T>::tensorShapeToStr(rhs.shape_), Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Lengths are incompatible for dot product : {} and {}.", Tensor<T>::tensorShapeToStr(rhs.shape_), Tensor<T>::tensorShapeToStr(lhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({1});
     tensor.buffer_[0] = 0;
@@ -76,11 +76,11 @@ Tensor<T> Tensor<T>::mm(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     // matrix multiplication (2x2 tensors)
     if (lhs.shape_.size() != 2)
-        throw std::invalid_argument(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() != 2)
-        throw std::invalid_argument(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[1] != rhs.shape_[0])
-        throw std::invalid_argument(std::format("Tensors are not compatible for matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Tensors are not compatible for matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({lhs.shape_[0], rhs.shape_[1]});
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -95,11 +95,11 @@ Tensor<T> Tensor<T>::omm(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     // optimized matrix multiplication (2x2 tensors) with rhs transpose for quicker data reading
     if (lhs.shape_.size() != 2)
-        throw std::invalid_argument(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() != 2)
-        throw std::invalid_argument(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mm only applies for 2-dimensional tensors : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[1] != rhs.shape_[0])
-        throw std::invalid_argument(std::format("Tensors are not compatible for matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Tensors are not compatible for matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({lhs.shape_[0], rhs.shape_[1]});
     Tensor<T> rhs_t = rhs.transpose();
@@ -117,11 +117,11 @@ Tensor<T> Tensor<T>::mvm(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     // matrix vector multiplication
     if (lhs.shape_.size() != 2)
-        throw std::invalid_argument(std::format("mvm only applies for 2-dimensional tensors for lhs : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mvm only applies for 2-dimensional tensors for lhs : {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() != 1)
-        throw std::invalid_argument(std::format("mvm only applies for 1-dimensional tensors for rhs : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("mvm only applies for 1-dimensional tensors for rhs : {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[1] != rhs.shape_[0])
-        throw std::invalid_argument(std::format("Tensors are not compatible for matrix-vector multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Tensors are not compatible for matrix-vector multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({lhs.shape_[0]});
     for (std::size_t y = 0; y < lhs.shape_[0]; y++)
@@ -135,16 +135,16 @@ Tensor<T> Tensor<T>::bmm(const Tensor<T> &lhs, const Tensor<T> &rhs)
     requires std::is_arithmetic_v<T>
 {
     if (lhs.shape_.size() < 3)
-        throw std::invalid_argument(std::format("bmm only applies for 3 or + dimensional tensors (batched): {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
+        throw TensorInvalidShapeException(std::format("bmm only applies for 3 or + dimensional tensors (batched): {}.", Tensor<T>::tensorShapeToStr(lhs.shape_)));
     if (rhs.shape_.size() < 3)
-        throw std::invalid_argument(std::format("bmm only applies for 3 or + dimensional tensors (batched): {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("bmm only applies for 3 or + dimensional tensors (batched): {}.", Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_[lhs.shape_.size() - 1] != rhs.shape_[rhs.shape_.size() - 2])
-        throw std::invalid_argument(std::format("Tensors are not compatible for batched matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Tensors are not compatible for batched matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
     if (lhs.shape_.size() != rhs.shape_.size())
-        throw std::invalid_argument(std::format("Tensors dimensions are not compatible for batched matrix multiplication (use broadcasting) : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Tensors dimensions are not compatible for batched matrix multiplication (use broadcasting) : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
     for (std::size_t i = 0; i < lhs.shape_.size() - 2; i++)
         if (lhs.shape_[i] != rhs.shape_[i])
-            throw std::invalid_argument(std::format("Tensors dimensions are not compatible for batched matrix multiplication (use broadcasting) : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
+            throw TensorInvalidShapeException(std::format("Tensors dimensions are not compatible for batched matrix multiplication (use broadcasting) : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     std::vector<std::size_t> new_shape = std::vector(rhs.shape_.begin(), rhs.shape_.end() - 2);
     new_shape.push_back(*(lhs.shape_.end() - 2));

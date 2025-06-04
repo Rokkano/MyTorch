@@ -80,7 +80,7 @@ Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &b
     std::size_t shape_size = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<int>());
     std::size_t buffer_size = buffer.size();
     if (shape_size != buffer_size)
-        throw std::invalid_argument(std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
+        throw TensorInvalidShapeException(std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
 }
 
 template <typename T>
@@ -132,7 +132,7 @@ template <typename T>
 Tensor<T> Tensor<T>::squeeze(std::size_t dim)
 {
     if (this->shape_[dim] != 1)
-        throw std::invalid_argument(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
+        throw TensorSqueezeException(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
     this->shape_.erase(this->shape_.begin() + dim);
     return *this;
 }
@@ -147,7 +147,7 @@ template <typename T>
 Tensor<T> Tensor<T>::transpose(std::size_t dim0, std::size_t dim1) const
 {
     if (this->shape_.size() < 2)
-        throw std::invalid_argument("Cannot transpose tensor with less than 2 dimensions");
+        throw TensorTransposeException("Cannot transpose tensor with less than 2 dimensions");
 
     std::vector<std::size_t> new_shape = this->shape_;
     std::swap(new_shape[dim0], new_shape[dim1]);
@@ -182,7 +182,7 @@ Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape)
     for (std::size_t i = 0; i < tensor_shape.size(); i++)
     {
         if (tensor_shape[i] != target_shape[i] && tensor_shape[i] != 1 && target_shape[i] != 1)
-            throw std::invalid_argument(std::format("Tensor is not broadcastable to this shape : {} to {} at index {}.", this->tensorShapeToStr(tensor_shape), this->tensorShapeToStr(target_shape), i));
+            throw TensorBroadcastException(std::format("Tensor is not broadcastable to this shape : {} to {} at index {}.", this->tensorShapeToStr(tensor_shape), this->tensorShapeToStr(target_shape), i));
         new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
     }
 

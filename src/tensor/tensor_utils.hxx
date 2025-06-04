@@ -27,7 +27,7 @@ template <typename T>
 Tensor<T> Tensor<T>::from_vector(const std::vector<T> &buffer, const std::vector<std::size_t> &shape)
 {
     if (std::accumulate(shape.begin(), shape.end(), 0) != buffer.size())
-        throw std::invalid_argument(std::format("Lengths are incompatible : {} and {}.", std::accumulate(shape.begin(), shape.end(), 0), buffer.size()));
+        throw TensorInvalidShapeException(std::format("Buffer length and shape are incompatible : {} and {}.", std::accumulate(shape.begin(), shape.end(), 0), buffer.size()));
 
     Tensor<T> tensor = Tensor<T>(shape);
     for (std::size_t i = 0; i < tensor.numel(); i++)
