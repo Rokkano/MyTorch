@@ -10,7 +10,16 @@ Tensor<U> Tensor<T>::to_type()
 {
     Tensor<U> tensor = Tensor<U>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = static_cast<U>(this->buffer_[i]);
+    {
+        try
+        {
+            tensor.buffer_[i] = static_cast<U>(this->buffer_[i]);
+        }
+        catch (const std::exception &e)
+        {
+            throw CastException(e.what());
+        }
+    }
     return tensor;
 }
 
