@@ -27,6 +27,7 @@ public:
 
     std::vector<std::size_t> shape() const;
     std::size_t numel() const;
+    T item() const;
     Tensor<T> flatten();
     Tensor<T> unsqueeze(std::size_t dim = 0);
     Tensor<T> squeeze(std::size_t dim = 0);
@@ -73,6 +74,16 @@ public:
     Tensor<bool> operator>=(const Tensor<T> &);
     Tensor<bool> operator>=(const T &);
 
+    // ###### TENSOR MATH ######
+    Tensor<T> min();
+    Tensor<T> min(const T &);
+    // Tensor<T> min(const std::size_t);
+    Tensor<T> min(const Tensor<T> &);
+    Tensor<T> max();
+    Tensor<T> max(const T &);
+    // Tensor<T> max(const std::size_t);
+    Tensor<T> max(const Tensor<T> &);
+
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
     static Tensor<T> affine(const Tensor<T> &, std::optional<T>, std::optional<T>)
@@ -96,6 +107,9 @@ public:
     static Tensor<T> bmm(const Tensor<T> &, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
 
+    static Tensor<T> relu(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+
     // ###### TENSOR IO ######
 private:
     static std::string tensorDataToStr(const std::vector<std::size_t> &, const std::vector<T> &);
@@ -116,7 +130,15 @@ public:
 
 #include "tensor.hxx"
 #include "tensor_op.hxx"
-#include "tensor_functional.hxx"
 #include "tensor_bool.hxx"
+#include "tensor_math.hxx"
 #include "tensor_io.hxx"
 #include "tensor_utils.hxx"
+
+// functionals
+#include "functional/tensor_activation.hxx"
+#include "functional/tensor_convolution.hxx"
+#include "functional/tensor_linear.hxx"
+#include "functional/tensor_loss.hxx"
+#include "functional/tensor_pooling.hxx"
+#include "functional/tensor_vision.hxx"

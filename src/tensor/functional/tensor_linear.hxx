@@ -3,7 +3,7 @@
 #include <format>
 #include <typeinfo>
 
-#include "tensor.hh"
+#include "../tensor.hh"
 
 template <typename T>
 Tensor<T> Tensor<T>::affine(const Tensor<T> &rhs, std::optional<T> a, std::optional<T> b)
