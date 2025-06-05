@@ -1,6 +1,7 @@
 # Custom MyTorch gitignore
 main
 test
+benchmark
 .vscode/
 
 # Prerequisites
