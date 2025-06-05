@@ -29,5 +29,6 @@ public:
     };
 
 DEFINE_EXCEPTION(CastException);
+DEFINE_EXCEPTION(NotImplementedException);
 
 #include "tensor.hh"
