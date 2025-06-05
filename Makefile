@@ -16,6 +16,10 @@ test: $(TST_OBJS)
 	$(CXX) -lcriterion -o test $(OBJS) $(TST_OBJS) $(LDLIBS)
 	./test
 
+benchmark: $(OBJS) scripts/benchmark.cc
+	$(CXX) $(CXXFLAGS) -o benchmark scripts/benchmark.cc $(OBJS)
+	./benchmark
+
 clean:
 	rm src/**/*.o main
 
