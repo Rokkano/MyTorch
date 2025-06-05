@@ -115,6 +115,14 @@ std::size_t Tensor<T>::numel() const
 }
 
 template <typename T>
+T Tensor<T>::item() const
+{
+    if (this->shape_.size() != 1 || this->shape_[0] != 1)
+        throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}", this->tensorShapeToStr(this->shape_)));
+    return this->buffer_[0];
+}
+
+template <typename T>
 Tensor<T> Tensor<T>::flatten()
 {
     this->shape_ = std::vector({this->numel()});
