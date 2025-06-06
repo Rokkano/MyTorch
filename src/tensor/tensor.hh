@@ -77,12 +77,12 @@ public:
     // ###### TENSOR MATH ######
     Tensor<T> min();
     Tensor<T> min(const T &);
-    // Tensor<T> min(const std::size_t);
     Tensor<T> min(const Tensor<T> &);
     Tensor<T> max();
     Tensor<T> max(const T &);
-    // Tensor<T> max(const std::size_t);
     Tensor<T> max(const Tensor<T> &);
+    Tensor<T> amin(const std::size_t);
+    Tensor<T> amax(const std::size_t);
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
