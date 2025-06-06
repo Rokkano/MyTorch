@@ -5,6 +5,7 @@ benchmark
 .vscode/
 
 # Gcov coverage files
+cov/
 *.gcda
 *.gcno
 
