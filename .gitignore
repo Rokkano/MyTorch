@@ -4,6 +4,10 @@ test
 benchmark
 .vscode/
 
+# Gcov coverage files
+*.gcda
+*.gcno
+
 # Prerequisites
 *.d
 
