@@ -17,7 +17,7 @@ test: $(TST_OBJS)
 	$(CXX) $(CXXFLAGS) $(CRITERIONFLAGS)  $(LDLIBS) -o test $(SRCS) $(TST_SRCS)
 	@./test
 
-test-cov: test
+cov: test
 	@mkdir -p cov/
 	@rm -rf cov/*
 	@gcovr --include src/ --json cov/cov.json
