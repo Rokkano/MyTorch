@@ -117,6 +117,8 @@ public:
 
     static Tensor<T> relu(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> sigmoid(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
