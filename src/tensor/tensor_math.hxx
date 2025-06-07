@@ -103,3 +103,34 @@ Tensor<T> Tensor<T>::amax(const std::size_t dim)
     }
     return tensor;
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::mean()
+{
+    T mean = 0;
+    for (std::size_t i = 0; i < this->numel(); i++)
+        mean += this->buffer_[i];
+    T val = mean / this->numel();
+    return Tensor<T>({1}, {val});
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::amean(const std::size_t dim)
+{
+    std::vector<std::size_t> new_shape = this->shape_;
+    new_shape.erase(new_shape.begin() + dim);
+
+    Tensor<T> tensor = Tensor<T>(new_shape);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+    {
+        T mean = 0;
+        for (std::size_t k = 0; k < this->shape_[dim]; k++)
+        {
+            std::vector<std::size_t> coords = tensor.absToCoord(i);
+            coords.insert(coords.begin() + dim, k);
+            mean += this->buffer_[this->coordToAbs(coords)];
+        }
+        tensor.buffer_[i] = mean / this->shape_[dim];
+    }
+    return tensor;
+}
