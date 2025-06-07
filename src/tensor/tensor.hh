@@ -83,8 +83,14 @@ public:
     Tensor<T> max(const T &);
     Tensor<T> max(const Tensor<T> &);
     Tensor<T> amax(const std::size_t);
-    Tensor<T> mean();
-    Tensor<T> amean(const std::size_t);
+    Tensor<T> mean(int bessel_correction = 0);
+    Tensor<T> amean(const std::size_t, int bessel_correction = 0);
+    Tensor<T> var(int bessel_correction = 0);
+    Tensor<T> std(int bessel_correction = 0);
+    Tensor<std::size_t> argmin();
+    Tensor<std::size_t> argmin(const std::size_t);
+    Tensor<std::size_t> argmax();
+    Tensor<std::size_t> argmax(const std::size_t);
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
