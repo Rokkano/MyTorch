@@ -138,12 +138,12 @@ public:
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
 
-#include "tensor.hxx"
-#include "tensor_op.hxx"
 #include "tensor_bool.hxx"
-#include "tensor_math.hxx"
 #include "tensor_io.hxx"
+#include "tensor_math.hxx"
+#include "tensor_op.hxx"
 #include "tensor_utils.hxx"
+#include "tensor.hxx"
 
 // functionals
 #include "functional/tensor_activation.hxx"

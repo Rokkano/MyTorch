@@ -11,7 +11,7 @@ bool Tensor<T>::validateCoord(const std::vector<std::size_t> &coord) const
         return false;
 
     for (std::size_t i = 0; i < coord.size(); i++)
-        if (coord[i] < 0 || coord[i] >= this->shape_[i])
+        if (coord[i] >= this->shape_[i])
             return false;
 
     return true;

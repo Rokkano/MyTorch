@@ -1,15 +1,7 @@
-#pragma once
+#include <format>
 
 #include "tensor.hh"
-
-template <>
-Tensor<bool>::operator bool() const
-{
-    if (this->numel() != 1)
-        throw CastException("Boolean cast of a Tensor is ambiguous. Use .all() or .any() depending on the behaviour you want.");
-    else
-        return this->buffer_[0];
-}
+#include "../utils.hh"
 
 template <typename T>
 Tensor<bool> Tensor<T>::operator==(const Tensor<T> &other)
@@ -116,29 +108,38 @@ Tensor<bool> Tensor<T>::operator>=(const T &other)
     return tensor;
 }
 
-template <>
-bool Tensor<bool>::all() const
+template <typename T>
+Tensor<T>::operator bool() const
 {
-    for (std::size_t i = 0; i < this->numel(); i++)
-        if (!this->buffer_[i])
-            return false;
-    return true;
+    throw TensorInvalidTypeException(std::format("bool() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+}
+
+template <typename T>
+bool Tensor<T>::all() const
+{
+    throw TensorInvalidTypeException(std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+}
+
+template <typename T>
+bool Tensor<T>::any() const
+{
+    throw TensorInvalidTypeException(std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+}
+
+template <typename T>
+bool Tensor<T>::none() const
+{
+    throw TensorInvalidTypeException(std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <>
-bool Tensor<bool>::any() const
-{
-    for (std::size_t i = 0; i < this->numel(); i++)
-        if (this->buffer_[i])
-            return true;
-    return false;
-}
+bool Tensor<bool>::all() const;
 
 template <>
-bool Tensor<bool>::none() const
-{
-    for (std::size_t i = 0; i < this->numel(); i++)
-        if (this->buffer_[i])
-            return false;
-    return true;
-}
+bool Tensor<bool>::any() const;
+
+template <>
+bool Tensor<bool>::none() const;
+
+template <>
+Tensor<bool>::operator bool() const;

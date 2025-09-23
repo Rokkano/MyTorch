@@ -1,3 +1,5 @@
+#include <format>
+
 #include "tensor.hh"
 
 template <typename T>
