@@ -9,6 +9,13 @@ cov/
 *.gcda
 *.gcno
 
+# CMake build files
+build/
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+Makefile
+
 # Prerequisites
 *.d
 
