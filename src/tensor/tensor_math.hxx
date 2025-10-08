@@ -222,7 +222,6 @@ Tensor<std::size_t> Tensor<T>::argmax(const std::size_t dim)
             coords.insert(coords.begin() + dim, k);
             max_buff.insert(max_buff.end(), this->buffer_[this->coordToAbs(coords)]);
         }
-        std::cout << Tensor<T>({this->shape_[dim]}, max_buff) << std::endl;
         tensor.buffer_[i] = Tensor<T>({this->shape_[dim]}, max_buff).argmax().item();
     }
     return tensor;
