@@ -115,31 +115,31 @@ Tensor<T>::operator bool() const
 }
 
 template <typename T>
-bool Tensor<T>::all() const
+Tensor<bool> Tensor<T>::all() const
 {
     throw TensorInvalidTypeException(std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <typename T>
-bool Tensor<T>::any() const
+Tensor<bool> Tensor<T>::any() const
 {
     throw TensorInvalidTypeException(std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <typename T>
-bool Tensor<T>::none() const
+Tensor<bool> Tensor<T>::none() const
 {
     throw TensorInvalidTypeException(std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <>
-bool Tensor<bool>::all() const;
-
-template <>
-bool Tensor<bool>::any() const;
-
-template <>
-bool Tensor<bool>::none() const;
-
-template <>
 Tensor<bool>::operator bool() const;
+
+template <>
+Tensor<bool> Tensor<bool>::all() const;
+
+template <>
+Tensor<bool> Tensor<bool>::any() const;
+
+template <>
+Tensor<bool> Tensor<bool>::none() const;

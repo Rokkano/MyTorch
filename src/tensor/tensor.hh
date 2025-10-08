@@ -59,9 +59,9 @@ private:
     // ###### TENSOR BOOL ######
 public:
     explicit operator bool() const;
-    bool all() const;
-    bool any() const;
-    bool none() const;
+    Tensor<bool> all() const;
+    Tensor<bool> any() const;
+    Tensor<bool> none() const;
 
     Tensor<bool> operator==(const Tensor<T> &);
     Tensor<bool> operator==(const T &);
