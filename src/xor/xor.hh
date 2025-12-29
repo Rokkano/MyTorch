@@ -6,4 +6,4 @@
 class XorDataset : Dataset<Tensor<int>, int>
 {
     XorDataset(std::size_t num_samples = 1024);
-}
+};
