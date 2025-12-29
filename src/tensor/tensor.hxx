@@ -126,7 +126,7 @@ template <typename T>
 Tensor<T> Tensor<T>::flatten()
 {
     this->shape_ = std::vector({this->numel()});
-    return &this;
+    return *this;
 }
 
 template <typename T>
