@@ -3,6 +3,7 @@
 ParameterizedTestParameters(tensor, tensor_broadcast)
 {
     static tensor_broadcast_params_c params[] = {
+        // shape, target, expected
         {{2, 1, 3}, {2, 3, 3}, {2, 3, 3}},
         {{2, 1, 1}, {2, 3, 3}, {2, 3, 3}},
     };
