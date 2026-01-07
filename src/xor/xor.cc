@@ -2,6 +2,12 @@
 #include "../dataset/dataset.hh"
 #include "xor.hh"
 
+XorDataset::XorDataset(std::vector<std::tuple<Tensor<int>, int>> data)
+{
+    this->name_ = "Xor";
+    this->data_ = data;
+}
+
 XorDataset::XorDataset(std::size_t num_samples = 1024)
 {
     this->name_ = "Xor";
@@ -19,3 +25,8 @@ XorDataset::XorDataset(std::size_t num_samples = 1024)
     }
 }
 
+std::pair<XorDataset, XorDataset> XorDataset::split(std::size_t split)
+{
+    auto&&[data1, data2] = this->data_split(split);
+    return std::make_pair(XorDataset(data1), XorDataset(data2));
+}

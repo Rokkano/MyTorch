@@ -15,7 +15,7 @@ std::string Dataset<T, U>::datasetDataToStr(std::vector<std::tuple<T, U>> data)
 }
 
 template <typename T, typename U>
-std::string Dataset<T, U>::datasetToStr(std::vector<std::tuple<T, U>> data, std::string name, uint clip)
+std::string Dataset<T, U>::datasetToStr(std::vector<std::tuple<T, U>> data, std::string name, std::size_t clip)
 {
     std::string data_str = Dataset<T, U>::datasetDataToStr(data);
     if (data_str.length() > clip)
