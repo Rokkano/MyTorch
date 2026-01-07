@@ -15,3 +15,9 @@ public:
 // tensorDataToStr specialization for XorDataset (tuple)
 template<>
 std::string Tensor<std::tuple<Tensor<int>, int>>::tensorDataToStr(const std::vector<std::size_t> &shape, const std::vector<std::tuple<Tensor<int>, int>> &buffer);
+
+class OrDataset : public XorDataset
+{
+public:
+    OrDataset(std::size_t);
+};
