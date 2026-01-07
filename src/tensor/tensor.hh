@@ -109,6 +109,8 @@ public:
         requires std::is_arithmetic_v<T>;
     Tensor<T> sum()
         requires std::is_arithmetic_v<T>;
+    Tensor<T> heaviside()
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:

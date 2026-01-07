@@ -252,3 +252,14 @@ Tensor<T> Tensor<T>::sum()
         sum += this->buffer_[i];
     return Tensor<T>({1}, {sum});
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::heaviside()
+    requires std::is_arithmetic_v<T>
+{
+    // This is the regular definition of heaviside step function : H(x) = {1 if x>=0, 0 if x < 0}
+    Tensor<T> tensor = Tensor<T>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = this->buffer_[i] >= 0 ? 1 : 0;
+    return tensor;
+}
