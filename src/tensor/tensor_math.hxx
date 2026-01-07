@@ -5,6 +5,7 @@
 
 template <typename T>
 Tensor<T> Tensor<T>::min()
+    requires std::is_arithmetic_v<T>
 {
     T min = this->buffer_[0];
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -15,6 +16,7 @@ Tensor<T> Tensor<T>::min()
 
 template <typename T>
 Tensor<T> Tensor<T>::min(const T &val)
+    requires std::is_arithmetic_v<T>
 {
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -24,6 +26,7 @@ Tensor<T> Tensor<T>::min(const T &val)
 
 template <typename T>
 Tensor<T> Tensor<T>::amin(const std::size_t dim)
+    requires std::is_arithmetic_v<T>
 {
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.erase(new_shape.begin() + dim);
@@ -45,6 +48,7 @@ Tensor<T> Tensor<T>::amin(const std::size_t dim)
 
 template <typename T>
 Tensor<T> Tensor<T>::min(const Tensor<T> &other)
+    requires std::is_arithmetic_v<T>
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
@@ -57,6 +61,7 @@ Tensor<T> Tensor<T>::min(const Tensor<T> &other)
 
 template <typename T>
 Tensor<T> Tensor<T>::max()
+    requires std::is_arithmetic_v<T>
 {
     T max = this->buffer_[0];
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -67,6 +72,7 @@ Tensor<T> Tensor<T>::max()
 
 template <typename T>
 Tensor<T> Tensor<T>::max(const T &val)
+    requires std::is_arithmetic_v<T>
 {
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -76,6 +82,7 @@ Tensor<T> Tensor<T>::max(const T &val)
 
 template <typename T>
 Tensor<T> Tensor<T>::max(const Tensor<T> &other)
+    requires std::is_arithmetic_v<T>
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
@@ -88,6 +95,7 @@ Tensor<T> Tensor<T>::max(const Tensor<T> &other)
 
 template <typename T>
 Tensor<T> Tensor<T>::amax(const std::size_t dim)
+    requires std::is_arithmetic_v<T>
 {
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.erase(new_shape.begin() + dim);
@@ -109,6 +117,7 @@ Tensor<T> Tensor<T>::amax(const std::size_t dim)
 
 template <typename T>
 Tensor<T> Tensor<T>::mean(int bessel_correction)
+    requires std::is_arithmetic_v<T>
 {
     T mean = 0;
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -119,6 +128,7 @@ Tensor<T> Tensor<T>::mean(int bessel_correction)
 
 template <typename T>
 Tensor<T> Tensor<T>::amean(const std::size_t dim, int bessel_correction)
+    requires std::is_arithmetic_v<T>
 {
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.erase(new_shape.begin() + dim);
@@ -140,6 +150,7 @@ Tensor<T> Tensor<T>::amean(const std::size_t dim, int bessel_correction)
 
 template <typename T>
 Tensor<T> Tensor<T>::var(int bessel_correction)
+    requires std::is_arithmetic_v<T>
 {
     T sum_diff_squared = 0;
     T mean = this->mean().item();
@@ -152,12 +163,14 @@ Tensor<T> Tensor<T>::var(int bessel_correction)
 
 template <typename T>
 Tensor<T> Tensor<T>::std(int bessel_correction)
+    requires std::is_arithmetic_v<T>
 {
     return Tensor<T>::sqrt(this->var());
 }
 
 template <typename T>
 Tensor<std::size_t> Tensor<T>::argmin()
+    requires std::is_arithmetic_v<T>
 {
     T min = this->buffer_[0];
     std::size_t min_index = 0;
@@ -172,6 +185,7 @@ Tensor<std::size_t> Tensor<T>::argmin()
 
 template <typename T>
 Tensor<std::size_t> Tensor<T>::argmin(const std::size_t dim)
+    requires std::is_arithmetic_v<T>
 {
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.erase(new_shape.begin() + dim);
@@ -194,6 +208,7 @@ Tensor<std::size_t> Tensor<T>::argmin(const std::size_t dim)
 
 template <typename T>
 Tensor<std::size_t> Tensor<T>::argmax()
+    requires std::is_arithmetic_v<T>
 {
     T max = this->buffer_[0];
     std::size_t max_index = 0;
@@ -208,6 +223,7 @@ Tensor<std::size_t> Tensor<T>::argmax()
 
 template <typename T>
 Tensor<std::size_t> Tensor<T>::argmax(const std::size_t dim)
+    requires std::is_arithmetic_v<T>
 {
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.erase(new_shape.begin() + dim);
@@ -225,4 +241,14 @@ Tensor<std::size_t> Tensor<T>::argmax(const std::size_t dim)
         tensor.buffer_[i] = Tensor<T>({this->shape_[dim]}, max_buff).argmax().item();
     }
     return tensor;
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::sum()
+    requires std::is_arithmetic_v<T>
+{
+    T sum = 0;
+    for (std::size_t i = 0; i < this->numel(); i++)
+        sum += this->buffer_[i];
+    return Tensor<T>({1}, {sum});
 }

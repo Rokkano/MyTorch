@@ -75,22 +75,40 @@ public:
     Tensor<bool> operator>=(const T &);
 
     // ###### TENSOR MATH ######
-    Tensor<T> min();
-    Tensor<T> min(const T &);
-    Tensor<T> min(const Tensor<T> &);
-    Tensor<T> amin(const std::size_t);
-    Tensor<T> max();
-    Tensor<T> max(const T &);
-    Tensor<T> max(const Tensor<T> &);
-    Tensor<T> amax(const std::size_t);
-    Tensor<T> mean(int bessel_correction = 0);
-    Tensor<T> amean(const std::size_t, int bessel_correction = 0);
-    Tensor<T> var(int bessel_correction = 0);
-    Tensor<T> std(int bessel_correction = 0);
-    Tensor<std::size_t> argmin();
-    Tensor<std::size_t> argmin(const std::size_t);
-    Tensor<std::size_t> argmax();
-    Tensor<std::size_t> argmax(const std::size_t);
+    Tensor<T> min()
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> min(const T &)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> min(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> amin(const std::size_t)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> max()
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> max(const T &)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> max(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> amax(const std::size_t)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> mean(int bessel_correction = 0)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> amean(const std::size_t, int bessel_correction = 0)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> var(int bessel_correction = 0)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> std(int bessel_correction = 0)
+        requires std::is_arithmetic_v<T>;
+    Tensor<std::size_t> argmin()
+        requires std::is_arithmetic_v<T>;
+    Tensor<std::size_t> argmin(const std::size_t)
+        requires std::is_arithmetic_v<T>;
+    Tensor<std::size_t> argmax()
+        requires std::is_arithmetic_v<T>;
+    Tensor<std::size_t> argmax(const std::size_t)
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> sum()
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
 public:
