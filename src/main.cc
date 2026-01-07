@@ -1,46 +1,39 @@
 #include <stdlib.h>
 #include "tensor/tensor.hh"
-// #include "dataset/dataset.hh"
-// #include "xor/xor.hh"
-
+#include "dataset/dataset.hh"
+#include "xor/xor.hh"
+#include "layer/layer.hh"
 #include "exception/exception.hh"
 
-template <typename T>
-using member_callable = Tensor<T> (Tensor<T>::*)() const;
-
-template <typename T>
-std::function<Tensor<T>(member_callable<T>)> make_caller(const Tensor<T> &tensor)
-{
-    return [tensor](member_callable<T> func)
-    {
-        return (tensor.*func)();
-    };
-}
+#include <tuple>
 
 int main()
 {
-    // auto identity = [](int x)
-    // { return x; };
-    // Tensor<int> tensor1 = Tensor<int>::from_function(identity, {1, 2, 3});
-    // Tensor<int> tensor2 = Tensor<int>::from_function(identity, {1, 3, 7});
+    std::size_t num_elements = 10000;
+    std::size_t num_validation = 1000;
 
-    // using bool_callable = std::function<Tensor<bool>(Tensor<bool> &)>;
-    // using bool_callable = Tensor<bool> (Tensor<bool>::*)() const;
-    // bool_callable func = &Tensor<bool>::all;
-    Tensor<bool> tensor = Tensor<bool>({1}, {true});
+    XorDataset dataset = XorDataset(num_elements);
+    dataset.shuffle();
+    auto&&[training, validation] = dataset.split(num_elements - num_validation);
+    
+    Perceptron perceptron = Perceptron(2);
+    float learning_rate = 0.1;
+    
+    // Training
+    for (auto&&[data, expected] : training)
+    {
+        Tensor<float> data_f = data.to_type<float>();
+        float y = (perceptron.weights * data_f).sum().heaviside().item();
+        perceptron.weights = perceptron.weights + data_f * (learning_rate * (expected - y));
+    }
 
-    // std::invoke([tensor](bool_callable func)
-    //             { return (tensor.*func)(); }, func);
-
-    auto caller = make_caller<bool>(tensor);
-    Tensor<bool> result = caller(&Tensor<bool>::all);
-
-    // using bool_callable = Tensor<bool> (Tensor<bool>::*)() const;
-    // bool_callable func = &Tensor<bool>::all;
-    // Tensor<bool> tensor = Tensor<bool>({1}, {true});
-
-    // std::invoke([tensor](bool_callable func)
-    //             { return (tensor.*func)(); }, func);
-
-    return 0;
+    // Validation
+    std::size_t res = 0;
+    for (auto&&[data, expected] : validation)
+    {
+        float y = (perceptron.weights * data.to_type<float>()).sum().heaviside().item();
+        res += (y == expected) ? 1 : 0;
+    }
+    std::cout << ((float)(res)/num_validation) * 100 << "%" << std::endl;    
 }
+
