@@ -3,15 +3,26 @@
 #include <cstddef>
 #include <vector>
 #include <tuple>
+#include <string>
 
 template <typename T, typename U>
 class Dataset
 {
-public:
+
+protected:
     std::vector<std::tuple<T, U>> data_;
+    std::string name_ = "";
+
+private:
+    static std::string datasetDataToStr(std::vector<std::tuple<T, U>>);
+    static std::string datasetToStr(std::vector<std::tuple<T, U>>, std::string, uint = 1024);
 
 public:
-    Dataset(std::vector<std::tuple<T, U>>);
+    void shuffle();
+
+    template <typename V, typename W>
+    friend std::ostream &operator<<(std::ostream &, const Dataset<V, W> &);
 };
 
 #include "dataset.hxx"
+#include "dataset_io.hxx"

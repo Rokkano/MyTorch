@@ -1,7 +1,9 @@
 #include "dataset.hh"
 
+#include <algorithm>
+
 template <typename T, typename U>
-Dataset<T, U>::Dataset(std::vector<std::tuple<T, U>> data)
+void Dataset<T, U>::shuffle()
 {
-    this->data_ = data;
+    std::random_shuffle(this->data_.begin(), this->data_.end());
 }
