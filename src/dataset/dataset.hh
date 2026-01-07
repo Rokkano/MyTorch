@@ -9,7 +9,7 @@ template <typename T, typename U>
 class Dataset
 {
 
-protected:
+public:
     std::vector<std::tuple<T, U>> data_;
     std::string name_ = "";
 
@@ -21,6 +21,11 @@ private:
 
 public:
     void shuffle();
+
+    std::vector<std::tuple<T, U>>::iterator begin();
+    std::vector<std::tuple<T, U>>::iterator const_begin() const;
+    std::vector<std::tuple<T, U>>::iterator end();
+    std::vector<std::tuple<T, U>>::iterator const_end() const;
 
     template <typename V, typename W>
     friend std::ostream &operator<<(std::ostream &, const Dataset<V, W> &);
