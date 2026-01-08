@@ -139,6 +139,12 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> sigmoid(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> sinh(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> cosh(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> tanh(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 private:
