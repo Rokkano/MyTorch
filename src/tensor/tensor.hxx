@@ -89,6 +89,36 @@ Tensor<T>::~Tensor()
 }
 
 template <typename T>
+std::vector<T>::iterator Tensor<T>::begin()
+{
+    return this->buffer_.begin();
+}
+
+template <typename T>
+std::vector<T>::iterator Tensor<T>::const_begin() const
+{
+    return this->buffer_.begin();
+}
+
+template <typename T>
+std::vector<T>::iterator Tensor<T>::end()
+{
+    return this->buffer_.end();
+}
+
+template <typename T>
+std::vector<T>::iterator Tensor<T>::const_end() const
+{
+    return this->buffer_.end();
+}
+
+template <typename T>
+T &Tensor<T>::operator[](std::size_t pos)
+{
+    return this->buffer_[pos];
+}
+
+template <typename T>
 std::vector<size_t> Tensor<T>::shape() const
 {
     return this->shape_;

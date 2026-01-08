@@ -25,6 +25,13 @@ public:
     Tensor(const std::vector<std::size_t> &, const std::vector<T> &);
     ~Tensor();
 
+    std::vector<T>::iterator begin();
+    std::vector<T>::iterator const_begin() const;
+    std::vector<T>::iterator end();
+    std::vector<T>::iterator const_end() const;
+
+    T &operator[](std::size_t);
+
     std::vector<std::size_t> shape() const;
     std::size_t numel() const;
     T item() const;
