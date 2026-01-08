@@ -144,13 +144,19 @@ public:
 
     static Tensor<T> relu(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> drelu(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
     static Tensor<T> sigmoid(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> dsigmoid(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
     static Tensor<T> sinh(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
     static Tensor<T> cosh(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
     static Tensor<T> tanh(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
+    static Tensor<T> dtanh(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
