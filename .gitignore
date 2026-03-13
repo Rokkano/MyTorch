@@ -3,6 +3,7 @@ main
 test
 benchmark
 .vscode/
+_deps/
 
 # Gcov coverage files
 cov/
