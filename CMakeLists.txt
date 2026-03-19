@@ -38,10 +38,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
-# TARGET : main
 file(GLOB SRC src/*.cc src/*/*.cc src/*/*/*.cc)
-list(REMOVE_ITEM SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc")
+list(REMOVE_ITEM SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc" "${CMAKE_CURRENT_SOURCE_DIR}/src/linear.cc")
 
+# TARGET : main
 add_executable(main)
 target_sources(main PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc" ${SRC})
 target_link_libraries(main PRIVATE ${LIBRARIES})
@@ -57,6 +57,5 @@ target_link_libraries(benchmark PRIVATE ${LIBRARIES})
 file(GLOB SRC_TST tests/*.cc tests/*/*.cc tests/*/*/*.cc)
 add_executable(test)
 target_sources(test PRIVATE ${SRC} ${SRC_TST})
-target_link_options(test PRIVATE "-lcriterion")
 target_link_libraries(test PRIVATE ${LIBRARIES})
 
