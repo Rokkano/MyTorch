@@ -7,10 +7,10 @@ enum Initialization {
     ONES,
     NORMAL,
     UNIFORM,
+    LECUN,
     XAVIER,
     XAVIER_NORMALIZED,
     HE,
-    he_leaky,
 };
 
 void initialize_weights(Tensor<float> &tensor, enum Initialization initialization = ZEROS);
