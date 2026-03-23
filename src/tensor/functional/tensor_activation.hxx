@@ -6,7 +6,7 @@ Tensor<T> Tensor<T>::relu(const Tensor<T> &tensor)
 {
     Tensor<T> res = Tensor<T>(tensor.shape_);
     for(std::size_t i = 0; i < tensor.numel(); i++)
-        res[i] = (tensor[i] > 0) ? tensor[i] : 0;
+        res.buffer_[i] = (tensor.buffer_[i] > 0) ? tensor.buffer_[i] : 0;
     return res;
 }
 
@@ -16,7 +16,7 @@ Tensor<T> Tensor<T>::drelu(const Tensor<T> &tensor)
 {
     Tensor<T> res = Tensor<T>(tensor.shape_);
     for(std::size_t i = 0; i < tensor.numel(); i++)
-        res[i] = (tensor[i] > 0) ? 1 : 0;
+        res.buffer_[i] = (tensor.buffer_[i] > 0) ? 1 : 0;
     return res;
 }
 
@@ -24,14 +24,14 @@ template <typename T>
 Tensor<T> Tensor<T>::sigmoid(const Tensor<T> &tensor)
     requires std::is_arithmetic_v<T>
 {
-    return 1 / (1 + Tensor<T>::exp(-tensor));
+    return 1.f / (1.f + Tensor<T>::exp(-tensor));
 }
 
 template <typename T>
 Tensor<T> Tensor<T>::dsigmoid(const Tensor<T> &tensor)
     requires std::is_arithmetic_v<T>
 {
-    return Tensor<T>::sigmoid(tensor) * (1 - Tensor<T>::sigmoid(tensor));
+    return Tensor<T>::sigmoid(tensor) * (1.f - Tensor<T>::sigmoid(tensor));
 }
 
 template <typename T>

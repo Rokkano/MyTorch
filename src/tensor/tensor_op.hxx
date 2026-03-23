@@ -14,81 +14,139 @@ bool Tensor<T>::validateSameShape(const std::vector<std::size_t> &shape) const
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::operator+(const Tensor<T> &other)
+Tensor<T> operator+(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
-    if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for addition.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+    if (!lhs.validateSameShape(rhs.shape_))
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for addition.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
 
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] + other.buffer_[i];
+        tensor.buffer_[i] = lhs.buffer_[i] + rhs.buffer_[i];
     return tensor;
 }
+
 template <typename T>
-Tensor<T> Tensor<T>::operator+(const T &other)
+Tensor<T> operator+(const Tensor<T> &lhs, const T &rhs)
 {
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] + other;
+        tensor.buffer_[i] = lhs.buffer_[i] + rhs;
     return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::operator+()
+Tensor<T> operator+(const T &lhs, const Tensor<T> &rhs)
 {
-    Tensor<T> tensor = Tensor<T>(this->shape_);
-    for (std::size_t i = 0; i < this->numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i];
-    return tensor;
-}
-
-template <typename T>
-Tensor<T> Tensor<T>::operator-(const Tensor<T> &other)
-{
-    if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for substraction.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
-
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] - other.buffer_[i];
+        tensor.buffer_[i] = lhs + rhs.buffer_[i];
     return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::operator-(const T &other)
+Tensor<T> operator+(const Tensor<T> &lhs)
 {
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < lhs.numel(); i++)
+        tensor.buffer_[i] = lhs.buffer_[i];
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator-(const Tensor<T> &lhs, const Tensor<T> &rhs)
+{
+    if (!lhs.validateSameShape(rhs.shape_))
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for substraction.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] - other;
+        tensor.buffer_[i] = lhs.buffer_[i] - rhs.buffer_[i];
     return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::operator-()
+Tensor<T> operator-(const Tensor<T> &lhs, const T &rhs)
 {
-    Tensor<T> tensor = Tensor<T>(this->shape_);
-    for (std::size_t i = 0; i < this->numel(); i++)
-        tensor.buffer_[i] = -this->buffer_[i];
-    return tensor;
-}
-
-template <typename T>
-Tensor<T> Tensor<T>::operator*(const Tensor<T> &other)
-{
-    if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for multiplication.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
-
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] * other.buffer_[i];
+        tensor.buffer_[i] = lhs.buffer_[i] - rhs;
     return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::operator*(const T &other)
+Tensor<T> operator-(const T &lhs, const Tensor<T> &rhs)
 {
-    Tensor<T> tensor = Tensor<T>(this->shape_);
+    Tensor<T> tensor = Tensor<T>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i] * other;
+        tensor.buffer_[i] = lhs - rhs.buffer_[i];
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator-(const Tensor<T> &lhs)
+{
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < lhs.numel(); i++)
+        tensor.buffer_[i] = -(lhs.buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator*(const Tensor<T> &lhs, const Tensor<T> &rhs)
+{
+    if (!lhs.validateSameShape(rhs.shape_))
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for multiplication.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs.buffer_[i] * rhs.buffer_[i];
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator*(const Tensor<T> &lhs, const T &rhs)
+{
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs.buffer_[i] * rhs;
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator*(const T &lhs, const Tensor<T> &rhs)
+{
+    Tensor<T> tensor = Tensor<T>(rhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs * rhs.buffer_[i];
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator/(const Tensor<T> &lhs, const Tensor<T> &rhs)
+{
+    if (!lhs.validateSameShape(rhs.shape_))
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for division.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs.buffer_[i] / rhs.buffer_[i];
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator/(const Tensor<T> &lhs, const T &rhs)
+{
+    Tensor<T> tensor = Tensor<T>(lhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs.buffer_[i] / rhs;
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> operator/(const T &lhs, const Tensor<T> &rhs)
+{
+    Tensor<T> tensor = Tensor<T>(rhs.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = lhs / rhs.buffer_[i];
     return tensor;
 }

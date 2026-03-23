@@ -33,6 +33,16 @@ Tensor<T> Tensor<T>::exp(const Tensor<T> &t)
 }
 
 template <typename T>
+Tensor<T> Tensor<T>::log(const Tensor<T> &t)
+    requires std::is_arithmetic_v<T>
+{
+    Tensor<T> tensor = Tensor<T>(t.shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = std::log(t.buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
 Tensor<T> Tensor<T>::pow(const Tensor<T> &t, const double exponent)
     requires std::is_arithmetic_v<T>
 {
@@ -83,9 +93,11 @@ Tensor<T> Tensor<T>::mm(const Tensor<T> &lhs, const Tensor<T> &rhs)
         throw TensorInvalidShapeException(std::format("Tensors are not compatible for matrix multiplication : {} and {}.", Tensor<T>::tensorShapeToStr(lhs.shape_), Tensor<T>::tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>({lhs.shape_[0], rhs.shape_[1]});
-    for (std::size_t i = 0; i < tensor.numel(); i++)
-        for (std::size_t k = 0; k < lhs.shape_[1]; k++)
-            tensor.buffer_[i] += lhs.buffer_[k + (i / tensor.shape_[1]) * lhs.shape_[1]] * rhs.buffer_[(i % tensor.shape_[1]) + k * rhs.shape_[1]];
+    tensor.fill(0);
+    for(std::size_t y = 0; y < tensor.shape_[1]; y++)
+        for(std::size_t x = 0; x < tensor.shape_[0]; x++)
+            for(std::size_t k = 0; k < lhs.shape_[1]; k++)
+                tensor.buffer_[x + y*tensor.shape_[0]] += lhs.buffer_[x + k * lhs.shape_[0]] * rhs.buffer_[k + y * rhs.shape_[0]];
     return tensor;
 }
 
@@ -167,23 +179,36 @@ Tensor<T> Tensor<T>::matmul(const Tensor<T> &lhs, const Tensor<T> &rhs)
     if (lhs.shape_.size() == 2 && rhs.shape_.size() == 2)
         return Tensor<T>::mm(lhs, rhs);
     if (lhs.shape_.size() == 1 && rhs.shape_.size() == 2)
-        return Tensor<T>::mm(lhs.unsqueeze(), rhs).squeeze();
+        return Tensor<T>::mm(lhs.unsqueeze(0), rhs).squeeze(0);
     if (lhs.shape_.size() == 2 && rhs.shape_.size() == 1)
         return Tensor<T>::mvm(lhs, rhs);
 
-    if (lhs.shape_.size() == 1)
-        lhs = lhs.unsqueeze(0);
-    if (rhs.shape_.size() == 1)
-        rhs = rhs.unsqueeze(1);
+    bool nlhs_unsqueeze_flg = false;
+    bool nrhs_unsqueeze_flg = false;
+    
+    Tensor<T> nlhs = lhs;
+    Tensor<T> nrhs = rhs;
 
-    Tensor<T> lhs_b = lhs.batch_broadcast(rhs);
-    Tensor<T> rhs_b = lhs.batch_broadcast(lhs);
+    if (nlhs.shape_.size() == 1)
+    {
+        nlhs = nlhs.unsqueeze(0);
+        nlhs_unsqueeze_flg = true;
+    }
+    
+    if (nrhs.shape_.size() == 1)
+    {
+        nrhs = nrhs.unsqueeze(0);
+        nrhs_unsqueeze_flg = true;
+    }
+    
+    nlhs = nlhs.batch_broadcast(nrhs);
+    nrhs = lhs.batch_broadcast(nlhs);
 
-    Tensor<T> tensor = Tensor<T>::bmm(lhs, rhs);
+    Tensor<T> tensor = Tensor<T>::bmm(nlhs, nrhs);
 
-    if (lhs.shape_.size() == 1)
+    if (nlhs_unsqueeze_flg)
         tensor = tensor.unsqueeze(tensor.shape_.size() - 2);
-    if (rhs.shape_.size() == 1)
+    if (nrhs_unsqueeze_flg)
         tensor = tensor.unsqueeze(tensor.shape_.size() - 1);
     return tensor;
 }

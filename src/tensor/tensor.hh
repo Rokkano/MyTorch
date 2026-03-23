@@ -21,6 +21,7 @@ private:
     bool validateAbs(std::size_t) const;
 
 public:
+    Tensor();
     Tensor(const std::vector<std::size_t> &);
     Tensor(const std::vector<std::size_t> &, const std::vector<T> &);
     ~Tensor();
@@ -35,30 +36,50 @@ public:
     std::vector<std::size_t> shape() const;
     std::size_t numel() const;
     T item() const;
-    Tensor<T> flatten();
-    Tensor<T> unsqueeze(std::size_t dim = 0);
-    Tensor<T> squeeze(std::size_t dim = 0);
+    Tensor<T> flatten() const;
+    Tensor<T> unsqueeze(std::size_t dim = 0) const;
+    Tensor<T> squeeze(std::size_t dim = 0) const;
     Tensor<T> t(std::size_t dim0 = 0, std::size_t dim1 = 1) const;
     Tensor<T> transpose(std::size_t dim0 = 0, std::size_t dim1 = 1) const;
     void fill(const T &);
-    Tensor<T> broadcast(const std::vector<std::size_t> &);
-    Tensor<T> broadcast(Tensor<T> &);
-    Tensor<T> batch_broadcast(const std::vector<std::size_t> &);
-    Tensor<T> batch_broadcast(Tensor<T> &);
+    Tensor<T> broadcast(const std::vector<std::size_t> &) const;
+    Tensor<T> broadcast(Tensor<T> &) const;
+    Tensor<T> batch_broadcast(const std::vector<std::size_t> &) const;
+    Tensor<T> batch_broadcast(Tensor<T> &) const;
 
     std::size_t coordToAbs(const std::vector<std::size_t> &) const;
     std::vector<std::size_t> absToCoord(std::size_t) const;
 
     // ###### TENSOR OP ######
 public:
-    Tensor<T> operator+(const Tensor<T> &);
-    Tensor<T> operator+(const T &);
-    Tensor<T> operator+();
-    Tensor<T> operator-(const Tensor<T> &);
-    Tensor<T> operator-(const T &);
-    Tensor<T> operator-();
-    Tensor<T> operator*(const Tensor<T> &);
-    Tensor<T> operator*(const T &);
+    template <typename U>
+    friend Tensor<U> operator+(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator+(const Tensor<U> &, const U &);
+    template <typename U>
+    friend Tensor<U> operator+(const U &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator+(const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator-(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator-(const Tensor<U> &, const U &);
+    template <typename U>
+    friend Tensor<U> operator-(const U &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator-(const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator*(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator*(const Tensor<U> &, const U &);
+    template <typename U>
+    friend Tensor<U> operator*(const U &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator/(const Tensor<U> &, const Tensor<U> &);
+    template <typename U>
+    friend Tensor<U> operator/(const Tensor<U> &, const U &);
+    template <typename U>
+    friend Tensor<U> operator/(const U &, const Tensor<U> &);
 
 private:
     bool validateSameShape(const std::vector<std::size_t> &) const;
@@ -125,6 +146,8 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> exp(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> log(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
     static Tensor<T> pow(const Tensor<T> &t, const double)
         requires std::is_arithmetic_v<T>;
     static Tensor<T> sqrt(const Tensor<T> &)
@@ -164,6 +187,9 @@ private:
     static std::string tensorDataToStr(const std::vector<std::size_t> &, const std::vector<T> &);
     static std::string tensorShapeToStr(const std::vector<std::size_t> &);
     static std::string tensorToStr(const std::vector<std::size_t> &, const std::vector<T> &);
+public:
+    void plot(std::string title = "", std::string xlabel = "", std::string ylabel = "") const
+        requires std::is_arithmetic_v<T>;
 
 public:
     template <typename U>
@@ -176,6 +202,15 @@ public:
     static Tensor<T> from_function(std::function<std::size_t(T)>, const std::vector<std::size_t> &);
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
+
+template<typename T>
+struct is_tuple : std::false_type {};
+
+template<typename... Args>
+struct is_tuple<std::tuple<Args...>> : std::true_type {};
+
+template<typename T>
+concept Tuple = is_tuple<T>::value;
 
 #include "tensor_bool.hxx"
 #include "tensor_io.hxx"

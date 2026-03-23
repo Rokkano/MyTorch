@@ -35,7 +35,7 @@ Tensor<T> Tensor<T>::from_function(std::function<std::size_t(T)> lambda, const s
 template <typename T>
 Tensor<T> Tensor<T>::from_vector(const std::vector<T> &buffer, const std::vector<std::size_t> &shape)
 {
-    std::size_t num_e = std::accumulate(shape.begin(), shape.end(), (std::size_t)0);
+    std::size_t num_e = std::size_t(std::accumulate(shape.begin(), shape.end(), 1.0, std::multiplies<double>()));
     if (num_e != buffer.size())
         throw TensorInvalidShapeException(std::format("Buffer length and shape are incompatible : {} and {}.", num_e, buffer.size()));
 

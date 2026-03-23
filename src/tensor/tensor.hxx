@@ -68,6 +68,14 @@ std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
 }
 
 template <typename T>
+Tensor<T>::Tensor()
+{
+    this->shape_ = {0};
+    this->buffer_ = std::vector<T>(0);
+}
+
+
+template <typename T>
 Tensor<T>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
     std::size_t num_e = this->numel();
@@ -147,32 +155,43 @@ std::size_t Tensor<T>::numel() const
 template <typename T>
 T Tensor<T>::item() const
 {
-    if (this->shape_.size() != 1 || this->shape_[0] != 1)
+    if (this->numel() != 1)
         throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}", this->tensorShapeToStr(this->shape_)));
     return this->buffer_[0];
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::flatten()
+Tensor<T> Tensor<T>::flatten() const
 {
-    this->shape_ = std::vector({this->numel()});
-    return *this;
+    std::vector<std::size_t> new_shape = std::vector({this->numel()});
+    Tensor<T> tensor = Tensor<T>(new_shape);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = this.buffer_[i];
+    return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::unsqueeze(std::size_t dim)
-{
-    this->shape_.insert(this->shape_.begin() + dim, 1);
-    return *this;
+Tensor<T> Tensor<T>::unsqueeze(std::size_t dim) const
+{       
+    std::vector<std::size_t> new_shape = this->shape_;
+    new_shape.insert(new_shape.begin() + dim, 1);
+    Tensor<T> tensor = Tensor<T>(new_shape);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = this->buffer_[i];
+    return tensor;
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::squeeze(std::size_t dim)
+Tensor<T> Tensor<T>::squeeze(std::size_t dim) const
 {
     if (this->shape_[dim] != 1)
         throw TensorSqueezeException(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
-    this->shape_.erase(this->shape_.begin() + dim);
-    return *this;
+    std::vector<std::size_t> new_shape = this->shape_;
+    new_shape.erase(new_shape.begin() + dim);
+    Tensor<T> tensor = Tensor<T>(new_shape);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = this->buffer_[i];
+    return tensor;
 }
 
 template <typename T>
@@ -200,13 +219,13 @@ Tensor<T> Tensor<T>::transpose(std::size_t dim0, std::size_t dim1) const
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::broadcast(Tensor<T> &tensor)
+Tensor<T> Tensor<T>::broadcast(Tensor<T> &tensor) const
 {
     return this->broadcast(tensor.shape_);
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape)
+Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape) const
 {
     // unsqueeze both dimensions until same number of dim
     std::vector<size_t> tensor_shape = this->shape_;
@@ -236,13 +255,13 @@ Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape)
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::batch_broadcast(Tensor<T> &tensor)
+Tensor<T> Tensor<T>::batch_broadcast(Tensor<T> &tensor) const
 {
     return this->batch_broadcast(tensor.shape_);
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::batch_broadcast(const std::vector<std::size_t> &shape)
+Tensor<T> Tensor<T>::batch_broadcast(const std::vector<std::size_t> &shape) const
 {
     // broadcast only on non-matrix dimensions (ie batch, channels...)
     std::vector<std::size_t> new_shape = shape;
