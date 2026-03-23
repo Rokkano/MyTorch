@@ -5,19 +5,19 @@
 
 
 
-template <typename T, typename U>
-std::string Dataset<T, U>::datasetDataToStr(std::vector<std::tuple<T, U>> data)
+template <typename T>
+std::string Dataset<T>::datasetDataToStr(std::vector<T> data)
 {
-    Tensor<std::tuple<T, U>> temp = Tensor<std::tuple<T, U>>({data.size()}, data);
+    Tensor<T> temp = Tensor<T>({data.size()}, data);
     std::stringstream ss;
     ss << temp;
     return ss.str();
 }
 
-template <typename T, typename U>
-std::string Dataset<T, U>::datasetToStr(std::vector<std::tuple<T, U>> data, std::string name, std::size_t clip)
+template <typename T>
+std::string Dataset<T>::datasetToStr(std::vector<T> data, std::string name, std::size_t clip)
 {
-    std::string data_str = Dataset<T, U>::datasetDataToStr(data);
+    std::string data_str = Dataset<T>::datasetDataToStr(data);
     if (data_str.length() > clip)
     {
         data_str.resize(clip);
@@ -28,10 +28,10 @@ std::string Dataset<T, U>::datasetToStr(std::vector<std::tuple<T, U>> data, std:
 
 
 
-template <typename T, typename U>
-std::ostream &operator<<(std::ostream &os, const Dataset<T, U> &t)
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Dataset<T> &t)
 {
 
-    return os << Dataset<T, U>::datasetToStr(t.data_, t.name_);
+    return os << Dataset<T>::datasetToStr(t.data_, t.name_);
 }
 

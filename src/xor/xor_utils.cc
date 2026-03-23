@@ -1,5 +1,3 @@
-#include "../tensor/tensor.hh"
-#include "../dataset/dataset.hh"
 #include "xor.hh"
 
 template<>

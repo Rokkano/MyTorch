@@ -4,32 +4,41 @@
 #include <vector>
 #include <tuple>
 #include <string>
+#include "../utils/random.hh"
 
-template <typename T, typename U>
+template <typename T>
 class Dataset
 {
 
 public:
-    std::vector<std::tuple<T, U>> data_;
+    std::vector<T> data_;
     std::string name_ = "";
 
-    std::pair<std::vector<std::tuple<T, U>>, std::vector<std::tuple<T, U>>> data_split(std::size_t split);
-
 private:
-    static std::string datasetDataToStr(std::vector<std::tuple<T, U>>);
-    static std::string datasetToStr(std::vector<std::tuple<T, U>>, std::string, std::size_t = 1024);
+    static std::string datasetDataToStr(std::vector<T>);
+    static std::string datasetToStr(std::vector<T>, std::string, std::size_t = 1024);
 
 public:
     void shuffle();
+    std::pair<Dataset<T>, Dataset<T>> split(std::size_t);
+    std::size_t length();
 
-    std::vector<std::tuple<T, U>>::iterator begin();
-    std::vector<std::tuple<T, U>>::iterator const_begin() const;
-    std::vector<std::tuple<T, U>>::iterator end();
-    std::vector<std::tuple<T, U>>::iterator const_end() const;
+    std::vector<T>::iterator begin();
+    std::vector<T>::iterator const_begin() const;
+    std::vector<T>::iterator end();
+    std::vector<T>::iterator const_end() const;
 
-    template <typename V, typename W>
-    friend std::ostream &operator<<(std::ostream &, const Dataset<V, W> &);
+    T &operator[](std::size_t index)
+    {
+        return this->data_[index];
+    };
+
+    template <typename V>
+    friend std::ostream &operator<<(std::ostream &, const Dataset<V> &);
+    
 };
 
 #include "dataset.hxx"
 #include "dataset_io.hxx"
+
+#include "supervised.hh"
