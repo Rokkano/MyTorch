@@ -7,110 +7,55 @@
 #include <sstream>
 #include <map>
 
-inline std::map<std::string, std::function<bool()>> REGISTRY;
+#include "utils/utils.hh"
 
-#define CONCAT(a, b) a##b
-#define EXPAND(a, b) CONCAT(a, b)
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-
-#define TESTFUNCNAME(func, id) EXPAND(EXPAND(func, _test), id)
-#define TESTSTRUCTNAME(func, id) EXPAND(EXPAND(func, _test_struct), id)
-
-#define ASSERT(expr) \
-    if (!(expr)) return false;
-
-#define PARAMETRIZE(func, ...) \
-    PARAMETRIZE_IMPL(EXPAND(_id_, __COUNTER__), func, __VA_ARGS__)
-
-#define PARAMETRIZE_IMPL(id, func, ...) \
-bool TESTFUNCNAME(func, id)() { \
-    return run(func, __VA_ARGS__); \
-} \
-struct TESTSTRUCTNAME(func, id) { \
-    TESTSTRUCTNAME(func, id)() { \
-        REGISTRY[TOSTRING(TESTFUNCNAME(func, id))] = TESTFUNCNAME(func, id); \
-    } \
-} EXPAND(_instance_, id);
-
-
-template<typename Func, typename... Args>
-requires std::same_as<std::invoke_result_t<Func, Args...>, bool>
-bool run(Func func, Args&&... args)
-{
-    std::stringstream buffer;
-    std::streambuf * old = std::cout.rdbuf(buffer.rdbuf());
-    try
-    {
-        bool result = func(std::forward<Args>(args)...);
-        std::cout.rdbuf(old);
-        return result;
-    }
-    catch(const std::exception& e)
-    {
-        std::cout << buffer.str() << std::endl;
-        std::cerr << e.what() << '\n';
-        std::cout.rdbuf(old);
-        throw;
-    }
+struct Record {
+    std::function<bool()> runner;
+    std::string func;
+    std::string file;
+    std::string line;
+    std::string args;
 };
 
+inline auto& registry() {
+    static std::map<std::string, Record> _registry;
+    return _registry;
+};
+
+inline auto& functionalRegistry() {
+    static std::map<std::string, Record> _functionalRegistry;
+    return _functionalRegistry;
+};
+
+#define TEST_FUNC_NAME(func, id, ...) CONCAT(func, _test, id, __VA_ARGS__)
+#define TEST_STRUCT_NAME(func, id, ...) CONCAT(func, _test_struct, id, __VA_ARGS__)
+#define TEST_STRUCT_INSTANCE_NAME(func, id, ...) CONCAT(func, _test_struct_instance, id, __VA_ARGS__)
+
+
+#define PARAMETRIZE(func, ...) \
+    PARAMETRIZE_IMPL(CONCAT(_id_, __COUNTER__), func, run, registry(), __VA_ARGS__)
+
+#define PARAMETRIZE_FUNCTIONAL(func, ...) \
+    PARAMETRIZE_IMPL(CONCAT(_id_, __COUNTER__), func, run, functionalRegistry(), __VA_ARGS__)
+    
 #define PARAMETRIZE_THROW(func, ...) \
-    PARAMETRIZE_THROW_IMPL(EXPAND(_id_, __COUNTER__), func, __VA_ARGS__)
-
-#define PARAMETRIZE_THROW_IMPL(id, func, ...) \
-bool TESTFUNCNAME(func, id)() { \
-    return run_throw(func, __VA_ARGS__); \
-} \
-struct TESTSTRUCTNAME(func, id) { \
-    TESTSTRUCTNAME(func, id)() { \
-        REGISTRY[TOSTRING(TESTFUNCNAME(func, id))] = TESTFUNCNAME(func, id); \
-    } \
-} EXPAND(_instance_, id);
-
-template<typename Func, typename... Args>
-requires std::same_as<std::invoke_result_t<Func, Args...>, bool>
-bool run_throw(Func func, Args&&... args)
-{
-    std::stringstream buffer;
-    std::streambuf * old = std::cout.rdbuf(buffer.rdbuf());
-    try
-    {
-        func(std::forward<Args>(args)...);
-        std::cout.rdbuf(old);
-        return false;
-    }
-    catch(const std::exception& e)
-    {
-        std::cout.rdbuf(old);
-        return true;
-    }
-}
-
+    PARAMETRIZE_IMPL(CONCAT(_id_, __COUNTER__), func, run_throw, registry(), __VA_ARGS__)
+    
 #define PARAMETRIZE_NO_THROW(func, ...) \
-    PARAMETRIZE_NO_THROW_IMPL(EXPAND(_id_, __COUNTER__), func, __VA_ARGS__)
+    PARAMETRIZE_IMPL(CONCAT(_id_, __COUNTER__), func, run_no_throw, registry(), __VA_ARGS__)
 
-#define PARAMETRIZE_NO_THROW_IMPL(id, func, ...) \
-bool TESTFUNCNAME(func, id)() { \
-    return run_no_throw(func, __VA_ARGS__); \
+#define PARAMETRIZE_IMPL(id, func, runner_, registry_, ...) \
+bool TEST_FUNC_NAME(func, id)() { \
+    return runner_(func __VA_OPT__(,) __VA_ARGS__); \
 } \
-struct TESTSTRUCTNAME(func, id) { \
-    TESTSTRUCTNAME(func, id)() { \
-        REGISTRY[TOSTRING(TESTFUNCNAME(func, id))] = TESTFUNCNAME(func, id); \
+struct TEST_STRUCT_NAME(func, id) { \
+    TEST_STRUCT_NAME(func, id)() { \
+        registry_[TO_STRING(TEST_FUNC_NAME(func, id))] = { \
+            TEST_FUNC_NAME(func, id), \
+            TO_STRING(func), \
+            TO_STRING(__FILE__), \
+            TO_STRING(__LINE__), \
+            std::string(#__VA_ARGS__) \
+        }; \
     } \
-} EXPAND(_instance_, id);
-
-template<typename Func, typename... Args>
-requires std::same_as<std::invoke_result_t<Func, Args...>, bool>
-bool run_no_throw(Func func, Args&&... args)
-{
-    try
-    {
-        func(std::forward<Args>(args)...);
-        return true;
-    }
-    catch(const std::exception& e)
-    {
-        return false;
-    }
-}
+} TEST_STRUCT_INSTANCE_NAME(func, id);
