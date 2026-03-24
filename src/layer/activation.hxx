@@ -1,26 +1,8 @@
-// #pragma once
-
-// #include "layer.hh"
-
 #pragma once
 
 #include <optional>
 #include "layer.hh"
 
-// template <typename T>
-// class Sigmoid: public Layer<T>
-// {
-// public:
-//     Tensor<T> forward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::sigmoid(tensor);
-//     }
-
-//     Tensor<T> backward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::dsigmoid(tensor);
-//     }
-// };
 
 template <typename T>
 class Sigmoid: public Layer<T>
@@ -42,21 +24,6 @@ public:
     }
 };
 
-// template <typename T>
-// class Tanh: public Layer<T>
-// {
-// public:
-//     Tensor<T> forward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::tanh(tensor);
-//     }
-
-//     Tensor<T> backward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::dtanh(tensor);
-//     }
-// };
-
 template <typename T>
 class Tanh: public Layer<T>
 {
@@ -77,20 +44,6 @@ public:
     }
 };
 
-// template <typename T>
-// class ReLu: public Layer<T>
-// {
-// public:
-//     Tensor<T> forward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::relu(tensor);
-//     }
-
-//     Tensor<T> backward(Tensor<T> tensor)
-//     {
-//         return Tensor<T>::drelu(tensor);
-//     }
-// };
 
 template <typename T>
 class ReLu: public Layer<T>
