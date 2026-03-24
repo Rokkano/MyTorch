@@ -1,20 +1,21 @@
-#include <stdlib.h>
-#include <fstream>
-#include <cmath>
-#include <tuple>
-
 #include "functional.hh"
 
-bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements = 1000, std::size_t num_validation = 100, float target = 99.f, float epsilon = 1.f)
+#include <cmath>
+#include <fstream>
+#include <stdlib.h>
+#include <tuple>
+
+bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements = 1000,
+                          std::size_t num_validation = 100, float target = 99.f, float epsilon = 1.f)
 {
-    auto&&[training, validation] = linearDataset.split(num_elements - num_validation);
+    auto &&[training, validation] = linearDataset.split(num_elements - num_validation);
 
     Linear<float> linear = Linear<float>(1, 1, UNIFORM, 0.1f);
     MeanSquaredErrorLoss<float> mseloss = MeanSquaredErrorLoss<float>();
 
     linear.training = true;
 
-    for (auto&&[data, expected] : training)
+    for (auto &&[data, expected] : training)
     {
         Tensor<float> t = data.to_type<float>();
         t = linear.forward(t);
@@ -24,11 +25,11 @@ bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements 
 
         d = linear.backward(d);
     }
-    
+
     linear.training = false;
 
     float res = 0;
-    for (auto&&[data, expected] : validation)
+    for (auto &&[data, expected] : validation)
     {
         Tensor<float> t = data.to_type<float>();
         t = linear.forward(t);
@@ -37,12 +38,10 @@ bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements 
 
     float precision = 100 - res / float(num_validation) * 100;
 
-    ASSERT(
-        precision >= target - epsilon && precision <= target + epsilon, 
-        std::format("Precision criteria not met : {:.2f} != {} ± {}.", precision, target, epsilon),
-        std::format("Precision criteria met : {:.2f}% precision.", precision)
-    );
-    
+    ASSERT(precision >= target - epsilon && precision <= target + epsilon,
+           std::format("Precision criteria not met : {:.2f} != {} ± {}.", precision, target, epsilon),
+           std::format("Precision criteria met : {:.2f}% precision.", precision));
+
     return true;
 }
 PARAMETRIZE_FUNCTIONAL(testLinearRegression, LinearDataset(1000, 2, 5, 0, 1), 1000, 100, 99.f, 1.f)
@@ -50,4 +49,3 @@ PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0, 
 PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0.1, 0, 1), 1000, 100, 99.f, 1.f)
 PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0.5, 0, 1), 1000, 100, 99.f, 1.f)
 PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 2., 0, 1), 1000, 100, 99.f, 1.f)
-

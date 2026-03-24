@@ -1,9 +1,7 @@
 #pragma once
 
-#include "dataset.hh"
 #include "../tensor/tensor.hh"
-
-
+#include "dataset.hh"
 
 template <typename T>
 std::string Dataset<T>::datasetDataToStr(std::vector<T> data)
@@ -26,12 +24,9 @@ std::string Dataset<T>::datasetToStr(std::vector<T> data, std::string name, std:
     return "dataset(name=" + name + "; data=(" + data_str + "))";
 }
 
-
-
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const Dataset<T> &t)
 {
 
     return os << Dataset<T>::datasetToStr(t.data_, t.name_);
 }
-

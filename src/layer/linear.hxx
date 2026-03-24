@@ -1,9 +1,9 @@
 #pragma once
 
-#include <optional>
-
 #include "layer.hh"
 #include "weights.hh"
+
+#include <optional>
 
 template <typename T>
 class Linear : public Layer<T>

@@ -1,12 +1,14 @@
-#include <format>
-
 #include "tensor.hh"
+
+#include <format>
 
 template <>
 Tensor<bool>::operator bool() const
 {
     if (this->numel() != 1)
-        throw CastException("Boolean cast of a non single element Tensor<bool> is ambiguous. Use .all() or .any() depending on the behaviour you want.");
+        throw CastException("Boolean cast of a non single element Tensor<bool> is "
+                            "ambiguous. Use .all() or .any() "
+                            "depending on the behaviour you want.");
     else
         return this->buffer_[0];
 }

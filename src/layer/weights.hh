@@ -2,7 +2,8 @@
 
 #include "../tensor/tensor.hh"
 
-enum Initialization {
+enum Initialization
+{
     ZEROS,
     ONES,
     NORMAL,

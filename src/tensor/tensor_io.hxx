@@ -1,11 +1,11 @@
-#include <iostream>
-#include <format>
-#include <matplot/matplot.h>
-#include <type_traits>
-#include <tuple>
-
-#include "tensor.hh"
 #include "../utils.hxx"
+#include "tensor.hh"
+
+#include <format>
+#include <iostream>
+#include <matplot/matplot.h>
+#include <tuple>
+#include <type_traits>
 
 template <typename T>
 std::string Tensor<T>::tensorDataToStr(const std::vector<std::size_t> &shape, const std::vector<T> &buffer)
@@ -55,10 +55,11 @@ std::ostream &operator<<(std::ostream &os, const Tensor<T> &t)
 
 template <typename T>
 void Tensor<T>::plot(std::string title, std::string xlabel, std::string ylabel) const
-        requires std::is_arithmetic_v<T>
+    requires std::is_arithmetic_v<T>
 {
     if (this->shape().size() != 1)
-        throw TensorInvalidShapeException(std::format("Shape {} is invalid for plot : need a single dimentional tensor.", this->tensorShapeToStr(this->shape())));
+        throw TensorInvalidShapeException(std::format(
+            "Shape {} is invalid for plot : need a single dimentional tensor.", this->tensorShapeToStr(this->shape())));
 
     std::vector<double> x = matplot::linspace(0, this->shape()[0]);
     std::vector<T> y = this->buffer_;

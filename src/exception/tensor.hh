@@ -1,9 +1,9 @@
 #pragma once
 
+#include "exception.hh"
+
 #include <exception>
 #include <string>
-
-#include "exception.hh"
 
 DEFINE_EXCEPTION(TensorOutOfBoundException);
 DEFINE_EXCEPTION(TensorInvalidShapeException);

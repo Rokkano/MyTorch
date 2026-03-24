@@ -1,6 +1,6 @@
-#include <format>
-
 #include "tensor.hh"
+
+#include <format>
 
 template <typename T>
 bool Tensor<T>::validateSameShape(const std::vector<std::size_t> &shape) const
@@ -17,7 +17,9 @@ template <typename T>
 Tensor<T> operator+(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for addition.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for addition.",
+                                                      lhs.tensorShapeToStr(lhs.shape_),
+                                                      rhs.tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -56,7 +58,9 @@ template <typename T>
 Tensor<T> operator-(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for substraction.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for substraction.",
+                                                      lhs.tensorShapeToStr(lhs.shape_),
+                                                      rhs.tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -95,7 +99,9 @@ template <typename T>
 Tensor<T> operator*(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for multiplication.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for multiplication.",
+                                                      lhs.tensorShapeToStr(lhs.shape_),
+                                                      rhs.tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -125,7 +131,9 @@ template <typename T>
 Tensor<T> operator/(const Tensor<T> &lhs, const Tensor<T> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for division.", lhs.tensorShapeToStr(lhs.shape_), rhs.tensorShapeToStr(rhs.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for division.",
+                                                      lhs.tensorShapeToStr(lhs.shape_),
+                                                      rhs.tensorShapeToStr(rhs.shape_)));
 
     Tensor<T> tensor = Tensor<T>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)

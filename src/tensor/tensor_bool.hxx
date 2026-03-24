@@ -1,13 +1,15 @@
-#include <format>
-
-#include "tensor.hh"
 #include "../utils.hh"
+#include "tensor.hh"
+
+#include <format>
 
 template <typename T>
 Tensor<bool> Tensor<T>::operator==(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -28,7 +30,9 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator<(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -49,7 +53,9 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator<=(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -70,7 +76,9 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator>(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -91,7 +99,9 @@ template <typename T>
 Tensor<bool> Tensor<T>::operator>=(const Tensor<T> &other)
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<bool> tensor = Tensor<bool>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -111,25 +121,29 @@ Tensor<bool> Tensor<T>::operator>=(const T &other)
 template <typename T>
 Tensor<T>::operator bool() const
 {
-    throw TensorInvalidTypeException(std::format("bool() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    throw TensorInvalidTypeException(
+        std::format("bool() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <typename T>
 Tensor<bool> Tensor<T>::all() const
 {
-    throw TensorInvalidTypeException(std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    throw TensorInvalidTypeException(
+        std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <typename T>
 Tensor<bool> Tensor<T>::any() const
 {
-    throw TensorInvalidTypeException(std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    throw TensorInvalidTypeException(
+        std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <typename T>
 Tensor<bool> Tensor<T>::none() const
 {
-    throw TensorInvalidTypeException(std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    throw TensorInvalidTypeException(
+        std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
 }
 
 template <>

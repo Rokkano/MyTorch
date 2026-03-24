@@ -7,7 +7,7 @@ class Layer
 {
 public:
     bool training = false;
-    
+
 public:
     Tensor<T> forward(Tensor<T>...);
     Tensor<T> backward(Tensor<T>...);

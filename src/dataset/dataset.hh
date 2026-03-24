@@ -1,10 +1,11 @@
 #pragma once
 
-#include <cstddef>
-#include <vector>
-#include <tuple>
-#include <string>
 #include "../utils/random.hh"
+
+#include <cstddef>
+#include <string>
+#include <tuple>
+#include <vector>
 
 template <typename T>
 class Dataset
@@ -28,17 +29,12 @@ public:
     std::vector<T>::iterator end();
     std::vector<T>::iterator const_end() const;
 
-    T &operator[](std::size_t index)
-    {
-        return this->data_[index];
-    };
+    T &operator[](std::size_t index) { return this->data_[index]; };
 
     template <typename V>
     friend std::ostream &operator<<(std::ostream &, const Dataset<V> &);
-    
 };
 
 #include "dataset.hxx"
 #include "dataset_io.hxx"
-
 #include "supervised.hh"

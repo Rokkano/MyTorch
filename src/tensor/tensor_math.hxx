@@ -1,7 +1,7 @@
+#include "tensor.hh"
+
 #include <cmath>
 #include <format>
-
-#include "tensor.hh"
 
 template <typename T>
 Tensor<T> Tensor<T>::min()
@@ -51,7 +51,9 @@ Tensor<T> Tensor<T>::min(const Tensor<T> &other)
     requires std::is_arithmetic_v<T>
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -85,7 +87,9 @@ Tensor<T> Tensor<T>::max(const Tensor<T> &other)
     requires std::is_arithmetic_v<T>
 {
     if (!this->validateSameShape(other.shape_))
-        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.", this->tensorShapeToStr(this->shape_), other.tensorShapeToStr(other.shape_)));
+        throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
+                                                      this->tensorShapeToStr(this->shape_),
+                                                      other.tensorShapeToStr(other.shape_)));
 
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -146,7 +150,7 @@ Tensor<T> Tensor<T>::amean(const std::size_t dim, int bessel_correction)
         tensor.buffer_[i] = mean / std::max(std::size_t(0), this->shape_[dim] - bessel_correction);
     }
     return tensor;
-}
+};
 
 template <typename T>
 Tensor<T> Tensor<T>::var(int bessel_correction)
@@ -257,7 +261,8 @@ template <typename T>
 Tensor<T> Tensor<T>::heaviside()
     requires std::is_arithmetic_v<T>
 {
-    // This is the regular definition of heaviside step function : H(x) = {1 if x>=0, 0 if x < 0}
+    // This is the regular definition of heaviside step function : H(x) = {1 if
+    // x>=0, 0 if x < 0}
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
         tensor.buffer_[i] = this->buffer_[i] >= 0 ? 1 : 0;

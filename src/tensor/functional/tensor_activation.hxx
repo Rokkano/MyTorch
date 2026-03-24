@@ -5,7 +5,7 @@ Tensor<T> Tensor<T>::relu(const Tensor<T> &tensor)
     requires std::is_arithmetic_v<T>
 {
     Tensor<T> res = Tensor<T>(tensor.shape_);
-    for(std::size_t i = 0; i < tensor.numel(); i++)
+    for (std::size_t i = 0; i < tensor.numel(); i++)
         res.buffer_[i] = (tensor.buffer_[i] > 0) ? tensor.buffer_[i] : 0;
     return res;
 }
@@ -15,7 +15,7 @@ Tensor<T> Tensor<T>::drelu(const Tensor<T> &tensor)
     requires std::is_arithmetic_v<T>
 {
     Tensor<T> res = Tensor<T>(tensor.shape_);
-    for(std::size_t i = 0; i < tensor.numel(); i++)
+    for (std::size_t i = 0; i < tensor.numel(); i++)
         res.buffer_[i] = (tensor.buffer_[i] > 0) ? 1 : 0;
     return res;
 }

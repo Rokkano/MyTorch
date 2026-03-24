@@ -1,12 +1,11 @@
-#include <chrono>
-#include <iostream>
-#include <thread>
-#include <functional>
-#include <source_location>
-
+#include "../include/nameof.hpp"
 #include "../src/tensor/tensor.hh"
 
-#include "../include/nameof.hpp"
+#include <chrono>
+#include <functional>
+#include <iostream>
+#include <source_location>
+#include <thread>
 
 using std::chrono::duration;
 using std::chrono::duration_cast;
@@ -30,8 +29,7 @@ void benchmark(F &func, std::size_t num_run, Args &&...args)
 int main()
 {
     std::size_t num_run = 25;
-    auto identity = [](int x)
-    { return x; };
+    auto identity = [](int x) { return x; };
     Tensor<int> tensor1 = Tensor<int>::from_function(identity, {512, 1024});
     Tensor<int> tensor2 = Tensor<int>::from_function(identity, {1024, 256});
 

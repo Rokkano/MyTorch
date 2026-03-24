@@ -4,7 +4,7 @@ bool testTensorCreation(std::vector<std::size_t> shape)
 {
     std::vector<float> buffer = std::vector<float>(128);
     Tensor<float> tensor = Tensor<float>(shape, buffer);
-    
+
     ASSERT(tensor.numel() == 128);
 
     for (std::size_t i = 0; i < shape.size(); i++)

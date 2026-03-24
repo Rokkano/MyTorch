@@ -1,7 +1,9 @@
 #include "xor.hh"
 
-template<>
-std::string Tensor<std::tuple<Tensor<int>, int>>::tensorDataToStr(const std::vector<std::size_t> &shape, const std::vector<std::tuple<Tensor<int>, int>> &buffer)
+template <>
+std::string
+Tensor<std::tuple<Tensor<int>, int>>::tensorDataToStr(const std::vector<std::size_t> &shape,
+                                                      const std::vector<std::tuple<Tensor<int>, int>> &buffer)
 {
     // New tensorDataToStr to allow Xor data to be printed
     auto tuple_to_str = [](std::tuple<Tensor<int>, int> tuple)
@@ -17,7 +19,8 @@ std::string Tensor<std::tuple<Tensor<int>, int>>::tensorDataToStr(const std::vec
     for (std::size_t i = 0; i < shape[0]; i++)
     {
         std::vector<std::size_t> new_shape = std::vector<std::size_t>(shape.begin() + 1, shape.end());
-        std::vector<std::tuple<Tensor<int>, int>> new_buffer = std::vector<std::tuple<Tensor<int>, int>>(buffer.begin() + i * step, buffer.end());
+        std::vector<std::tuple<Tensor<int>, int>> new_buffer =
+            std::vector<std::tuple<Tensor<int>, int>>(buffer.begin() + i * step, buffer.end());
         str += tensorDataToStr(new_shape, new_buffer) + (i != shape[0] - 1 ? "," : "");
     }
     str = str + "]";

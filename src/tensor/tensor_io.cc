@@ -1,7 +1,7 @@
-#include <iostream>
-#include <format>
-
 #include "tensor.hh"
+
+#include <format>
+#include <iostream>
 
 template <>
 std::string Tensor<bool>::tensorDataToStr(const std::vector<std::size_t> &shape, const std::vector<bool> &buffer)

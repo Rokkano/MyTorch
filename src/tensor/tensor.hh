@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <optional>
-#include <functional>
-
 #include "../exception/exception.hh"
+
+#include <functional>
+#include <iostream>
+#include <optional>
+#include <vector>
 
 template <typename T>
 class Tensor
@@ -187,6 +187,7 @@ private:
     static std::string tensorDataToStr(const std::vector<std::size_t> &, const std::vector<T> &);
     static std::string tensorShapeToStr(const std::vector<std::size_t> &);
     static std::string tensorToStr(const std::vector<std::size_t> &, const std::vector<T> &);
+
 public:
     void plot(std::string title = "", std::string xlabel = "", std::string ylabel = "") const
         requires std::is_arithmetic_v<T>;
@@ -203,21 +204,25 @@ public:
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
 
-template<typename T>
-struct is_tuple : std::false_type {};
+template <typename T>
+struct is_tuple : std::false_type
+{
+};
 
-template<typename... Args>
-struct is_tuple<std::tuple<Args...>> : std::true_type {};
+template <typename... Args>
+struct is_tuple<std::tuple<Args...>> : std::true_type
+{
+};
 
-template<typename T>
+template <typename T>
 concept Tuple = is_tuple<T>::value;
 
+#include "tensor.hxx"
 #include "tensor_bool.hxx"
 #include "tensor_io.hxx"
 #include "tensor_math.hxx"
 #include "tensor_op.hxx"
 #include "tensor_utils.hxx"
-#include "tensor.hxx"
 
 // functionals
 #include "functional/tensor_activation.hxx"

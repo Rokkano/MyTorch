@@ -1,9 +1,8 @@
 #include "test.hh"
 
 #include <argparse.hpp>
-
-#include <map>
 #include <format>
+#include <map>
 
 bool run_test(Record record)
 {
@@ -24,38 +23,36 @@ bool run_test(Record record)
     return result;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     argparse::ArgumentParser program("Test suite");
 
-    program.add_argument("--functional")
-    .help("Run functional tests only.")
-    .flag();
-    
-    program.add_argument("--unit")
-    .help("Run unit tests only.")
-    .flag();
+    program.add_argument("--functional").help("Run functional tests only.").flag();
 
-    try {
+    program.add_argument("--unit").help("Run unit tests only.").flag();
+
+    try
+    {
         program.parse_args(argc, argv);
     }
-    catch (const std::exception& err) {
+    catch (const std::exception &err)
+    {
         std::cerr << err.what() << std::endl;
         std::cerr << program;
         return 1;
     }
 
     std::map<std::string, bool> results;
-    if (program["--unit"] == true || program["--functional"] == false)    
+    if (program["--unit"] == true || program["--functional"] == false)
     {
-        for (auto& f : registry())
+        for (auto &f : registry())
             results[f.first] = run_test(f.second);
     }
-    if (program["--functional"] == true || program["--unit"] == false)    
+    if (program["--functional"] == true || program["--unit"] == false)
     {
-        for (auto& f : functionalRegistry())
+        for (auto &f : functionalRegistry())
             results[f.first] = run_test(f.second);
     }
-
 
     int passed = 0;
     int failed = 0;

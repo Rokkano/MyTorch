@@ -1,10 +1,10 @@
-#include <stdlib.h>
-#include "tensor/tensor.hh"
 #include "dataset/dataset.hh"
-#include "xor/xor.hh"
-#include "layer/layer.hh"
 #include "exception/exception.hh"
+#include "layer/layer.hh"
+#include "tensor/tensor.hh"
+#include "xor/xor.hh"
 
+#include <stdlib.h>
 #include <tuple>
 
 int main()
@@ -14,13 +14,13 @@ int main()
 
     XorDataset dataset = XorDataset(num_elements);
     dataset.shuffle();
-    auto&&[training, validation] = dataset.split(num_elements - num_validation);
-    
+    auto &&[training, validation] = dataset.split(num_elements - num_validation);
+
     Perceptron perceptron = Perceptron(2);
     float learning_rate = 0.1;
-    
+
     // Training
-    for (auto&&[data, expected] : training)
+    for (auto &&[data, expected] : training)
     {
         Tensor<float> data_f = data.to_type<float>();
         float y = (perceptron.weights * data_f).sum().heaviside().item();
@@ -29,11 +29,10 @@ int main()
 
     // Validation
     std::size_t res = 0;
-    for (auto&&[data, expected] : validation)
+    for (auto &&[data, expected] : validation)
     {
         float y = (perceptron.weights * data.to_type<float>()).sum().heaviside().item();
         res += (y == expected) ? 1 : 0;
     }
-    std::cout << ((float)(res)/num_validation) * 100 << "%" << std::endl;    
+    std::cout << ((float)(res) / num_validation) * 100 << "%" << std::endl;
 }
-

@@ -1,10 +1,11 @@
 
+#include "supervised.hh"
+
+#include "../tensor/tensor.hh"
+#include "../utils/random.hh"
+
 #include <ostream>
 #include <vector>
-
-#include "supervised.hh"
-#include "../utils/random.hh"
-#include "../tensor/tensor.hh"
 
 LinearDataset::LinearDataset(std::size_t num_samples, float a, float b, float min, float max)
 {
@@ -18,11 +19,7 @@ LinearDataset::LinearDataset(std::size_t num_samples, float a, float b, float mi
     {
         float x = dis();
         this->data_.push_back(
-            SupervisedDatasetItem<Tensor<float>, float>{
-                Tensor<float>::from_vector({x}, {1, 1}),
-                a * x + b
-            }
-        );
+            SupervisedDatasetItem<Tensor<float>, float>{Tensor<float>::from_vector({x}, {1, 1}), a * x + b});
         i++;
     }
 }
@@ -38,12 +35,8 @@ NoisedLinearDataset::NoisedLinearDataset(std::size_t num_samples, float a, float
     while (i < num_samples)
     {
         float x = xDis();
-        this->data_.push_back(
-            SupervisedDatasetItem<Tensor<float>, float>{
-                Tensor<float>::from_vector({x}, {1, 1}),
-                a * x + b + noiseDis()
-            }
-        );
+        this->data_.push_back(SupervisedDatasetItem<Tensor<float>, float>{Tensor<float>::from_vector({x}, {1, 1}),
+                                                                          a * x + b + noiseDis()});
         i++;
     }
 }

@@ -1,13 +1,14 @@
 #pragma once
 
-#include <optional>
 #include "layer.hh"
 
+#include <optional>
 
 template <typename T>
-class Sigmoid: public Layer<T>
+class Sigmoid : public Layer<T>
 {
     std::optional<Tensor<T>> inp_;
+
 public:
     Tensor<T> forward(Tensor<T> tensor)
     {
@@ -25,9 +26,10 @@ public:
 };
 
 template <typename T>
-class Tanh: public Layer<T>
+class Tanh : public Layer<T>
 {
     std::optional<Tensor<T>> inp_;
+
 public:
     Tensor<T> forward(Tensor<T> tensor)
     {
@@ -44,11 +46,11 @@ public:
     }
 };
 
-
 template <typename T>
-class ReLu: public Layer<T>
+class ReLu : public Layer<T>
 {
     std::optional<Tensor<T>> inp_;
+
 public:
     Tensor<T> forward(Tensor<T> tensor)
     {
@@ -64,4 +66,3 @@ public:
         return gradient * Tensor<T>::drelu(this->inp_.value());
     }
 };
-

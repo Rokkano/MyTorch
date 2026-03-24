@@ -1,8 +1,8 @@
-#include <iostream>
-#include <format>
-
-#include "tensor.hh"
 #include "../utils.hxx"
+#include "tensor.hh"
+
+#include <format>
+#include <iostream>
 
 template <typename T>
 bool Tensor<T>::validateCoord(const std::vector<std::size_t> &coord) const
@@ -30,7 +30,8 @@ std::size_t Tensor<T>::coordToAbs(const std::vector<std::size_t> &coord) const
     // [y,x] with [y_m,x_m] -> y * x_m + x
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateCoord(coord))
-        throw std::invalid_argument(std::format("Coordinates {} are invalid for tensor of shape {}.", this->tensorShapeToStr(coord), this->tensorShapeToStr(this->shape_)));
+        throw std::invalid_argument(std::format("Coordinates {} are invalid for tensor of shape {}.",
+                                                this->tensorShapeToStr(coord), this->tensorShapeToStr(this->shape_)));
 
     std::size_t abs = 0;
     for (std::size_t i = 0; i < coord.size(); i++)
@@ -50,7 +51,9 @@ std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
     // [y,x] with [y_m,x_m] -> y * x_m + x
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateAbs(abs))
-        throw std::invalid_argument(std::format("Absolute {} is invalid for tensor of shape {} ({} elements).", std::to_string(abs), this->tensorShapeToStr(this->shape_), std::to_string(this->numel())));
+        throw std::invalid_argument(std::format("Absolute {} is invalid for tensor of shape {} ({} elements).",
+                                                std::to_string(abs), this->tensorShapeToStr(this->shape_),
+                                                std::to_string(this->numel())));
     std::vector<std::size_t> coord = std::vector<std::size_t>();
     for (std::size_t i = 0; i < this->shape_.size(); i++)
     {
@@ -74,7 +77,6 @@ Tensor<T>::Tensor()
     this->buffer_ = std::vector<T>(0);
 }
 
-
 template <typename T>
 Tensor<T>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
@@ -88,7 +90,8 @@ Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &b
     std::size_t shape_size = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<int>());
     std::size_t buffer_size = buffer.size();
     if (shape_size != buffer_size)
-        throw TensorInvalidShapeException(std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
+        throw TensorInvalidShapeException(
+            std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
 }
 
 template <typename T>
@@ -156,7 +159,8 @@ template <typename T>
 T Tensor<T>::item() const
 {
     if (this->numel() != 1)
-        throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}", this->tensorShapeToStr(this->shape_)));
+        throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}",
+                                                      this->tensorShapeToStr(this->shape_)));
     return this->buffer_[0];
 }
 
@@ -172,7 +176,7 @@ Tensor<T> Tensor<T>::flatten() const
 
 template <typename T>
 Tensor<T> Tensor<T>::unsqueeze(std::size_t dim) const
-{       
+{
     std::vector<std::size_t> new_shape = this->shape_;
     new_shape.insert(new_shape.begin() + dim, 1);
     Tensor<T> tensor = Tensor<T>(new_shape);
@@ -239,7 +243,10 @@ Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape) const
     for (std::size_t i = 0; i < tensor_shape.size(); i++)
     {
         if (tensor_shape[i] != target_shape[i] && tensor_shape[i] != 1 && target_shape[i] != 1)
-            throw TensorBroadcastException(std::format("Tensor is not broadcastable to this shape : {} to {} at index {}.", this->tensorShapeToStr(tensor_shape), this->tensorShapeToStr(target_shape), i));
+            throw TensorBroadcastException(std::format("Tensor is not broadcastable to this shape : {} to "
+                                                       "{} at index {}.",
+                                                       this->tensorShapeToStr(tensor_shape),
+                                                       this->tensorShapeToStr(target_shape), i));
         new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
     }
 

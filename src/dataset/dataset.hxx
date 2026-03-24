@@ -1,10 +1,9 @@
 #include "dataset.hh"
 
 #include <algorithm>
-#include <iterator>
 #include <chrono>
+#include <iterator>
 #include <random>
-
 
 template <typename T>
 std::pair<Dataset<T>, Dataset<T>> Dataset<T>::split(std::size_t split)
@@ -48,5 +47,5 @@ std::vector<T>::iterator Dataset<T>::end()
 template <typename T>
 std::vector<T>::iterator Dataset<T>::const_end() const
 {
-        return this->data_.end();
+    return this->data_.end();
 }
