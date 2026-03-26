@@ -65,6 +65,7 @@ void initialize_weights(Tensor<float> &tensor, enum Initialization initializatio
         break;
     }
     case Initialization::HE:
+    {
         if (tensor.shape().size() != 2)
             throw;
         std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
@@ -73,6 +74,7 @@ void initialize_weights(Tensor<float> &tensor, enum Initialization initializatio
         for (std::size_t i = 0; i < tensor.numel(); i++)
             tensor[i] = dis();
         break;
+    }
     default:
         throw Exception(std::format("Unknown initialization method."));
     }

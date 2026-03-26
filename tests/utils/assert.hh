@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 inline auto &assertBuffer()
 {
     static std::stringstream ss;

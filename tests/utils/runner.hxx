@@ -1,5 +1,7 @@
 #pragma once
 
+#include "assert.hh"
+
 #include <functional>
 #include <iostream>
 #include <map>
@@ -22,9 +24,9 @@ bool run(Func func, Args &&...args)
     catch (const std::exception &e)
     {
         std::cout.rdbuf(old);
-        std::cout << buffer.str() << std::endl;
-        std::cerr << e.what() << '\n';
-        throw;
+        assertBuffer() << "EXCEPTION CAUGHT: "
+                       << e.what();
+        return false;
     }
 }
 

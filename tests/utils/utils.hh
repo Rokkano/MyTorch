@@ -3,6 +3,8 @@
 #include "assert.hh"
 #include "macro.hh"
 
+#include <concepts>
+
 template <typename Func, typename... Args>
     requires std::same_as<std::invoke_result_t<Func, Args...>, bool>
 bool run(Func func, Args &&...args);
