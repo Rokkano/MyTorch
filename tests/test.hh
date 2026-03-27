@@ -3,6 +3,7 @@
 #include "utils/utils.hh"
 
 #include <functional>
+#include <format>
 #include <iostream>
 #include <map>
 #include <sstream>
