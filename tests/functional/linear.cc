@@ -8,6 +8,7 @@
 bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements = 1000,
                           std::size_t num_validation = 100, float target = 99.f, float epsilon = 1.f)
 {
+    linearDataset.shuffle();
     auto &&[training, validation] = linearDataset.split(num_elements - num_validation);
 
     Linear<float> linear = Linear<float>(1, 1, UNIFORM, 0.1f);
@@ -44,8 +45,8 @@ bool testLinearRegression(LinearDataset linearDataset, std::size_t num_elements 
 
     return true;
 }
-PARAMETRIZE_FUNCTIONAL(testLinearRegression, LinearDataset(1000, 2, 5, 0, 1), 1000, 100, 99.f, 1.f)
-PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0, 0, 1), 1000, 100, 99.f, 1.f)
-PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0.1, 0, 1), 1000, 100, 99.f, 1.f)
-PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 0.5, 0, 1), 1000, 100, 99.f, 1.f)
-PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1000, 2, 5, 2., 0, 1), 1000, 100, 99.f, 1.f)
+PARAMETRIZE_FUNCTIONAL(testLinearRegression, LinearDataset(1100, 2, 5, 0, 1), 1100, 100, 99.f, 1.f)
+PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1100, 2, 5, 0, 0, 1), 1100, 100, 99.f, 1.f)
+PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1100, 2, 5, 0.1, 0, 1), 1100, 100, 99.f, 1.f)
+PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1100, 2, 5, 0.5, 0, 1), 1100, 100, 99.f, 1.f)
+PARAMETRIZE_FUNCTIONAL(testLinearRegression, NoisedLinearDataset(1100, 2, 5, 2., 0, 1), 1100, 100, 99.f, 1.f)
