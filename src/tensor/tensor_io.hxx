@@ -61,7 +61,8 @@ void Tensor<T>::plot(std::string title, std::string xlabel, std::string ylabel) 
         throw TensorInvalidShapeException(std::format(
             "Shape {} is invalid for plot : need a single dimentional tensor.", this->tensorShapeToStr(this->shape())));
 
-    std::vector<double> x = matplot::linspace(0, this->shape()[0]);
+    std::vector<double> x = std::vector<double>(this->shape()[0]);
+    std::iota(x.begin(), x.end(), 1);
     std::vector<T> y = this->buffer_;
 
     matplot::plot(x, y);

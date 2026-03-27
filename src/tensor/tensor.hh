@@ -183,12 +183,11 @@ public:
         requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
-private:
+public:
     static std::string tensorDataToStr(const std::vector<std::size_t> &, const std::vector<T> &);
     static std::string tensorShapeToStr(const std::vector<std::size_t> &);
     static std::string tensorToStr(const std::vector<std::size_t> &, const std::vector<T> &);
 
-public:
     void plot(std::string title = "", std::string xlabel = "", std::string ylabel = "") const
         requires std::is_arithmetic_v<T>;
 
@@ -200,7 +199,7 @@ public:
 public:
     template <typename U>
     Tensor<U> to_type();
-    static Tensor<T> from_function(std::function<std::size_t(T)>, const std::vector<std::size_t> &);
+    static Tensor<T> from_function(std::function<T(std::size_t)>, const std::vector<std::size_t> &);
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
 };
 

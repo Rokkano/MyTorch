@@ -170,7 +170,7 @@ Tensor<T> Tensor<T>::flatten() const
     std::vector<std::size_t> new_shape = std::vector({this->numel()});
     Tensor<T> tensor = Tensor<T>(new_shape);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this.buffer_[i];
+        tensor.buffer_[i] = this->buffer_[i];
     return tensor;
 }
 
