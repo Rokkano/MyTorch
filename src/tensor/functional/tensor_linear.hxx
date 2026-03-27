@@ -105,8 +105,8 @@ Tensor<T> Tensor<T>::mm(const Tensor<T> &lhs, const Tensor<T> &rhs)
     for (std::size_t y = 0; y < tensor.shape_[1]; y++)
         for (std::size_t x = 0; x < tensor.shape_[0]; x++)
             for (std::size_t k = 0; k < lhs.shape_[1]; k++)
-                tensor.buffer_[x + y * tensor.shape_[0]] +=
-                    lhs.buffer_[x + k * lhs.shape_[0]] * rhs.buffer_[k + y * rhs.shape_[0]];
+                tensor.buffer_[x * tensor.shape_[1] + y] +=
+                    lhs.buffer_[x * lhs.shape_[1] + k] * rhs.buffer_[k * rhs.shape_[1] + y];
     return tensor;
 }
 
