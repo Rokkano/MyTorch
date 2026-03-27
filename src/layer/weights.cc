@@ -46,17 +46,6 @@ void initialize_weights(Tensor<float> &tensor, enum Initialization initializatio
         if (tensor.shape().size() != 2)
             throw;
         std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
-        float bound = 1.f / std::sqrt(prevLayer);
-        UniformDistribution dis = Random::getInstance().uniformDistribution(-bound, +bound);
-        for (std::size_t i = 0; i < tensor.numel(); i++)
-            tensor[i] = dis();
-        break;
-    }
-    case Initialization::XAVIER_NORMALIZED:
-    {
-        if (tensor.shape().size() != 2)
-            throw;
-        std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
         std::size_t nextLayer = tensor.shape()[1]; // number of nodes in the next layer
         float bound = std::sqrt(6.f / (prevLayer + nextLayer));
         UniformDistribution dis = Random::getInstance().uniformDistribution(-bound, +bound);

@@ -10,7 +10,6 @@ enum Initialization
     UNIFORM,
     LECUN,
     XAVIER,
-    XAVIER_NORMALIZED,
     HE,
 };
 
