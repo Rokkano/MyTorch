@@ -45,3 +45,10 @@ Tensor<T> Tensor<T>::from_vector(const std::vector<T> &buffer, const std::vector
         tensor.buffer_[i] = buffer[i];
     return tensor;
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::one_hot(std::size_t index, const std::vector<std::size_t> &shape)
+{
+    auto oh = [index](std::size_t x) { return (x == index) ? 1 : 0; };
+    return Tensor<T>::from_function(oh, shape);
+}

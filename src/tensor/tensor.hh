@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../mt/mt.hh"
 #include "../exception/exception.hh"
 
 #include <functional>
@@ -8,7 +9,7 @@
 #include <vector>
 
 template <typename T>
-class Tensor
+class Tensor: public IMTSerialize
 {
 private:
     std::vector<std::size_t> shape_;
@@ -195,12 +196,18 @@ public:
     template <typename U>
     friend std::ostream &operator<<(std::ostream &, const Tensor<U> &);
 
+    // ###### TENSOR MT SERIALIZE ######
+    virtual std::vector<std::byte> serialize();
+    virtual void deserialize(std::vector<std::byte>);
+    static Tensor<T> from_bytes(std::vector<std::byte> &);
+
     // ###### TENSOR UTILS ######
 public:
     template <typename U>
     Tensor<U> to_type();
     static Tensor<T> from_function(std::function<T(std::size_t)>, const std::vector<std::size_t> &);
     static Tensor<T> from_vector(const std::vector<T> &, const std::vector<std::size_t> &);
+    static Tensor<T> one_hot(std::size_t, const std::vector<std::size_t> &);
 };
 
 template <typename T>
@@ -222,6 +229,7 @@ concept Tuple = is_tuple<T>::value;
 #include "tensor_math.hxx"
 #include "tensor_op.hxx"
 #include "tensor_utils.hxx"
+#include "tensor_serialize.hxx"
 
 // functionals
 #include "functional/tensor_activation.hxx"

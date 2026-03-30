@@ -44,7 +44,7 @@ std::string Tensor<T>::tensorToStr(const std::vector<std::size_t> &shape, const 
 {
     std::string data_str = Tensor<T>::tensorDataToStr(shape, buffer);
     std::string shape_str = Tensor<T>::tensorShapeToStr(shape);
-    return "tensor(shape=" + shape_str + "; data=(" + data_str + "))";
+    return "tensor(shape=" + shape_str + "; data=(" + data_str + "); dtype=" + type_name<T>() + ")";
 }
 
 template <typename T>
