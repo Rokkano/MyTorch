@@ -2,33 +2,37 @@
 
 #include <vector>
 #include <sys/types.h>
+#include <optional>
 
+#include "../tensor/tensor.hh"
+#include "imt.hh"
 #include "../utils.hh"
 
-class IMTSerialize
+inline char MTFILE_VERSION_MAJOR = 1;
+inline char MTFILE_VERSION_MINOR = 0;
+
+enum MTFILE_TYPE
 {
-    public:
-        virtual ~IMTSerialize() {};
-        virtual std::vector<std::byte> serialize() = 0;
-        virtual void deserialize(std::vector<std::byte>) = 0;
+    NONE = 0,
+    TENSOR = 1,
+    LAYER = 2,
+    MODEL = 3,
 };
 
-inline uint MTFILE_VERSION_MAJOR = 1;
-inline uint MTFILE_VERSION_MINOR = 0;
-
 template <typename T>
+requires std::is_base_of_v<IMTSerialize, T>
 class MTFile
 {
-private:
-    std::string path;
-
 public:
-    MTFile(std::string &);
-    T read();
-    void write(T);
+    static T read(std::string);
+    static void write(std::string, T);   
+
+    static std::size_t sizeOfFile(std::string);
+    static std::size_t sizeOfObject(T);
+
+private:
+    static std::vector<std::byte> readFile(std::string);
+    static void writeFile(std::string, std::vector<std::byte>);
 };
 
-template <typename T>
-inline void MTFile<T>::write(T)
-{
-}
+#include "mt.hxx"
