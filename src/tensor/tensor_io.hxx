@@ -3,7 +3,6 @@
 
 #include <format>
 #include <iostream>
-#include <matplot/matplot.h>
 #include <tuple>
 #include <type_traits>
 
@@ -54,7 +53,7 @@ std::ostream &operator<<(std::ostream &os, const Tensor<T> &t)
 }
 
 template <typename T>
-void Tensor<T>::plot(std::string title, std::string xlabel, std::string ylabel) const
+void Tensor<T>::plot(const std::string &linespec, OpenCVWindowOpts opts) const
     requires std::is_arithmetic_v<T>
 {
     if (this->shape().size() != 1)
@@ -63,11 +62,10 @@ void Tensor<T>::plot(std::string title, std::string xlabel, std::string ylabel) 
 
     std::vector<double> x = std::vector<double>(this->shape()[0]);
     std::iota(x.begin(), x.end(), 1);
-    std::vector<T> y = this->buffer_;
+    std::vector<T> y = this->buffer();
 
-    matplot::plot(x, y);
-    matplot::title(title);
-    matplot::xlabel(xlabel);
-    matplot::ylabel(ylabel);
-    matplot::show();
+    CvPlot::Axes parent = CvPlot::makePlotAxes();
+    parent.create<CvPlot::Series>(x, y, linespec);
+
+    ::show(parent, opts);
 }
