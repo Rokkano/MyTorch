@@ -46,7 +46,7 @@ std::vector<std::byte> Tensor<T>::serialize()
 }
 
 template <typename T>
-void Tensor<T>::deserialize(std::vector<std::byte> bytes)
+std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
 {
     if (this->buffer_.size() != 0)
         throw Exception("Tensor<T>::deserialize can only be called on empty tensor.");
@@ -104,6 +104,7 @@ void Tensor<T>::deserialize(std::vector<std::byte> bytes)
         
     this->buffer_ = buffer;
     this->shape_ = shape;
+    return offset;
 }
 
 template <typename T>
