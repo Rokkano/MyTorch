@@ -61,3 +61,13 @@ Tensor<T> Tensor<T>::dtanh(const Tensor<T> &tensor)
 {
     return 1 - Tensor<T>::tanh(Tensor<T>::tanh(tensor));
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::softmax(const Tensor<T> &tensor)
+    requires std::is_arithmetic_v<T>
+{
+    // Numeric stability
+    Tensor<T> exp = Tensor<T>::exp(tensor - tensor.max().item());
+    return exp / exp.sum().item();
+}
+
