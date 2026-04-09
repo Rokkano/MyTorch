@@ -62,7 +62,7 @@ Tensor<T> Tensor<T>::min(const Tensor<T> &other)
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::max()
+Tensor<T> Tensor<T>::max() const
     requires std::is_arithmetic_v<T>
 {
     T max = this->buffer_[0];
@@ -73,7 +73,7 @@ Tensor<T> Tensor<T>::max()
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::max(const T &val)
+Tensor<T> Tensor<T>::max(const T &val) const
     requires std::is_arithmetic_v<T>
 {
     Tensor<T> tensor = Tensor<T>(this->shape_);
@@ -83,7 +83,7 @@ Tensor<T> Tensor<T>::max(const T &val)
 }
 
 template <typename T>
-Tensor<T> Tensor<T>::max(const Tensor<T> &other)
+Tensor<T> Tensor<T>::max(const Tensor<T> &other) const
     requires std::is_arithmetic_v<T>
 {
     if (!this->validateSameShape(other.shape_))
@@ -266,5 +266,36 @@ Tensor<T> Tensor<T>::heaviside()
     Tensor<T> tensor = Tensor<T>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
         tensor.buffer_[i] = this->buffer_[i] >= 0 ? 1 : 0;
+    return tensor;
+}
+
+
+template <typename T>
+Tensor<T> Tensor<T>::round()
+    requires std::is_arithmetic_v<T>
+{
+    Tensor<T> tensor = Tensor<T>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = std::round(this->buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::floor()
+    requires std::is_arithmetic_v<T>
+{
+    Tensor<T> tensor = Tensor<T>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = std::floor(this->buffer_[i]);
+    return tensor;
+}
+
+template <typename T>
+Tensor<T> Tensor<T>::ceil()
+    requires std::is_arithmetic_v<T>
+{
+    Tensor<T> tensor = Tensor<T>(this->shape_);
+    for (std::size_t i = 0; i < tensor.numel(); i++)
+        tensor.buffer_[i] = std::ceil(this->buffer_[i]);
     return tensor;
 }
