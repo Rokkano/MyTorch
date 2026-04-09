@@ -49,3 +49,9 @@ std::vector<T>::iterator Dataset<T>::const_end() const
 {
     return this->data_.end();
 }
+
+template <typename T>
+void Dataset<T>::transform(std::function<T(T)> func)
+{
+    std::transform(this->data_.begin(), this->data_.end(), this->data_.begin(), func);
+}

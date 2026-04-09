@@ -6,6 +6,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <functional>
 
 template <typename T>
 class Dataset
@@ -23,6 +24,7 @@ public:
     void shuffle();
     std::pair<Dataset<T>, Dataset<T>> split(std::size_t);
     std::size_t length();
+    void transform(std::function<T(T)>);
 
     std::vector<T>::iterator begin();
     std::vector<T>::iterator const_begin() const;
@@ -37,4 +39,3 @@ public:
 
 #include "dataset.hxx"
 #include "dataset_io.hxx"
-#include "supervised.hh"

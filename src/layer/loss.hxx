@@ -22,15 +22,19 @@ template <typename T>
 using L2Loss = MeanSquaredErrorLoss<T>;
 
 template <typename T>
-class CrossEntropyLoss : public Layer<T>
+class SoftmaxCrossEntropyLoss : public Layer<T>
 {
 public:
     Tensor<T> forward(Tensor<T> pred, Tensor<T> gt)
     {
-        return -(gt * Tensor<T>::log(pred) + (1.f - gt) * Tensor<T>::log(1.f - pred));
+        Tensor<T> sm = Tensor<T>::softmax(pred);
+        return -(gt * Tensor<T>::log(sm + 1.e-7f)).sum();
     }
 
-    Tensor<T> backward(Tensor<T> pred, Tensor<T> gt) { return (pred - gt) / (pred * (1.f - pred)); }
+    Tensor<T> backward(Tensor<T> pred, Tensor<T> gt) 
+    { 
+        return Tensor<T>::softmax(pred) - gt; 
+    }
 };
 
 template <typename T>

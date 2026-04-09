@@ -6,6 +6,27 @@
 #include <random>
 #include <string>
 
+
+void initialize_weights(Tensor<int> &tensor, enum Initialization initialization)
+{
+    switch (initialization)
+    {
+    case Initialization::ZEROS:
+        tensor.fill(0);
+        break;
+    case Initialization::ONES:
+        tensor.fill(1);
+        break;
+    default:
+        if (initialization == Initialization::NORMAL || initialization == Initialization::UNIFORM || 
+            initialization == Initialization::LECUN || initialization == Initialization::XAVIER ||
+            initialization == Initialization::HE)
+            throw Exception(std::format("Initialization {} only allowed on Tensor<float>.", initialization));
+        throw Exception(std::format("Unknown initialization method."));
+    }
+}
+
+
 void initialize_weights(Tensor<float> &tensor, enum Initialization initialization)
 {
     switch (initialization)
