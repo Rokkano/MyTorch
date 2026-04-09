@@ -130,6 +130,12 @@ T &Tensor<T>::operator[](std::size_t pos)
 }
 
 template <typename T>
+std::vector<T> Tensor<T>::buffer() const
+{
+    return this->buffer_;
+}
+
+template <typename T>
 std::vector<size_t> Tensor<T>::shape() const
 {
     return this->shape_;

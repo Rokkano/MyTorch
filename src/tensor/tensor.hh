@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../cv/cv.hh"
 #include "../mt/imt.hh"
 #include "../exception/exception.hh"
 
@@ -34,6 +35,7 @@ public:
 
     T &operator[](std::size_t);
 
+    std::vector<T> buffer() const;
     std::vector<std::size_t> shape() const;
     std::size_t numel() const;
     T item() const;
@@ -112,11 +114,11 @@ public:
         requires std::is_arithmetic_v<T>;
     Tensor<T> amin(const std::size_t)
         requires std::is_arithmetic_v<T>;
-    Tensor<T> max()
+    Tensor<T> max() const
         requires std::is_arithmetic_v<T>;
-    Tensor<T> max(const T &)
+    Tensor<T> max(const T &) const
         requires std::is_arithmetic_v<T>;
-    Tensor<T> max(const Tensor<T> &)
+    Tensor<T> max(const Tensor<T> &) const
         requires std::is_arithmetic_v<T>;
     Tensor<T> amax(const std::size_t)
         requires std::is_arithmetic_v<T>;
@@ -139,6 +141,12 @@ public:
     Tensor<T> sum()
         requires std::is_arithmetic_v<T>;
     Tensor<T> heaviside()
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> round()
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> floor()
+        requires std::is_arithmetic_v<T>;
+    Tensor<T> ceil()
         requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR OP FUNCTIONAL (arithmetic only) ######
@@ -165,6 +173,8 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> bmm(const Tensor<T> &, const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> identity(std::size_t)
+        requires std::is_arithmetic_v<T>;
 
     static Tensor<T> relu(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
@@ -182,6 +192,8 @@ public:
         requires std::is_arithmetic_v<T>;
     static Tensor<T> dtanh(const Tensor<T> &)
         requires std::is_arithmetic_v<T>;
+    static Tensor<T> softmax(const Tensor<T> &)
+        requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
 public:
@@ -189,8 +201,9 @@ public:
     static std::string tensorShapeToStr(const std::vector<std::size_t> &);
     static std::string tensorToStr(const std::vector<std::size_t> &, const std::vector<T> &);
 
-    void plot(std::string title = "", std::string xlabel = "", std::string ylabel = "") const
+    void plot(const std::string &linespec, OpenCVWindowOpts opts = {}) const
         requires std::is_arithmetic_v<T>;
+
 
 public:
     template <typename U>
@@ -198,7 +211,7 @@ public:
 
     // ###### TENSOR MT SERIALIZE ######
     virtual std::vector<std::byte> serialize();
-    virtual void deserialize(std::vector<std::byte>);
+    virtual std::size_t deserialize(std::vector<std::byte>);
     static Tensor<T> from_bytes(std::vector<std::byte> &);
 
     // ###### TENSOR UTILS ######

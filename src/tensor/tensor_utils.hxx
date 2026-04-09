@@ -52,3 +52,15 @@ Tensor<T> Tensor<T>::one_hot(std::size_t index, const std::vector<std::size_t> &
     auto oh = [index](std::size_t x) { return (x == index) ? 1 : 0; };
     return Tensor<T>::from_function(oh, shape);
 }
+
+template <typename T>
+Tensor<T> Tensor<T>::identity(std::size_t n)
+requires std::is_arithmetic_v<T>
+{
+    Tensor<T> tensor = Tensor<T>({n, n});
+    tensor.fill(0);
+
+    for (std::size_t i = 0; i < n; i++)
+        tensor.buffer_[i * n + i] = 1;
+    return tensor;
+}
