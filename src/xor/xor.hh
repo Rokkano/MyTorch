@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../dataset/dataset.hh"
+#include "../dataset/supervised.hh"
 #include "../tensor/tensor.hh"
 
 class XorDataset : public SupervisedDataset<Tensor<int>, int>
