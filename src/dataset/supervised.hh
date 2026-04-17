@@ -17,13 +17,15 @@ class SupervisedDataset : public Dataset<SupervisedDatasetItem<T, U>>
 {
 };
 
-class LinearDataset : public SupervisedDataset<Tensor<float>, float>
+template <typename B>
+class LinearDataset : public SupervisedDataset<Tensor<float, B>, float>
 {
 public:
     LinearDataset(std::size_t num_samples = 1024, float a = 1, float b = 0, float min = 0, float max = 10);
 };
 
-class NoisedLinearDataset : public LinearDataset
+template <typename B>
+class NoisedLinearDataset : public LinearDataset<B>
 {
 public:
     NoisedLinearDataset(std::size_t num_samples = 1024, float a = 1, float b = 0, float noise = 0.1, float min = 0,

@@ -31,10 +31,7 @@ public:
         return -(gt * Tensor<T>::log(sm + 1.e-7f)).sum();
     }
 
-    Tensor<T> backward(Tensor<T> pred, Tensor<T> gt) 
-    { 
-        return Tensor<T>::softmax(pred) - gt; 
-    }
+    Tensor<T> backward(Tensor<T> pred, Tensor<T> gt) { return Tensor<T>::softmax(pred) - gt; }
 };
 
 template <typename T>

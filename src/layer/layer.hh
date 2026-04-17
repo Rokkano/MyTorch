@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../mt/imt.hh"
-#include "../tensor/tensor.hh"
+#include "src/mt/imt.hh"
+#include "src/tensor/tensor_fwd.hh"
 
 template <typename T>
 class Layer : public IMTSerialize
@@ -10,16 +10,16 @@ protected:
     bool training_ = false;
 
 public:
-    virtual std::vector<std::byte> serialize();
-    virtual std::size_t deserialize(std::vector<std::byte>);
+    std::vector<std::byte> serialize() override;
+    std::size_t deserialize(std::vector<std::byte> &bytes) override;
 
-    Tensor<T> forward(Tensor<T>...);
-    Tensor<T> backward(Tensor<T>...);
+    Tensor<T> forward(Tensor<T> &...);
+    Tensor<T> backward(Tensor<T> &...);
 
     void training(bool);
 };
 
-#include "layer.hxx"
 #include "activation.hxx"
+#include "layer.hxx"
 #include "linear.hxx"
 #include "loss.hxx"

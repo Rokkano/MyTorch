@@ -1,8 +1,8 @@
+#include "src/utils.hh"
 #include "tensor.hh"
-#include "../utils.hh"
 
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 
 // HEADER :
 //  shape_len   : uint64_t
@@ -14,24 +14,26 @@
 //  dtype       : array<char>
 //  buffer      : array<T>
 
-template <typename T>
-std::vector<std::byte> Tensor<T>::serialize()
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<std::byte> Tensor<T, B>::serialize()
 {
     // std::size_t are stored as uint64_t since the byte length
     // of std::size_t is platform-dependent.
     std::vector<std::byte> buffer;
 
-    auto write = [&]<typename U>(const U& val) {
-        const auto* ptr = reinterpret_cast<const std::byte*>(&val);
+    auto write = [&]<typename U>(const U &val)
+    {
+        const auto *ptr = reinterpret_cast<const std::byte *>(&val);
         buffer.insert(buffer.end(), ptr, ptr + sizeof(U));
     };
 
     write.template operator()<uint64_t>(static_cast<uint64_t>(this->shape().size()));
-    
+
     std::string dtype = type_name<T>();
     write.template operator()<uint64_t>(static_cast<uint64_t>(dtype.size()));
 
-    write.template operator()<uint64_t>(static_cast<uint64_t>(this->buffer_.size()));
+    write.template operator()<uint64_t>(static_cast<uint64_t>(this.size()));
 
     for (std::size_t s : this->shape())
         write.template operator()<uint64_t>(static_cast<uint64_t>(s));
@@ -40,19 +42,21 @@ std::vector<std::byte> Tensor<T>::serialize()
         write.template operator()<char>(c);
 
     for (std::size_t i = 0; i < this->numel(); i++)
-        write.template operator()<T>(this->buffer_[i]);
+        write.template operator()<T>(this[i]);
 
     return buffer;
 }
 
-template <typename T>
-std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::size_t Tensor<T, B>::deserialize(std::vector<std::byte> &bytes)
 {
-    if (this->buffer_.size() != 0)
-        throw Exception("Tensor<T>::deserialize can only be called on empty tensor.");
+    if (this.size() != 0)
+        throw Exception("Tensor<T, B>::deserialize can only be called on empty tensor.");
 
     std::size_t offset = 0;
-    auto read = [&]<typename U>(U& val) {
+    auto read = [&]<typename U>(U &val)
+    {
         std::memcpy(&val, bytes.data() + offset, sizeof(U));
         offset += sizeof(U);
     };
@@ -60,7 +64,7 @@ std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
     uint64_t shape_len_uint;
     read.template operator()<uint64_t>(shape_len_uint);
     std::size_t shape_len = static_cast<std::size_t>(shape_len_uint);
-    
+
     uint64_t dtype_len_uint;
     read.template operator()<uint64_t>(dtype_len_uint);
     std::size_t dtype_len = static_cast<std::size_t>(dtype_len_uint);
@@ -69,7 +73,6 @@ std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
     read.template operator()<uint64_t>(buffer_len_uint);
     std::size_t buffer_len = static_cast<std::size_t>(buffer_len_uint);
 
-    
     // read shape
     std::vector<std::size_t> shape;
     uint64_t shape_tmp_uint;
@@ -90,7 +93,8 @@ std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
 
     // Validation
     if (dtype != type_name<T>())
-        throw Exception(std::format("Type mismatch : tensor was serialized with type {}, got {}.", dtype, type_name<T>()));
+        throw Exception(
+            std::format("Type mismatch : tensor was serialized with type {}, got {}.", dtype, type_name<T>()));
 
     // read buffer
     std::vector<T> buffer;
@@ -101,16 +105,16 @@ std::size_t Tensor<T>::deserialize(std::vector<std::byte> bytes)
         buffer.insert(buffer.end(), buffer_tmp);
     }
 
-        
-    this->buffer_ = buffer;
+    this = buffer;
     this->shape_ = shape;
     return offset;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::from_bytes(std::vector<std::byte> &bytes)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> Tensor<T, B>::from_bytes(std::vector<std::byte> &bytes)
 {
-    Tensor<T> tensor = Tensor<T>({0});
+    Tensor<T, B> tensor = Tensor<T, B>({0});
     tensor.deserialize(bytes);
     return tensor;
 }

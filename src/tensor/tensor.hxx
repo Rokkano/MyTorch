@@ -1,11 +1,13 @@
-#include "../utils.hxx"
+#include "src/exception/exception.hh"
 #include "tensor.hh"
 
 #include <format>
 #include <iostream>
+#include <numeric>
 
-template <typename T>
-bool Tensor<T>::validateCoord(const std::vector<std::size_t> &coord) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+bool Tensor<T, B>::validateCoord(const std::vector<std::size_t> &coord) const
 {
     if (coord.size() < 1 || coord.size() != this->shape_.size())
         return false;
@@ -17,14 +19,16 @@ bool Tensor<T>::validateCoord(const std::vector<std::size_t> &coord) const
     return true;
 }
 
-template <typename T>
-bool Tensor<T>::validateAbs(std::size_t abs) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+bool Tensor<T, B>::validateAbs(std::size_t abs) const
 {
     return abs < this->numel();
 }
 
-template <typename T>
-std::size_t Tensor<T>::coordToAbs(const std::vector<std::size_t> &coord) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::size_t Tensor<T, B>::coordToAbs(const std::vector<std::size_t> &coord) const
 {
     // [x] with [x_m] -> x
     // [y,x] with [y_m,x_m] -> y * x_m + x
@@ -44,8 +48,9 @@ std::size_t Tensor<T>::coordToAbs(const std::vector<std::size_t> &coord) const
     return abs;
 }
 
-template <typename T>
-std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
 {
     // [x] with [x_m] -> x
     // [y,x] with [y_m,x_m] -> y * x_m + x
@@ -70,86 +75,101 @@ std::vector<std::size_t> Tensor<T>::absToCoord(std::size_t abs) const
     return coord;
 }
 
-template <typename T>
-Tensor<T>::Tensor()
-{
-    this->shape_ = {0};
-    this->buffer_ = std::vector<T>(0);
-}
-
-template <typename T>
-Tensor<T>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
     std::size_t num_e = this->numel();
-    this->buffer_ = std::vector<T>(num_e);
+    this->data() = std::vector<T>(num_e);
 }
 
-template <typename T>
-Tensor<T>::Tensor(const std::vector<std::size_t> &shape, const std::vector<T> &buffer) : shape_(shape), buffer_(buffer)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data)
 {
     std::size_t shape_size = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<int>());
-    std::size_t buffer_size = buffer.size();
+    std::size_t buffer_size = data.size();
     if (shape_size != buffer_size)
         throw TensorInvalidShapeException(
             std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
+    this->shape_ = shape;
+    this->data_ = data;
 }
 
-template <typename T>
-Tensor<T>::~Tensor()
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B>::~Tensor()
 {
 }
 
-template <typename T>
-std::vector<T>::iterator Tensor<T>::begin()
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<T>::iterator Tensor<T, B>::begin()
 {
-    return this->buffer_.begin();
+    return this->data().begin();
 }
 
-template <typename T>
-std::vector<T>::iterator Tensor<T>::const_begin() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<T>::iterator Tensor<T, B>::const_begin() const
 {
-    return this->buffer_.begin();
+    return this->data().begin();
 }
 
-template <typename T>
-std::vector<T>::iterator Tensor<T>::end()
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<T>::iterator Tensor<T, B>::end()
 {
-    return this->buffer_.end();
+    return this->data().end();
 }
 
-template <typename T>
-std::vector<T>::iterator Tensor<T>::const_end() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<T>::iterator Tensor<T, B>::const_end() const
 {
-    return this->buffer_.end();
+    return this->data().end();
 }
 
-template <typename T>
-T &Tensor<T>::operator[](std::size_t pos)
+template <typename T, typename B>
+requires IsBackend<T, B>
+T &Tensor<T, B>::operator[](std::size_t pos)
 {
-    return this->buffer_[pos];
+    return this->data_[pos];
 }
 
-template <typename T>
-std::vector<T> Tensor<T>::buffer() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+const T &Tensor<T, B>::operator[](std::size_t pos) const
 {
-    return this->buffer_;
+    return this->data_[pos];
 }
 
-template <typename T>
-std::vector<size_t> Tensor<T>::shape() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B>::TStorage &Tensor<T, B>::data()
+{
+    return this->data_;
+}
+
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::vector<size_t> &Tensor<T, B>::shape()
 {
     return this->shape_;
 }
 
-template <typename T>
-void Tensor<T>::fill(const T &value)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::fill(T value)
 {
     for (std::size_t i = 0; i < this->numel(); i++)
-        this->buffer_[i] = value;
+        this->data()[i] = value;
+    return *this;
 }
 
-template <typename T>
-std::size_t Tensor<T>::numel() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+std::size_t Tensor<T, B>::numel() const
 {
     if (this->shape_.empty())
     {
@@ -161,81 +181,82 @@ std::size_t Tensor<T>::numel() const
     return num_e;
 }
 
-template <typename T>
-T Tensor<T>::item() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+T Tensor<T, B>::item() const
 {
     if (this->numel() != 1)
         throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}",
                                                       this->tensorShapeToStr(this->shape_)));
-    return this->buffer_[0];
+    return this->data()[0];
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::flatten() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::flatten()
 {
-    std::vector<std::size_t> new_shape = std::vector({this->numel()});
-    Tensor<T> tensor = Tensor<T>(new_shape);
-    for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i];
-    return tensor;
+    this->shape_ = std::vector({this->numel()});
+    return *this;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::unsqueeze(std::size_t dim) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::unsqueeze(std::size_t dim)
 {
-    std::vector<std::size_t> new_shape = this->shape_;
-    new_shape.insert(new_shape.begin() + dim, 1);
-    Tensor<T> tensor = Tensor<T>(new_shape);
-    for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i];
-    return tensor;
+    this->shape_.insert(this->shape_.begin() + dim, 1);
+    return *this;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::squeeze(std::size_t dim) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::squeeze(std::size_t dim)
 {
     if (this->shape_[dim] != 1)
         throw TensorSqueezeException(std::format("Cannot squeeze at dim {} : non-1 dimension.", dim));
-    std::vector<std::size_t> new_shape = this->shape_;
-    new_shape.erase(new_shape.begin() + dim);
-    Tensor<T> tensor = Tensor<T>(new_shape);
-    for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = this->buffer_[i];
-    return tensor;
+    this->shape_.erase(this->shape_.begin() + dim);
+    return *this;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::t(std::size_t dim0, std::size_t dim1) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::t(std::size_t dim0, std::size_t dim1)
 {
     return this->transpose(dim0, dim1);
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::transpose(std::size_t dim0, std::size_t dim1) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
 {
     if (this->shape_.size() < 2)
         throw TensorTransposeException("Cannot transpose tensor with less than 2 dimensions");
 
     std::vector<std::size_t> new_shape = this->shape_;
     std::swap(new_shape[dim0], new_shape[dim1]);
-    Tensor<T> tensor = Tensor<T>(new_shape);
+    Tensor<T, B> tensor = Tensor<T, B>(new_shape);
     for (std::size_t i = 0; i < this->numel(); i++)
     {
         std::vector<std::size_t> target_coord = this->absToCoord(i);
         std::swap(target_coord[dim0], target_coord[dim1]);
-        tensor.buffer_[tensor.coordToAbs(target_coord)] = this->buffer_[i];
+        tensor[tensor.coordToAbs(target_coord)] = this->data()[i];
     }
-    return tensor;
+
+    this->shape_ = tensor.shape_;
+    this->data() = tensor.data();
+
+    return *this;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::broadcast(Tensor<T> &tensor) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::broadcast(Tensor<T, B> &tensor)
 {
     return this->broadcast(tensor.shape_);
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::broadcast(const std::vector<std::size_t> &shape)
 {
     // unsqueeze both dimensions until same number of dim
     std::vector<size_t> tensor_shape = this->shape_;
@@ -256,25 +277,30 @@ Tensor<T> Tensor<T>::broadcast(const std::vector<std::size_t> &shape) const
         new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
     }
 
-    Tensor<T> new_tensor = Tensor<T>(new_shape);
+    Tensor<T, B> new_tensor = Tensor<T, B>(new_shape);
     for (std::size_t i = 0; i < new_tensor.numel(); i++)
     {
         std::vector<std::size_t> coords = new_tensor.absToCoord(i);
         for (std::size_t j = 0; j < coords.size(); j++)
             coords[j] = tensor_shape[j] != 1 ? coords[j] : 0;
-        new_tensor.buffer_[i] = this->buffer_[this->coordToAbs(coords)];
+        new_tensor[i] = this->data()[this->coordToAbs(coords)];
     }
-    return new_tensor;
+
+    this->shape_ = new_tensor.shape_;
+    this->data() = new_tensor.data();
+    return *this;
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::batch_broadcast(Tensor<T> &tensor) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::batch_broadcast(Tensor<T, B> &tensor)
 {
     return this->batch_broadcast(tensor.shape_);
 }
 
-template <typename T>
-Tensor<T> Tensor<T>::batch_broadcast(const std::vector<std::size_t> &shape) const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B> &Tensor<T, B>::batch_broadcast(const std::vector<std::size_t> &shape)
 {
     // broadcast only on non-matrix dimensions (ie batch, channels...)
     std::vector<std::size_t> new_shape = shape;

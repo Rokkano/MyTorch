@@ -5,12 +5,11 @@ std::vector<std::byte> Layer<T>::serialize()
 {
     return std::vector<std::byte>();
 }
-    
 
 template <typename T>
-std::size_t Layer<T>::deserialize(std::vector<std::byte> buffer)
+std::size_t Layer<T>::deserialize(std::vector<std::byte> &bytes)
 {
-    (void)buffer;
+    (void)bytes;
     return 0;
 }
 

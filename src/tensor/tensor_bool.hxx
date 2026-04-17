@@ -1,159 +1,204 @@
-#include "../utils.hh"
+#include "src/exception/exception.hh"
+#include "src/utils.hh"
 #include "tensor.hh"
 
 #include <format>
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator==(const Tensor<T> &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator==(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
                                                       this->tensorShapeToStr(this->shape_),
                                                       other.tensorShapeToStr(other.shape_)));
 
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] == other.buffer_[i]);
+        tensor[i] = (bool)(this[i] == other[i]);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator==(const T &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator==(const T &other)
 {
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] == other);
+        tensor[i] = (bool)(this[i] == other);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator<(const Tensor<T> &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator<(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
                                                       this->tensorShapeToStr(this->shape_),
                                                       other.tensorShapeToStr(other.shape_)));
 
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] < other.buffer_[i]);
+        tensor[i] = (bool)(this[i] < other[i]);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator<(const T &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator<(const T &other)
 {
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] < other);
+        tensor[i] = (bool)(this[i] < other);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator<=(const Tensor<T> &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator<=(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
                                                       this->tensorShapeToStr(this->shape_),
                                                       other.tensorShapeToStr(other.shape_)));
 
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] <= other.buffer_[i]);
+        tensor[i] = (bool)(this[i] <= other[i]);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator<=(const T &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator<=(const T &other)
 {
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] <= other);
+        tensor[i] = (bool)(this[i] <= other);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator>(const Tensor<T> &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator>(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
                                                       this->tensorShapeToStr(this->shape_),
                                                       other.tensorShapeToStr(other.shape_)));
 
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] > other.buffer_[i]);
+        tensor[i] = (bool)(this[i] > other[i]);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator>(const T &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator>(const T &other)
 {
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] > other);
+        tensor[i] = (bool)(this[i] > other);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator>=(const Tensor<T> &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator>=(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
                                                       this->tensorShapeToStr(this->shape_),
                                                       other.tensorShapeToStr(other.shape_)));
 
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] >= other.buffer_[i]);
+        tensor[i] = (bool)(this[i] >= other[i]);
     return tensor;
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::operator>=(const T &other)
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::operator>=(const T &other)
 {
-    Tensor<bool> tensor = Tensor<bool>(this->shape_);
+    Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = (bool)(this->buffer_[i] >= other);
+        tensor[i] = (bool)(this[i] >= other);
     return tensor;
 }
 
-template <typename T>
-Tensor<T>::operator bool() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<T, B>::operator bool() const
 {
-    throw TensorInvalidTypeException(
-        std::format("bool() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    if constexpr (std::is_same_v<T, bool>)
+    {
+        if (this->numel() != 1)
+            throw CastException("Boolean cast of a non single element Tensor<bool> is "
+                                "ambiguous. Use .all() or .any() "
+                                "depending on the behaviour you want.");
+        else
+            return this[0];
+    }
+    else
+    {
+        throw TensorInvalidTypeException(
+            std::format("bool() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    }
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::all() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::all() const
 {
-    throw TensorInvalidTypeException(
-        std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    if constexpr (std::is_same_v<T, bool>)
+    {
+        for (std::size_t i = 0; i < this->numel(); i++)
+            if (!this[i])
+                return Tensor<bool, B>({1}, {false});
+        return Tensor<bool, B>({1}, {true});
+    }
+    else
+    {
+        throw TensorInvalidTypeException(
+            std::format("all() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    }
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::any() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::any() const
 {
-    throw TensorInvalidTypeException(
-        std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    if constexpr (std::is_same_v<T, bool>)
+    {
+        for (std::size_t i = 0; i < this->numel(); i++)
+            if (this[i])
+                return Tensor<bool, B>({1}, {true});
+        return Tensor<bool, B>({1}, {false});
+    }
+    else
+    {
+        throw TensorInvalidTypeException(
+            std::format("any() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    }
 }
 
-template <typename T>
-Tensor<bool> Tensor<T>::none() const
+template <typename T, typename B>
+requires IsBackend<T, B>
+Tensor<bool, B> Tensor<T, B>::none() const
 {
-    throw TensorInvalidTypeException(
-        std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    if constexpr (std::is_same_v<T, bool>)
+    {
+        for (std::size_t i = 0; i < this->numel(); i++)
+            if (this[i])
+                return Tensor<bool, B>({1}, {false});
+        return Tensor<bool, B>({1}, {true});
+    }
+    else
+    {
+        throw TensorInvalidTypeException(
+            std::format("none() can only be used on Tensor<bool>. Got Tensor<{}>.", type_name<T>()));
+    }
 }
-
-template <>
-Tensor<bool>::operator bool() const;
-
-template <>
-Tensor<bool> Tensor<bool>::all() const;
-
-template <>
-Tensor<bool> Tensor<bool>::any() const;
-
-template <>
-Tensor<bool> Tensor<bool>::none() const;

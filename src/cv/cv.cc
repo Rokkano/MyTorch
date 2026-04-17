@@ -1,6 +1,6 @@
 #include "cv.hh"
 
-void show(CvPlot::Axes &axes, OpenCVWindowOpts opts)
+void show(CvPlot::Axes &axes, const OpenCVWindowOpts &opts = {})
 {
     axes.title(opts.title);
     axes.xLabel(opts.xlabel);
