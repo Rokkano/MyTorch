@@ -1,0 +1,5 @@
+string(ASCII 27 ESCAPE)
+set(BoldWhite   "${ESCAPE}[1;37m")
+set(BoldYellow  "${ESCAPE}[1;33m")
+set(BoldRed     "${ESCAPE}[1;31m")
+set(ColorReset "${ESCAPE}[0m")
