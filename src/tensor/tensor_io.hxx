@@ -1,3 +1,5 @@
+#pragma once
+
 #include "src/cv/cv.hh"
 #include "src/utils.hh"
 #include "tensor.hh"

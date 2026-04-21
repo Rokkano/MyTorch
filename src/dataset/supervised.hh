@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dataset.hh"
+#include "src/tensor/tensor_fwd.hh"
 
 template <typename T, typename U>
 struct SupervisedDatasetItem
@@ -18,6 +19,7 @@ class SupervisedDataset : public Dataset<SupervisedDatasetItem<T, U>>
 };
 
 template <typename B>
+requires IsBackend<float, B>
 class LinearDataset : public SupervisedDataset<Tensor<float, B>, float>
 {
 public:
@@ -25,6 +27,7 @@ public:
 };
 
 template <typename B>
+requires IsBackend<float, B>
 class NoisedLinearDataset : public LinearDataset<B>
 {
 public:

@@ -9,11 +9,11 @@
 
 // backend selection
 #if BACKEND_EIGEN
-#include "backend/eigen/eigen_backend.hh"
+#include "src/tensor/backend/eigen/eigen_backend.hh"
 template <typename T>
 using DefaultBackend = EigenBackend<T>;
-#elif BACKEND_CPP
-#include "backend/cpp/cpp_backend.hh"
+#elif BACKEND_CPP || CLANG_TIDY
+#include "src/tensor/backend/cpp/cpp_backend.hh"
 template <typename T>
 using DefaultBackend = CppBackend<T>;
 #else
@@ -188,7 +188,7 @@ private:
     static std::string tensorToStr(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data);
 
 public:
-    void plot(const std::string &linespec, OpenCVWindowOpts opts = {}) const requires std::is_arithmetic_v<T>;
+    void plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>;
 
     template <typename T2, typename B2>
     requires IsBackend<T2, B2>

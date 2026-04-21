@@ -1,3 +1,5 @@
+#pragma once
+
 #include "src/utils.hh"
 #include "tensor.hh"
 
@@ -33,7 +35,7 @@ std::vector<std::byte> Tensor<T, B>::serialize()
     std::string dtype = type_name<T>();
     write.template operator()<uint64_t>(static_cast<uint64_t>(dtype.size()));
 
-    write.template operator()<uint64_t>(static_cast<uint64_t>(this.size()));
+    write.template operator()<uint64_t>(static_cast<uint64_t>(B::size(this->data_)));
 
     for (std::size_t s : this->shape())
         write.template operator()<uint64_t>(static_cast<uint64_t>(s));
@@ -51,7 +53,7 @@ template <typename T, typename B>
 requires IsBackend<T, B>
 std::size_t Tensor<T, B>::deserialize(std::vector<std::byte> &bytes)
 {
-    if (this.size() != 0)
+    if (B::size(this->data_) != 0)
         throw Exception("Tensor<T, B>::deserialize can only be called on empty tensor.");
 
     std::size_t offset = 0;

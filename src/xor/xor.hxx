@@ -1,7 +1,9 @@
+#pragma once
+
 #include "xor.hh"
 
 template <typename B>
-XorDataset<B>::XorDataset(std::size_t num_samples = 1024)
+XorDataset<B>::XorDataset(std::size_t num_samples)
 {
     this->name_ = "Xor";
     this->data_ = std::vector<SupervisedDatasetItem<Tensor<int, B>, int>>();
@@ -20,7 +22,7 @@ XorDataset<B>::XorDataset(std::size_t num_samples = 1024)
 };
 
 template <typename B>
-OrDataset<B>::OrDataset(std::size_t num_samples = 1024)
+OrDataset<B>::OrDataset(std::size_t num_samples)
 {
     this->name_ = "Or";
     this->data_ = std::vector<SupervisedDatasetItem<Tensor<int, B>, int>>();

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tensor.hh"
 
 #include <format>
@@ -14,7 +16,7 @@ Tensor<U, B> Tensor<T, B>::to_type()
     {
         try
         {
-            tensor.buffer_[i] = static_cast<U>(this->buffer_[i]);
+            tensor[i] = static_cast<U>(this[i]);
         }
         catch (const std::exception &e)
         {
@@ -30,7 +32,7 @@ Tensor<T, B> Tensor<T, B>::from_function(std::function<T(std::size_t)> lambda, c
 {
     Tensor<T, B> tensor = Tensor<T, B>(shape);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lambda(i);
+        tensor[i] = lambda(i);
     return tensor;
 }
 
@@ -45,7 +47,7 @@ Tensor<T, B> Tensor<T, B>::from_vector(const std::vector<T> &buffer, const std::
 
     Tensor<T, B> tensor = Tensor<T, B>(shape);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = buffer[i];
+        tensor[i] = buffer[i];
     return tensor;
 }
 
@@ -65,6 +67,6 @@ Tensor<T, B> Tensor<T, B>::identity(std::size_t n) requires std::is_arithmetic_v
     tensor.fill(0);
 
     for (std::size_t i = 0; i < n; i++)
-        tensor.buffer_[i * n + i] = 1;
+        tensor[i * n + i] = 1;
     return tensor;
 }

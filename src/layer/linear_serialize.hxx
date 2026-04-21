@@ -1,7 +1,9 @@
+#pragma once
+
 #include "layer.hh"
 
-template <typename T>
-std::vector<std::byte> Linear<T>::serialize()
+template <typename T, typename B>
+std::vector<std::byte> Linear<T, B>::serialize()
 {
     std::vector<std::byte> buffer;
 
@@ -22,8 +24,8 @@ std::vector<std::byte> Linear<T>::serialize()
     return buffer;
 }
 
-template <typename T>
-std::size_t Linear<T>::deserialize(std::vector<std::byte> &bytes)
+template <typename T, typename B>
+std::size_t Linear<T, B>::deserialize(std::vector<std::byte> &bytes)
 {
     std::size_t offset = 0;
     auto read = [&]<typename U>(U &val)

@@ -1,16 +1,18 @@
+#pragma once
+
 #include "src/layer/layer.hh"
 
 #include <optional>
 
-template <typename T>
-class MultiLayerPerceptron : public Layer<T>
+template <typename T, typename B>
+class MultiLayerPerceptron : public Layer<T, B>
 {
 private:
-    std::vector<Linear<T>> layers_ = std::vector<Linear<T>>();
-    std::vector<ReLu<T>> activations_ = std::vector<ReLu<T>>();
+    std::vector<Linear<T, B>> layers_ = std::vector<Linear<T, B>>();
+    std::vector<ReLu<T, B>> activations_ = std::vector<ReLu<T, B>>();
 
 public:
-    std::optional<Tensor<T>> inp_;
+    std::optional<Tensor<T, B>> inp_;
     float learning_rate_ = 0;
 
 public:
@@ -19,8 +21,8 @@ public:
                          enum Initialization hidInitialization = Initialization::ZEROS,
                          enum Initialization lastInitialization = Initialization::ZEROS, float learning_rate = 0.001);
 
-    Tensor<T> forward(Tensor<T> &tensor);
-    Tensor<T> backward(Tensor<T> &gradient);
+    Tensor<T, B> forward(Tensor<T, B> &tensor);
+    Tensor<T, B> backward(Tensor<T, B> &gradient);
 
     void training(bool flag);
 
@@ -29,34 +31,34 @@ public:
     virtual std::size_t deserialize(std::vector<std::byte> &bytes);
 };
 
-template <typename T>
-MultiLayerPerceptron<T>::MultiLayerPerceptron()
+template <typename T, typename B>
+MultiLayerPerceptron<T, B>::MultiLayerPerceptron()
 {
 }
 
-template <typename T>
-MultiLayerPerceptron<T>::MultiLayerPerceptron(std::size_t in, std::size_t out, std::size_t hid, std::size_t hidNum,
-                                              enum Initialization hidInitialization,
-                                              enum Initialization lastInitialization, float learning_rate)
+template <typename T, typename B>
+MultiLayerPerceptron<T, B>::MultiLayerPerceptron(std::size_t in, std::size_t out, std::size_t hid, std::size_t hidNum,
+                                                 enum Initialization hidInitialization,
+                                                 enum Initialization lastInitialization, float learning_rate)
 {
-    this->layers_.insert(this->layers_.end(), Linear<T>(in, hid, hidInitialization, learning_rate));
-    this->activations_.insert(this->activations_.end(), ReLu<T>());
+    this->layers_.insert(this->layers_.end(), Linear<T, B>(in, hid, hidInitialization, learning_rate));
+    this->activations_.insert(this->activations_.end(), ReLu<T, B>());
 
     for (std::size_t index = 0; index < hidNum; index++)
     {
-        this->layers_.insert(this->layers_.end(), Linear<T>(hid, hid, hidInitialization, learning_rate));
-        this->activations_.insert(this->activations_.end(), ReLu<T>());
+        this->layers_.insert(this->layers_.end(), Linear<T, B>(hid, hid, hidInitialization, learning_rate));
+        this->activations_.insert(this->activations_.end(), ReLu<T, B>());
     }
 
-    this->layers_.insert(this->layers_.end(), Linear<T>(hid, out, lastInitialization, learning_rate));
+    this->layers_.insert(this->layers_.end(), Linear<T, B>(hid, out, lastInitialization, learning_rate));
 }
 
-template <typename T>
-Tensor<T> MultiLayerPerceptron<T>::forward(Tensor<T> &tensor)
+template <typename T, typename B>
+Tensor<T, B> MultiLayerPerceptron<T, B>::forward(Tensor<T, B> &tensor)
 {
     if (this->training_)
         this->inp_ = tensor;
-    Tensor<T> output = tensor;
+    Tensor<T, B> output = tensor;
     for (std::size_t index = 0; index < this->activations_.size(); index++)
     {
         output = this->layers_[index].forward(output);
@@ -65,10 +67,10 @@ Tensor<T> MultiLayerPerceptron<T>::forward(Tensor<T> &tensor)
     return this->layers_[this->layers_.size() - 1].forward(output);
 }
 
-template <typename T>
-Tensor<T> MultiLayerPerceptron<T>::backward(Tensor<T> &gradient)
+template <typename T, typename B>
+Tensor<T, B> MultiLayerPerceptron<T, B>::backward(Tensor<T, B> &gradient)
 {
-    Tensor<T> output = this->layers_[this->layers_.size() - 1].backward(gradient);
+    Tensor<T, B> output = this->layers_[this->layers_.size() - 1].backward(gradient);
     for (std::size_t index = 0; index < this->activations_.size(); index++)
     {
         output = this->activations_[this->activations_.size() - index - 1].backward(output);
@@ -77,8 +79,8 @@ Tensor<T> MultiLayerPerceptron<T>::backward(Tensor<T> &gradient)
     return output;
 }
 
-template <typename T>
-void MultiLayerPerceptron<T>::training(bool flag)
+template <typename T, typename B>
+void MultiLayerPerceptron<T, B>::training(bool flag)
 {
     for (std::size_t index = 0; index < this->layers_.size(); index++)
         this->layers_[index].training(flag);
@@ -92,8 +94,8 @@ void MultiLayerPerceptron<T>::training(bool flag)
 // BODY :
 //  buffer      : array<Linear<T>>
 
-template <typename T>
-std::vector<std::byte> MultiLayerPerceptron<T>::serialize()
+template <typename T, typename B>
+std::vector<std::byte> MultiLayerPerceptron<T, B>::serialize()
 {
     std::vector<std::byte> buffer;
 
@@ -116,8 +118,8 @@ std::vector<std::byte> MultiLayerPerceptron<T>::serialize()
     return buffer;
 }
 
-template <typename T>
-std::size_t MultiLayerPerceptron<T>::deserialize(std::vector<std::byte> &bytes)
+template <typename T, typename B>
+std::size_t MultiLayerPerceptron<T, B>::deserialize(std::vector<std::byte> &bytes)
 {
     std::size_t offset = 0;
     auto read = [&]<typename U>(U &val)
@@ -132,12 +134,12 @@ std::size_t MultiLayerPerceptron<T>::deserialize(std::vector<std::byte> &bytes)
 
     for (std::size_t index = 0; index < hidden_len; index++)
     {
-        this->layers_.insert(this->layers_.end(), Linear<T>());
+        this->layers_.insert(this->layers_.end(), Linear<T, B>());
         std::vector<std::byte> layer_bytes = std::vector<std::byte>(bytes.begin() + offset, bytes.end());
         offset += this->layers_[index].deserialize(layer_bytes);
 
         if (index != hidden_len - 1)
-            this->activations_.insert(this->activations_.end(), ReLu<T>());
+            this->activations_.insert(this->activations_.end(), ReLu<T, B>());
     }
 
     return offset;

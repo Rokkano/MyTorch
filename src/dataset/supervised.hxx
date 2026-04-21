@@ -1,3 +1,5 @@
+#pragma once
+
 #include "supervised.hh"
 
 #include <ostream>
@@ -9,6 +11,7 @@ std::ostream &operator<<(std::ostream &os, const SupervisedDatasetItem<T, U> &I)
 }
 
 template <typename B>
+requires IsBackend<float, B>
 LinearDataset<B>::LinearDataset(std::size_t num_samples, float a, float b, float min, float max)
 {
     this->name_ = "Linear";
@@ -27,6 +30,7 @@ LinearDataset<B>::LinearDataset(std::size_t num_samples, float a, float b, float
 }
 
 template <typename B>
+requires IsBackend<float, B>
 NoisedLinearDataset<B>::NoisedLinearDataset(std::size_t num_samples, float a, float b, float noise, float min,
                                             float max)
 {

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "src/tensor/backend/backend.hh"
+#include "src/tensor/tensor_fwd.hh"
+
+#include <optional>
 
 template <typename T>
 struct CppBackend

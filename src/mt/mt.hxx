@@ -1,3 +1,5 @@
+#pragma once
+
 #include "mt.hh"
 
 #include <cstddef>

@@ -1,20 +1,16 @@
 #pragma once
 
-#include "src/mt/imt.hh"
 #include "src/tensor/tensor_fwd.hh"
 
-template <typename T>
-class Layer : public IMTSerialize
+template <typename T, typename B>
+class Layer
 {
 protected:
     bool training_ = false;
 
 public:
-    std::vector<std::byte> serialize() override;
-    std::size_t deserialize(std::vector<std::byte> &bytes) override;
-
-    Tensor<T> forward(Tensor<T> &...);
-    Tensor<T> backward(Tensor<T> &...);
+    virtual Tensor<T, B> forward(Tensor<T, B> &...);
+    virtual Tensor<T, B> backward(Tensor<T, B> &...);
 
     void training(bool);
 };

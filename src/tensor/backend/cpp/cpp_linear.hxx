@@ -1,3 +1,5 @@
+#pragma once
+
 #include "cpp_backend.hh"
 
 #include <cmath>

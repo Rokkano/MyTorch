@@ -1,3 +1,5 @@
+#pragma once
+
 #include "dataset.hh"
 
 #include <algorithm>

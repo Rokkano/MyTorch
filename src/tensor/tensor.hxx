@@ -1,3 +1,5 @@
+#pragma once
+
 #include "src/exception/exception.hh"
 #include "tensor.hh"
 

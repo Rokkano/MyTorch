@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tensor.hh"
 
 #include <format>

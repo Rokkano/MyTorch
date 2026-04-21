@@ -1,3 +1,5 @@
+#pragma once
+
 #include "src/tensor/tensor.hh"
 #include "src/utils/random.hh"
 #include "weights.hh"
@@ -6,7 +8,8 @@
 #include <random>
 #include <string>
 
-void initialize_weights(Tensor<int> &tensor, enum Initialization initialization)
+template <typename B>
+void initialize_weights(Tensor<int, B> &tensor, enum Initialization initialization)
 {
     switch (initialization)
     {
@@ -25,7 +28,8 @@ void initialize_weights(Tensor<int> &tensor, enum Initialization initialization)
     }
 }
 
-void initialize_weights(Tensor<float> &tensor, enum Initialization initialization)
+template <typename B>
+void initialize_weights(Tensor<float, B> &tensor, enum Initialization initialization)
 {
     switch (initialization)
     {

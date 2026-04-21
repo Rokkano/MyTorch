@@ -2,6 +2,9 @@
 
 #include "src/tensor/tensor_fwd.hh"
 
+#include <format>
+#include <string_view>
+
 enum Initialization
 {
     ZEROS,
@@ -49,7 +52,10 @@ struct std::formatter<Initialization> : std::formatter<std::string_view>
     }
 };
 
-void initialize_weights(Tensor<int> &tensor, enum Initialization initialization = ZEROS);
-void initialize_weights(Tensor<float> &tensor, enum Initialization initialization = ZEROS);
+template <typename B>
+void initialize_weights(Tensor<int, B> &tensor, enum Initialization initialization = ZEROS);
+
+template <typename B>
+void initialize_weights(Tensor<float, B> &tensor, enum Initialization initialization = ZEROS);
 
 #include "weights.hxx"

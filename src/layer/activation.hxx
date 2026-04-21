@@ -4,86 +4,86 @@
 
 #include <optional>
 
-template <typename T>
-class Sigmoid : public Layer<T>
+template <typename T, typename B>
+class Sigmoid : public Layer<T, B>
 {
-    std::optional<Tensor<T>> inp_;
+    std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T> forward(Tensor<T> tensor)
+    Tensor<T, B> forward(Tensor<T, B> tensor)
     {
         if (this->training_)
             this->inp_ = tensor;
-        return Tensor<T>::sigmoid(tensor);
+        return Tensor<T, B>::sigmoid(tensor);
     }
 
-    Tensor<T> backward(Tensor<T> gradient)
+    Tensor<T, B> backward(Tensor<T, B> gradient)
     {
         if (!this->inp_.has_value())
             throw;
-        return gradient * Tensor<T>::dsigmoid(this->inp_.value());
+        return gradient * Tensor<T, B>::dsigmoid(this->inp_.value());
     }
 };
 
-template <typename T>
-class Tanh : public Layer<T>
+template <typename T, typename B>
+class Tanh : public Layer<T, B>
 {
-    std::optional<Tensor<T>> inp_;
+    std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T> forward(Tensor<T> tensor)
+    Tensor<T, B> forward(Tensor<T, B> tensor)
     {
         if (this->training_)
             this->inp_ = tensor;
-        return Tensor<T>::tanh(tensor);
+        return Tensor<T, B>::tanh(tensor);
     }
 
-    Tensor<T> backward(Tensor<T> gradient)
+    Tensor<T, B> backward(Tensor<T, B> gradient)
     {
         if (!this->inp_.has_value())
             throw;
-        return gradient * Tensor<T>::dtanh(this->inp_.value());
+        return gradient * Tensor<T, B>::dtanh(this->inp_.value());
     }
 };
 
-template <typename T>
-class ReLu : public Layer<T>
+template <typename T, typename B>
+class ReLu : public Layer<T, B>
 {
-    std::optional<Tensor<T>> inp_;
+    std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T> forward(Tensor<T> tensor)
+    Tensor<T, B> forward(Tensor<T, B> tensor)
     {
         if (this->training_)
             this->inp_ = tensor;
-        return Tensor<T>::relu(tensor);
+        return Tensor<T, B>::relu(tensor);
     }
 
-    Tensor<T> backward(Tensor<T> gradient)
+    Tensor<T, B> backward(Tensor<T, B> gradient)
     {
         if (!this->inp_.has_value())
             throw;
-        return gradient * Tensor<T>::drelu(this->inp_.value());
+        return gradient * Tensor<T, B>::drelu(this->inp_.value());
     }
 };
 
-template <typename T>
-class Softmax : public Layer<T>
+template <typename T, typename B>
+class Softmax : public Layer<T, B>
 {
-    std::optional<Tensor<T>> inp_;
+    std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T> forward(Tensor<T> tensor)
+    Tensor<T, B> forward(Tensor<T, B> tensor)
     {
         if (this->training_)
             this->inp_ = tensor;
-        return Tensor<T>::softmax(tensor);
+        return Tensor<T, B>::softmax(tensor);
     }
 
-    Tensor<T> backward(Tensor<T> gradient)
+    Tensor<T, B> backward(Tensor<T, B> gradient)
     {
         if (!this->inp_.has_value())
             throw;
-        return Tensor<T>::softmax(this->inp_.value()) - gradient;
+        return Tensor<T, B>::softmax(this->inp_.value()) - gradient;
     }
 };

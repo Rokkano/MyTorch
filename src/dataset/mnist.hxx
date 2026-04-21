@@ -1,3 +1,5 @@
+#pragma once
+
 #include "mnist.hh"
 #include "src/cv/cv.hh"
 
@@ -5,6 +7,7 @@
 #include <mnist/mnist_utils.hpp>
 
 template <typename B>
+requires IsBackend<float, B>
 MNISTDataset<B>::MNISTDataset(std::string mnistDirectoryPath)
 {
     this->name_ = "MNIST";
@@ -19,7 +22,7 @@ MNISTDataset<B>::MNISTDataset(std::string mnistDirectoryPath)
         unsigned char label = dataset.training_labels[i];
 
         this->data_.push_back(MNISTSample<B>{
-            Tensor<float>(shape, buffer) / 255.f,
+            Tensor<float, B>(shape, buffer) / 255.f,
             label,
         });
     }
@@ -31,13 +34,14 @@ MNISTDataset<B>::MNISTDataset(std::string mnistDirectoryPath)
         unsigned char label = dataset.test_labels[i];
 
         this->data_validation_.push_back(MNISTSample{
-            Tensor<float>(shape, buffer) / 255.f,
+            Tensor<float, B>(shape, buffer) / 255.f,
             label,
         });
     }
 }
 
 template <typename B>
+requires IsBackend<float, B>
 MNISTDataset<B>::MNISTDataset(std::vector<MNISTSample<B>> data)
 {
     this->name_ = "MNIST";
@@ -45,6 +49,7 @@ MNISTDataset<B>::MNISTDataset(std::vector<MNISTSample<B>> data)
 }
 
 template <typename B>
+requires IsBackend<float, B>
 MNISTDataset<B> MNISTDataset<B>::validation()
 {
     if (this->data_validation_.size() == 0)
@@ -53,6 +58,7 @@ MNISTDataset<B> MNISTDataset<B>::validation()
 }
 
 template <typename B>
+requires IsBackend<float, B>
 void MNISTDataset<B>::normalize()
 {
     this->transform(
@@ -65,6 +71,7 @@ void MNISTDataset<B>::normalize()
 }
 
 template <typename B>
+requires IsBackend<float, B>
 void MNISTSample<B>::show(OpenCVWindowOpts opts, bool normalized)
 {
     cv::Mat image = cv::Mat(28, 28, CV_8UC1);
