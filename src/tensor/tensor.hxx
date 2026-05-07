@@ -79,10 +79,18 @@ std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
 
 template <typename T, typename B>
 requires IsBackend<T, B>
+Tensor<T, B>::Tensor() : shape_(0)
+{
+    this->data() = B::allocate(0);
+}
+
+
+template <typename T, typename B>
+requires IsBackend<T, B>
 Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
     std::size_t num_e = this->numel();
-    this->data() = std::vector<T>(num_e);
+    this->data() = B::allocate(num_e);
 }
 
 template <typename T, typename B>

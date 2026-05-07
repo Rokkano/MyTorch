@@ -14,11 +14,6 @@ struct CppBackend
 
     static std::size_t size(TStorage &s) { return s.size(); }
 
-    static T *data_ptr(TStorage &s) { return s.data(); }
-
-    static T &get(TStorage &s, std::size_t i) { return s[i]; }
-    static const T &get(const TStorage &s, std::size_t i) { return s[i]; }
-
     static std::vector<T>::iterator begin(TStorage &s) { return s.begin(); }
     static std::vector<T>::iterator const_begin(TStorage &s) { return s.const_begin(); }
     static std::vector<T>::iterator end(TStorage &s) { return s.end(); }

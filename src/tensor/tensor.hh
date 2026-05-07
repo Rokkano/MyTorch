@@ -8,17 +8,22 @@
 #include <vector>
 
 // backend selection
-#if BACKEND_EIGEN
-#include "src/tensor/backend/eigen/eigen_backend.hh"
-template <typename T>
-using DefaultBackend = EigenBackend<T>;
-#elif BACKEND_CPP || CLANG_TIDY
+// #if BACKEND_EIGEN
+// #include "src/tensor/backend/eigen/eigen_backend.hh"
+// template <typename T>
+// using DefaultBackend = EigenBackend<T>;
+// #elif BACKEND_CPP || CLANG_TIDY
+// #include "src/tensor/backend/cpp/cpp_backend.hh"
+// template <typename T>
+// using DefaultBackend = CppBackend<T>;
+// #else
+// #error "No backend available, this error should not happen.")
+// #endif
+
+
 #include "src/tensor/backend/cpp/cpp_backend.hh"
 template <typename T>
 using DefaultBackend = CppBackend<T>;
-#else
-#error "No backend available, this error should not happen.")
-#endif
 
 struct OpenCVWindowOpts;
 
@@ -33,7 +38,7 @@ protected:
     TStorage data_ = TStorage();
 
 public:
-    Tensor() {};
+    Tensor();
     Tensor(const std::vector<std::size_t> &shape);
     Tensor(const std::vector<std::size_t> &shape, const TStorage &data);
     ~Tensor();
@@ -181,13 +186,9 @@ public:
     static Tensor<T, B> softmax(const Tensor<T, B> &tensor) requires std::is_arithmetic_v<T>;
 
     // ###### TENSOR IO ######
-private:
-    static std::string tensorDataToStr(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data,
-                                       std::size_t data_index = 0);
-    static std::string tensorShapeToStr(const std::vector<std::size_t> &shape);
-    static std::string tensorToStr(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data);
 
 public:
+    std::string toStr() const;
     void plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>;
 
     template <typename T2, typename B2>

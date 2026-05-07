@@ -5,64 +5,59 @@
 #include "tensor.hh"
 
 #include <format>
+#include <functional>
 #include <iostream>
 #include <tuple>
 #include <type_traits>
 
 template <typename T, typename B>
 requires IsBackend<T, B>
-std::string Tensor<T, B>::tensorDataToStr(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data,
-                                          std::size_t data_index)
+std::string Tensor<T, B>::toStr() const
 {
-    std::stringstream ss;
-    std::size_t step = std::reduce(shape.begin() + 1, shape.end(), 1, std::multiplies<int>());
+    // Shape
+    std::stringstream ssShape;
+    ssShape << "(";
+    for (std::size_t i = 0; i < this->shape_.size(); i++)
+        ssShape << this->shape_[i] << (i != this->shape_.size() - 1 ? "," : "");
+    ssShape << ")";
 
-    if (shape.empty())
-    {
-        if constexpr (std::is_same_v<T, bool>)
-            ss << (data[data_index] ? "true" : "false");
+    // Buffer
+    std::stringstream ssBuffer;
+    ssBuffer << "(";
+    using RecLambda = std::function<void(std::vector<std::size_t>, std::size_t)>;
+    RecLambda rec = [&](std::vector<std::size_t> shape, std::size_t index) 
+    { 
+        if (!shape.empty())
+        {
+            std::size_t step = std::reduce(shape.begin() + 1, shape.end(), 1, std::multiplies<int>());
+            std::vector<std::size_t> new_shape = std::vector<std::size_t>(shape.begin() + 1, shape.end());
+            ssBuffer << "[";
+            for (std::size_t i = 0; i < shape[0]; i++)
+            {
+                rec(new_shape, index + i * step);
+                ssBuffer << (i != shape[0] - 1 ? "," : "");
+            }
+            ssBuffer << "]";
+        }
         else
-            ss << data[data_index];
-        return ss.str();
-    }
+        { 
+            if constexpr (std::is_same_v<T, bool>) 
+                ssBuffer << (this->data_[index] ? "true" : "false");
+            else
+                ssBuffer << this->data_[index];
+        }
+    };
+    rec(this->shape_, 0);
+    ssBuffer << ")";
 
-    ss << "[";
-    for (std::size_t i = 0; i < shape[0]; i++)
-    {
-        std::vector<std::size_t> new_shape = std::vector<std::size_t>(shape.begin() + 1, shape.end());
-        std::size_t new_data_index = data_index + i * step;
-        ss << tensorDataToStr(new_shape, data, new_data_index) + (i != shape[0] - 1 ? "," : "");
-    }
-    ss << "]";
-    return ss.str();
-}
-
-template <typename T, typename B>
-requires IsBackend<T, B>
-std::string Tensor<T, B>::tensorShapeToStr(const std::vector<std::size_t> &shape)
-{
-    std::stringstream ss;
-    ss << "(";
-    for (std::size_t i = 0; i < shape.size(); i++)
-        ss << shape[i] << (i != shape.size() - 1 ? "," : "");
-    ss << ")";
-    return ss.str();
-}
-
-template <typename T, typename B>
-requires IsBackend<T, B>
-std::string Tensor<T, B>::tensorToStr(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data)
-{
-    std::string data_str = Tensor<T, B>::tensorDataToStr(shape, data);
-    std::string shape_str = Tensor<T, B>::tensorShapeToStr(shape);
-    return "tensor(shape=" + shape_str + "; data=(" + data_str + "); dtype=" + type_name<T>() + ")";
+    return "tensor(shape=" + ssShape.str() + "; data=" + ssBuffer.str() + "; dtype=(" + type_name<T>() + "))";
 }
 
 template <typename T, typename B>
 requires IsBackend<T, B>
 std::ostream &operator<<(std::ostream &os, const Tensor<T, B> &t)
 {
-    return os << Tensor<T, B>::tensorToStr(t.shape_, t.data_);
+    return os << t.toStr();
 }
 
 template <typename T, typename B>

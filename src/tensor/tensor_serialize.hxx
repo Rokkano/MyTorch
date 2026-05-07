@@ -43,8 +43,11 @@ std::vector<std::byte> Tensor<T, B>::serialize()
     for (char c : dtype)
         write.template operator()<char>(c);
 
-    for (std::size_t i = 0; i < this->numel(); i++)
-        write.template operator()<T>(this[i]);
+    // for (std::size_t i = 0; i < this->numel(); i++)
+    // {
+    //     auto t = this[i];
+    //     write.template operator()<T>(t);
+    // }
 
     return buffer;
 }
@@ -107,7 +110,7 @@ std::size_t Tensor<T, B>::deserialize(std::vector<std::byte> &bytes)
         buffer.insert(buffer.end(), buffer_tmp);
     }
 
-    this = buffer;
+    this->data_ = buffer;
     this->shape_ = shape;
     return offset;
 }
