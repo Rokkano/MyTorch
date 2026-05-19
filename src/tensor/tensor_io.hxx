@@ -42,9 +42,9 @@ std::string Tensor<T, B>::toStr() const
         else
         { 
             if constexpr (std::is_same_v<T, bool>) 
-                ssBuffer << (this->data_[index] ? "true" : "false");
+                ssBuffer << ((*this)[index] ? "true" : "false");
             else
-                ssBuffer << this->data_[index];
+                ssBuffer << (*this)[index];
         }
     };
     rec(this->shape_, 0);

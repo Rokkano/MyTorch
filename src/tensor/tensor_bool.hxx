@@ -17,7 +17,7 @@ Tensor<bool, B> Tensor<T, B>::operator==(const Tensor<T, B> &other)
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] == other[i]);
+        tensor[i] = (bool)((*this)[i] == other[i]);
     return tensor;
 }
 
@@ -27,7 +27,7 @@ Tensor<bool, B> Tensor<T, B>::operator==(const T &other)
 {
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] == other);
+        tensor[i] = (bool)((*this)[i] == other);
     return tensor;
 }
 
@@ -42,7 +42,7 @@ Tensor<bool, B> Tensor<T, B>::operator<(const Tensor<T, B> &other)
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] < other[i]);
+        tensor[i] = (bool)((*this)[i] < other[i]);
     return tensor;
 }
 
@@ -52,7 +52,7 @@ Tensor<bool, B> Tensor<T, B>::operator<(const T &other)
 {
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] < other);
+        tensor[i] = (bool)((*this)[i] < other);
     return tensor;
 }
 
@@ -67,7 +67,7 @@ Tensor<bool, B> Tensor<T, B>::operator<=(const Tensor<T, B> &other)
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] <= other[i]);
+        tensor[i] = (bool)((*this)[i] <= other[i]);
     return tensor;
 }
 
@@ -77,7 +77,7 @@ Tensor<bool, B> Tensor<T, B>::operator<=(const T &other)
 {
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] <= other);
+        tensor[i] = (bool)((*this)[i] <= other);
     return tensor;
 }
 
@@ -92,7 +92,7 @@ Tensor<bool, B> Tensor<T, B>::operator>(const Tensor<T, B> &other)
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] > other[i]);
+        tensor[i] = (bool)((*this)[i] > other[i]);
     return tensor;
 }
 
@@ -102,7 +102,7 @@ Tensor<bool, B> Tensor<T, B>::operator>(const T &other)
 {
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] > other);
+        tensor[i] = (bool)((*this)[i] > other);
     return tensor;
 }
 
@@ -117,7 +117,7 @@ Tensor<bool, B> Tensor<T, B>::operator>=(const Tensor<T, B> &other)
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] >= other[i]);
+        tensor[i] = (bool)((*this)[i] >= other[i]);
     return tensor;
 }
 
@@ -127,7 +127,7 @@ Tensor<bool, B> Tensor<T, B>::operator>=(const T &other)
 {
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor[i] = (bool)(this[i] >= other);
+        tensor[i] = (bool)((*this)[i] >= other);
     return tensor;
 }
 
@@ -142,7 +142,7 @@ Tensor<T, B>::operator bool() const
                                 "ambiguous. Use .all() or .any() "
                                 "depending on the behaviour you want.");
         else
-            return this[0];
+            return (*this)[0];
     }
     else
     {
@@ -158,7 +158,7 @@ Tensor<bool, B> Tensor<T, B>::all() const
     if constexpr (std::is_same_v<T, bool>)
     {
         for (std::size_t i = 0; i < this->numel(); i++)
-            if (!this[i])
+            if (!(*this)[i])
                 return Tensor<bool, B>({1}, {false});
         return Tensor<bool, B>({1}, {true});
     }
@@ -176,7 +176,7 @@ Tensor<bool, B> Tensor<T, B>::any() const
     if constexpr (std::is_same_v<T, bool>)
     {
         for (std::size_t i = 0; i < this->numel(); i++)
-            if (this[i])
+            if ((*this)[i])
                 return Tensor<bool, B>({1}, {true});
         return Tensor<bool, B>({1}, {false});
     }
@@ -194,7 +194,7 @@ Tensor<bool, B> Tensor<T, B>::none() const
     if constexpr (std::is_same_v<T, bool>)
     {
         for (std::size_t i = 0; i < this->numel(); i++)
-            if (this[i])
+            if ((*this)[i])
                 return Tensor<bool, B>({1}, {false});
         return Tensor<bool, B>({1}, {true});
     }

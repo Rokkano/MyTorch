@@ -39,12 +39,12 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPT_FLAGS} -g3 -g -rdynami
 add_executable(main-cpp)
 target_sources(main-cpp PRIVATE "${PROJECT_SOURCE_DIR}/src/main.cc" ${SRC})
 target_link_libraries(main-cpp PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
-target_compile_definitions(main-cpp PRIVATE BACKEND_CPP)
+target_compile_definitions(main-cpp PRIVATE BACKEND_CPP=1 BACKEND_EIGEN=0)
 
 add_executable(main-eigen)
 target_sources(main-eigen PRIVATE "${PROJECT_SOURCE_DIR}/src/main.cc" ${SRC})
 target_link_libraries(main-eigen PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
-target_compile_definitions(main-eigen PRIVATE BACKEND_EIGEN)
+target_compile_definitions(main-eigen PRIVATE BACKEND_EIGEN=1 BACKEND_CPP=0)
 
 # TARGET : benchmark
 add_executable(benchmark)

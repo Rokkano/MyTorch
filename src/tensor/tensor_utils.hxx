@@ -16,7 +16,7 @@ Tensor<U, B> Tensor<T, B>::to_type()
     {
         try
         {
-            tensor[i] = static_cast<U>(this[i]);
+            tensor[i] = static_cast<U>((*this)[i]);
         }
         catch (const std::exception &e)
         {

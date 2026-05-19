@@ -3,6 +3,10 @@
 // #include "layer/layer.hh"
 // #include "layer/block/block.hh"
 #include "tensor/tensor.hh"
+#include "tensor/tensor_io.hxx"
+#include "tensor/backend/backend.hh"
+#include "tensor/tensor_utils.hxx"
+#include "tensor/tensor_serialize.hxx"
 // #include "xor/xor.hh"
 // #include "mt/mt.hh"
 
@@ -16,14 +20,24 @@
 
 int main()
 {
-    // Eigen::MatrixXd mat = Eigen::MatrixXd(3, 2);
-    // mat << 1, 2, 3, 4 , 5, 6;
-    // std::cout << "Here is mat*mat:\n" << mat * mat.transpose() << std::endl;
-    // constexpr bool backend_cpp = BACKEND_CPP;
-    // constexpr bool backend_eigen = BACKEND_EIGEN;
-    // std::cout << backend_cpp << std::endl;
-    // std::cout << backend_eigen << std::endl;
+    auto fct = [](std::size_t index) {
+        return index;
+    };
+    Tensor<float, CppBackend<float>> tensor = Tensor<float, CppBackend<float>>::from_function(fct, {3, 5, 7});
+    std::cout << tensor << std::endl;
+    return 0;
 }
+
+// int main()
+// {
+//     Eigen::MatrixXd mat = Eigen::MatrixXd(3, 2);
+//     mat << 1, 2, 3, 4 , 5, 6;
+//     std::cout << "Here is mat*mat:\n" << mat * mat.transpose() << std::endl;
+//     constexpr bool backend_cpp = BACKEND_CPP;
+//     constexpr bool backend_eigen = BACKEND_EIGEN;
+//     std::cout << backend_cpp << std::endl;
+//     std::cout << backend_eigen << std::endl;
+// }
 
 // int main()
 // {

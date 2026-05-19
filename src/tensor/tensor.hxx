@@ -147,6 +147,7 @@ T &Tensor<T, B>::operator[](std::size_t pos)
     return this->data_[pos];
 }
 
+
 template <typename T, typename B>
 requires IsBackend<T, B>
 const T &Tensor<T, B>::operator[](std::size_t pos) const

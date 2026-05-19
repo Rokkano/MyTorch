@@ -7,29 +7,12 @@
 #include <optional>
 #include <vector>
 
-// backend selection
-// #if BACKEND_EIGEN
-// #include "src/tensor/backend/eigen/eigen_backend.hh"
-// template <typename T>
-// using DefaultBackend = EigenBackend<T>;
-// #elif BACKEND_CPP || CLANG_TIDY
-// #include "src/tensor/backend/cpp/cpp_backend.hh"
-// template <typename T>
-// using DefaultBackend = CppBackend<T>;
-// #else
-// #error "No backend available, this error should not happen.")
-// #endif
-
-
-#include "src/tensor/backend/cpp/cpp_backend.hh"
-template <typename T>
-using DefaultBackend = CppBackend<T>;
 
 struct OpenCVWindowOpts;
 
-template <typename T, typename B = DefaultBackend<T>>
+template <typename T, typename B>
 requires IsBackend<T, B>
-class Tensor : public IMTSerialize<Tensor<T, B>>
+class Tensor : public IMTSerialize
 {
     using TStorage = typename B::TStorage;
 
@@ -74,46 +57,32 @@ private:
     // ###### TENSOR OP ######
 public:
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs, const T2 &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator+(const T2 &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs, const T2 &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator-(const T2 &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator*(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator*(const Tensor<T2, B2> &lhs, const T2 &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator*(const T2 &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator/(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator/(const Tensor<T2, B2> &lhs, const T2 &rhs);
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend Tensor<T2, B2> operator/(const T2 &lhs, const Tensor<T2, B2> &rhs);
 
 private:
@@ -122,20 +91,20 @@ private:
     // ###### TENSOR COMPARISON/BOOL ######
 public:
     explicit operator bool() const;
-    Tensor<bool, B> all() const;
-    Tensor<bool, B> any() const;
-    Tensor<bool, B> none() const;
+    // Tensor<bool, B> all() const;
+    // Tensor<bool, B> any() const;
+    // Tensor<bool, B> none() const;
 
-    Tensor<bool, B> operator==(const Tensor<T, B> &other);
-    Tensor<bool, B> operator==(const T &other);
-    Tensor<bool, B> operator<(const Tensor<T, B> &other);
-    Tensor<bool, B> operator<(const T &other);
-    Tensor<bool, B> operator<=(const Tensor<T, B> &other);
-    Tensor<bool, B> operator<=(const T &other);
-    Tensor<bool, B> operator>(const Tensor<T, B> &other);
-    Tensor<bool, B> operator>(const T &other);
-    Tensor<bool, B> operator>=(const Tensor<T, B> &other);
-    Tensor<bool, B> operator>=(const T &other);
+    // Tensor<bool, B> operator==(const Tensor<T, B> &other);
+    // Tensor<bool, B> operator==(const T &other);
+    // Tensor<bool, B> operator<(const Tensor<T, B> &other);
+    // Tensor<bool, B> operator<(const T &other);
+    // Tensor<bool, B> operator<=(const Tensor<T, B> &other);
+    // Tensor<bool, B> operator<=(const T &other);
+    // Tensor<bool, B> operator>(const Tensor<T, B> &other);
+    // Tensor<bool, B> operator>(const T &other);
+    // Tensor<bool, B> operator>=(const Tensor<T, B> &other);
+    // Tensor<bool, B> operator>=(const T &other);
 
     // ###### TENSOR MATH ######
     Tensor<T, B> min() const requires std::is_arithmetic_v<T>;
@@ -192,7 +161,6 @@ public:
     void plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>;
 
     template <typename T2, typename B2>
-    requires IsBackend<T2, B2>
     friend std::ostream &operator<<(std::ostream &, const Tensor<T2, B2> &);
 
     // ###### TENSOR MT SERIALIZE ######
@@ -229,9 +197,3 @@ template <typename T>
 concept Tuple = is_tuple<T>::value;
 
 #include "tensor.hxx"
-#include "tensor_bool.hxx"
-#include "tensor_io.hxx"
-#include "tensor_math.hxx"
-#include "tensor_op.hxx"
-#include "tensor_serialize.hxx"
-#include "tensor_utils.hxx"
