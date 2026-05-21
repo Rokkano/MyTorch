@@ -5,6 +5,6 @@
 
 #include <concepts>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 class Tensor;

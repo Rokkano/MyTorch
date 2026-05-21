@@ -5,7 +5,7 @@
 #include <cmath>
 #include <format>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::min() const requires std::is_arithmetic_v<T>
 {
@@ -16,7 +16,7 @@ Tensor<T, B> Tensor<T, B>::min() const requires std::is_arithmetic_v<T>
     return Tensor<T, B>({1}, {min});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::min(const T &val) const requires std::is_arithmetic_v<T>
 {
@@ -26,7 +26,7 @@ Tensor<T, B> Tensor<T, B>::min(const T &val) const requires std::is_arithmetic_v
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::amin(const std::size_t dim) const requires std::is_arithmetic_v<T>
 {
@@ -48,7 +48,7 @@ Tensor<T, B> Tensor<T, B>::amin(const std::size_t dim) const requires std::is_ar
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::min(const Tensor<T, B> &other) const requires std::is_arithmetic_v<T>
 {
@@ -63,7 +63,7 @@ Tensor<T, B> Tensor<T, B>::min(const Tensor<T, B> &other) const requires std::is
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::max() const requires std::is_arithmetic_v<T>
 {
@@ -74,7 +74,7 @@ Tensor<T, B> Tensor<T, B>::max() const requires std::is_arithmetic_v<T>
     return Tensor<T, B>({1}, {max});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::max(const T &val) const requires std::is_arithmetic_v<T>
 {
@@ -84,7 +84,7 @@ Tensor<T, B> Tensor<T, B>::max(const T &val) const requires std::is_arithmetic_v
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::max(const Tensor<T, B> &other) const requires std::is_arithmetic_v<T>
 {
@@ -99,7 +99,7 @@ Tensor<T, B> Tensor<T, B>::max(const Tensor<T, B> &other) const requires std::is
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::amax(const std::size_t dim) const requires std::is_arithmetic_v<T>
 {
@@ -121,7 +121,7 @@ Tensor<T, B> Tensor<T, B>::amax(const std::size_t dim) const requires std::is_ar
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::mean(int bessel_correction) const requires std::is_arithmetic_v<T>
 {
@@ -132,7 +132,7 @@ Tensor<T, B> Tensor<T, B>::mean(int bessel_correction) const requires std::is_ar
     return Tensor<T, B>({1}, {val});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::amean(const std::size_t dim, int bessel_correction) const requires std::is_arithmetic_v<T>
 {
@@ -154,7 +154,7 @@ Tensor<T, B> Tensor<T, B>::amean(const std::size_t dim, int bessel_correction) c
     return tensor;
 };
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::var(int bessel_correction) const requires std::is_arithmetic_v<T>
 {
@@ -167,14 +167,14 @@ Tensor<T, B> Tensor<T, B>::var(int bessel_correction) const requires std::is_ari
     return Tensor<T, B>({1}, {val});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::std(int bessel_correction) const requires std::is_arithmetic_v<T>
 {
     return Tensor<T, B>::sqrt(this->var());
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<std::size_t, B> Tensor<T, B>::argmin() const requires std::is_arithmetic_v<T>
 {
@@ -189,7 +189,7 @@ Tensor<std::size_t, B> Tensor<T, B>::argmin() const requires std::is_arithmetic_
     return Tensor<std::size_t, B>({1}, {min_index});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<std::size_t, B> Tensor<T, B>::argmin(const std::size_t dim) const requires std::is_arithmetic_v<T>
 {
@@ -212,7 +212,7 @@ Tensor<std::size_t, B> Tensor<T, B>::argmin(const std::size_t dim) const require
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<std::size_t, B> Tensor<T, B>::argmax() const requires std::is_arithmetic_v<T>
 {
@@ -227,7 +227,7 @@ Tensor<std::size_t, B> Tensor<T, B>::argmax() const requires std::is_arithmetic_
     return Tensor<std::size_t, B>({1}, {max_index});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<std::size_t, B> Tensor<T, B>::argmax(const std::size_t dim) const requires std::is_arithmetic_v<T>
 {
@@ -249,7 +249,7 @@ Tensor<std::size_t, B> Tensor<T, B>::argmax(const std::size_t dim) const require
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::sum() const requires std::is_arithmetic_v<T>
 {
@@ -259,7 +259,7 @@ Tensor<T, B> Tensor<T, B>::sum() const requires std::is_arithmetic_v<T>
     return Tensor<T, B>({1}, {sum});
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::heaviside() const requires std::is_arithmetic_v<T>
 {
@@ -271,7 +271,7 @@ Tensor<T, B> Tensor<T, B>::heaviside() const requires std::is_arithmetic_v<T>
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::round() const requires std::is_arithmetic_v<T>
 {
@@ -281,7 +281,7 @@ Tensor<T, B> Tensor<T, B>::round() const requires std::is_arithmetic_v<T>
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::floor() const requires std::is_arithmetic_v<T>
 {
@@ -291,7 +291,7 @@ Tensor<T, B> Tensor<T, B>::floor() const requires std::is_arithmetic_v<T>
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::ceil() const requires std::is_arithmetic_v<T>
 {

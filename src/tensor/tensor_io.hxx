@@ -10,7 +10,7 @@
 #include <tuple>
 #include <type_traits>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::string Tensor<T, B>::toStr() const
 {
@@ -53,14 +53,14 @@ std::string Tensor<T, B>::toStr() const
     return "tensor(shape=" + ssShape.str() + "; data=" + ssBuffer.str() + "; dtype=(" + type_name<T>() + "))";
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::ostream &operator<<(std::ostream &os, const Tensor<T, B> &t)
 {
     return os << t.toStr();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 void Tensor<T, B>::plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>
 {

@@ -6,7 +6,7 @@
 #include <functional>
 #include <numeric>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 template <typename U>
 Tensor<U, B> Tensor<T, B>::to_type()
@@ -26,7 +26,7 @@ Tensor<U, B> Tensor<T, B>::to_type()
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::from_function(std::function<T(std::size_t)> lambda, const std::vector<std::size_t> &shape)
 {
@@ -36,7 +36,7 @@ Tensor<T, B> Tensor<T, B>::from_function(std::function<T(std::size_t)> lambda, c
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::from_vector(const std::vector<T> &buffer, const std::vector<std::size_t> &shape)
 {
@@ -51,7 +51,7 @@ Tensor<T, B> Tensor<T, B>::from_vector(const std::vector<T> &buffer, const std::
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::one_hot(std::size_t index, const std::vector<std::size_t> &shape)
 {
@@ -59,7 +59,7 @@ Tensor<T, B> Tensor<T, B>::one_hot(std::size_t index, const std::vector<std::siz
     return Tensor<T, B>::from_function(oh, shape);
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::identity(std::size_t n) requires std::is_arithmetic_v<T>
 {

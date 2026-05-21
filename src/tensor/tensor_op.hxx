@@ -4,7 +4,7 @@
 
 #include <format>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 bool Tensor<T, B>::validateSameShape(const std::vector<std::size_t> &shape) const
 {
@@ -16,7 +16,7 @@ bool Tensor<T, B>::validateSameShape(const std::vector<std::size_t> &shape) cons
     return true;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator+(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
@@ -31,7 +31,7 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator+(const Tensor<T, B> &lhs, const T &rhs)
 {
@@ -41,7 +41,7 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs, const T &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator+(const T &lhs, const Tensor<T, B> &rhs)
 {
@@ -51,7 +51,7 @@ Tensor<T, B> operator+(const T &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator+(const Tensor<T, B> &lhs)
 {
@@ -61,7 +61,7 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator-(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
@@ -76,7 +76,7 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator-(const Tensor<T, B> &lhs, const T &rhs)
 {
@@ -86,7 +86,7 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs, const T &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator-(const T &lhs, const Tensor<T, B> &rhs)
 {
@@ -96,7 +96,7 @@ Tensor<T, B> operator-(const T &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator-(const Tensor<T, B> &lhs)
 {
@@ -106,7 +106,7 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator*(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
@@ -121,7 +121,7 @@ Tensor<T, B> operator*(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator*(const Tensor<T, B> &lhs, const T &rhs)
 {
@@ -131,7 +131,7 @@ Tensor<T, B> operator*(const Tensor<T, B> &lhs, const T &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator*(const T &lhs, const Tensor<T, B> &rhs)
 {
@@ -141,7 +141,7 @@ Tensor<T, B> operator*(const T &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator/(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
@@ -156,7 +156,7 @@ Tensor<T, B> operator/(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator/(const Tensor<T, B> &lhs, const T &rhs)
 {
@@ -166,7 +166,7 @@ Tensor<T, B> operator/(const Tensor<T, B> &lhs, const T &rhs)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator/(const T &lhs, const Tensor<T, B> &rhs)
 {

@@ -10,11 +10,11 @@
 
 struct OpenCVWindowOpts;
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 class Tensor : public IMTSerialize
 {
-    using TStorage = typename B::TStorage;
+    using TStorage = typename B<T>::TStorage;
 
 protected:
     std::vector<std::size_t> shape_ = std::vector<std::size_t>();
@@ -56,34 +56,34 @@ private:
 
     // ###### TENSOR OP ######
 public:
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs, const T2 &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator+(const T2 &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator+(const Tensor<T2, B2> &lhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs, const T2 &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator-(const T2 &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator-(const Tensor<T2, B2> &lhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator*(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator*(const Tensor<T2, B2> &lhs, const T2 &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator*(const T2 &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator/(const Tensor<T2, B2> &lhs, const Tensor<T2, B2> &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator/(const Tensor<T2, B2> &lhs, const T2 &rhs);
-    template <typename T2, typename B2>
-    friend Tensor<T2, B2> operator/(const T2 &lhs, const Tensor<T2, B2> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator+(const Tensor<T2, B> &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator+(const Tensor<T2, B> &lhs, const T2 &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator+(const T2 &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator+(const Tensor<T2, B> &lhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator-(const Tensor<T2, B> &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator-(const Tensor<T2, B> &lhs, const T2 &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator-(const T2 &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator-(const Tensor<T2, B> &lhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator*(const Tensor<T2, B> &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator*(const Tensor<T2, B> &lhs, const T2 &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator*(const T2 &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator/(const Tensor<T2, B> &lhs, const Tensor<T2, B> &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator/(const Tensor<T2, B> &lhs, const T2 &rhs);
+    template <typename T2>
+    friend Tensor<T2, B> operator/(const T2 &lhs, const Tensor<T2, B> &rhs);
 
 private:
     bool validateSameShape(const std::vector<std::size_t> &shape) const;
@@ -91,20 +91,20 @@ private:
     // ###### TENSOR COMPARISON/BOOL ######
 public:
     explicit operator bool() const;
-    // Tensor<bool, B> all() const;
-    // Tensor<bool, B> any() const;
-    // Tensor<bool, B> none() const;
+    Tensor<bool, B> all() const;
+    Tensor<bool, B> any() const;
+    Tensor<bool, B> none() const;
 
-    // Tensor<bool, B> operator==(const Tensor<T, B> &other);
-    // Tensor<bool, B> operator==(const T &other);
-    // Tensor<bool, B> operator<(const Tensor<T, B> &other);
-    // Tensor<bool, B> operator<(const T &other);
-    // Tensor<bool, B> operator<=(const Tensor<T, B> &other);
-    // Tensor<bool, B> operator<=(const T &other);
-    // Tensor<bool, B> operator>(const Tensor<T, B> &other);
-    // Tensor<bool, B> operator>(const T &other);
-    // Tensor<bool, B> operator>=(const Tensor<T, B> &other);
-    // Tensor<bool, B> operator>=(const T &other);
+    Tensor<bool, B> operator==(const Tensor<T, B> &other);
+    Tensor<bool, B> operator==(const T &other);
+    Tensor<bool, B> operator<(const Tensor<T, B> &other);
+    Tensor<bool, B> operator<(const T &other);
+    Tensor<bool, B> operator<=(const Tensor<T, B> &other);
+    Tensor<bool, B> operator<=(const T &other);
+    Tensor<bool, B> operator>(const Tensor<T, B> &other);
+    Tensor<bool, B> operator>(const T &other);
+    Tensor<bool, B> operator>=(const Tensor<T, B> &other);
+    Tensor<bool, B> operator>=(const T &other);
 
     // ###### TENSOR MATH ######
     Tensor<T, B> min() const requires std::is_arithmetic_v<T>;
@@ -160,7 +160,7 @@ public:
     std::string toStr() const;
     void plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>;
 
-    template <typename T2, typename B2>
+    template <typename T2, template <typename> typename B2>
     friend std::ostream &operator<<(std::ostream &, const Tensor<T2, B2> &);
 
     // ###### TENSOR MT SERIALIZE ######

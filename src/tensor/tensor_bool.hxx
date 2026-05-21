@@ -6,7 +6,7 @@
 
 #include <format>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator==(const Tensor<T, B> &other)
 {
@@ -21,7 +21,7 @@ Tensor<bool, B> Tensor<T, B>::operator==(const Tensor<T, B> &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator==(const T &other)
 {
@@ -31,7 +31,7 @@ Tensor<bool, B> Tensor<T, B>::operator==(const T &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator<(const Tensor<T, B> &other)
 {
@@ -46,7 +46,7 @@ Tensor<bool, B> Tensor<T, B>::operator<(const Tensor<T, B> &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator<(const T &other)
 {
@@ -56,7 +56,7 @@ Tensor<bool, B> Tensor<T, B>::operator<(const T &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator<=(const Tensor<T, B> &other)
 {
@@ -71,7 +71,7 @@ Tensor<bool, B> Tensor<T, B>::operator<=(const Tensor<T, B> &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator<=(const T &other)
 {
@@ -81,7 +81,7 @@ Tensor<bool, B> Tensor<T, B>::operator<=(const T &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator>(const Tensor<T, B> &other)
 {
@@ -96,7 +96,7 @@ Tensor<bool, B> Tensor<T, B>::operator>(const Tensor<T, B> &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator>(const T &other)
 {
@@ -106,7 +106,7 @@ Tensor<bool, B> Tensor<T, B>::operator>(const T &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator>=(const Tensor<T, B> &other)
 {
@@ -121,7 +121,7 @@ Tensor<bool, B> Tensor<T, B>::operator>=(const Tensor<T, B> &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::operator>=(const T &other)
 {
@@ -131,7 +131,7 @@ Tensor<bool, B> Tensor<T, B>::operator>=(const T &other)
     return tensor;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::operator bool() const
 {
@@ -151,7 +151,7 @@ Tensor<T, B>::operator bool() const
     }
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::all() const
 {
@@ -169,7 +169,7 @@ Tensor<bool, B> Tensor<T, B>::all() const
     }
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::any() const
 {
@@ -187,7 +187,7 @@ Tensor<bool, B> Tensor<T, B>::any() const
     }
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<bool, B> Tensor<T, B>::none() const
 {

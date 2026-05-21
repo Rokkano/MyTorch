@@ -18,7 +18,7 @@ class SupervisedDataset : public Dataset<SupervisedDatasetItem<T, U>>
 {
 };
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 class LinearDataset : public SupervisedDataset<Tensor<float, B>, float>
 {
@@ -26,7 +26,7 @@ public:
     LinearDataset(std::size_t num_samples = 1024, float a = 1, float b = 0, float min = 0, float max = 10);
 };
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 class NoisedLinearDataset : public LinearDataset<B>
 {

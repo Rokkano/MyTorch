@@ -10,7 +10,7 @@ std::ostream &operator<<(std::ostream &os, const SupervisedDatasetItem<T, U> &I)
     return os << "(label:" << I.label << ", data:" << I.sample << ")";
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 LinearDataset<B>::LinearDataset(std::size_t num_samples, float a, float b, float min, float max)
 {
@@ -29,7 +29,7 @@ LinearDataset<B>::LinearDataset(std::size_t num_samples, float a, float b, float
     }
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 NoisedLinearDataset<B>::NoisedLinearDataset(std::size_t num_samples, float a, float b, float noise, float min,
                                             float max)

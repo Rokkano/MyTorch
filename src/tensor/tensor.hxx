@@ -7,7 +7,7 @@
 #include <iostream>
 #include <numeric>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 bool Tensor<T, B>::validateCoord(const std::vector<std::size_t> &coord) const
 {
@@ -21,14 +21,14 @@ bool Tensor<T, B>::validateCoord(const std::vector<std::size_t> &coord) const
     return true;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 bool Tensor<T, B>::validateAbs(std::size_t abs) const
 {
     return abs < this->numel();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::size_t Tensor<T, B>::coordToAbs(const std::vector<std::size_t> &coord) const
 {
@@ -50,7 +50,7 @@ std::size_t Tensor<T, B>::coordToAbs(const std::vector<std::size_t> &coord) cons
     return abs;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
 {
@@ -77,23 +77,23 @@ std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
     return coord;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::Tensor() : shape_(0)
 {
-    this->data() = B::allocate(0);
+    this->data() = B<T>::allocate(0);
 }
 
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
 {
     std::size_t num_e = this->numel();
-    this->data() = B::allocate(num_e);
+    this->data() = B<T>::allocate(num_e);
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data)
 {
@@ -106,41 +106,41 @@ Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape, const Tensor<T, B>::
     this->data_ = data;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::~Tensor()
 {
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<T>::iterator Tensor<T, B>::begin()
 {
     return this->data().begin();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<T>::iterator Tensor<T, B>::const_begin() const
 {
     return this->data().begin();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<T>::iterator Tensor<T, B>::end()
 {
     return this->data().end();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<T>::iterator Tensor<T, B>::const_end() const
 {
     return this->data().end();
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 T &Tensor<T, B>::operator[](std::size_t pos)
 {
@@ -148,28 +148,28 @@ T &Tensor<T, B>::operator[](std::size_t pos)
 }
 
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 const T &Tensor<T, B>::operator[](std::size_t pos) const
 {
     return this->data_[pos];
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::TStorage &Tensor<T, B>::data()
 {
     return this->data_;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::vector<size_t> &Tensor<T, B>::shape()
 {
     return this->shape_;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::fill(T value)
 {
@@ -178,7 +178,7 @@ Tensor<T, B> &Tensor<T, B>::fill(T value)
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::size_t Tensor<T, B>::numel() const
 {
@@ -192,7 +192,7 @@ std::size_t Tensor<T, B>::numel() const
     return num_e;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 T Tensor<T, B>::item() const
 {
@@ -202,7 +202,7 @@ T Tensor<T, B>::item() const
     return this->data()[0];
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::flatten()
 {
@@ -210,7 +210,7 @@ Tensor<T, B> &Tensor<T, B>::flatten()
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::unsqueeze(std::size_t dim)
 {
@@ -218,7 +218,7 @@ Tensor<T, B> &Tensor<T, B>::unsqueeze(std::size_t dim)
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::squeeze(std::size_t dim)
 {
@@ -228,14 +228,14 @@ Tensor<T, B> &Tensor<T, B>::squeeze(std::size_t dim)
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::t(std::size_t dim0, std::size_t dim1)
 {
     return this->transpose(dim0, dim1);
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
 {
@@ -258,14 +258,14 @@ Tensor<T, B> &Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::broadcast(Tensor<T, B> &tensor)
 {
     return this->broadcast(tensor.shape_);
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::broadcast(const std::vector<std::size_t> &shape)
 {
@@ -302,14 +302,14 @@ Tensor<T, B> &Tensor<T, B>::broadcast(const std::vector<std::size_t> &shape)
     return *this;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::batch_broadcast(Tensor<T, B> &tensor)
 {
     return this->batch_broadcast(tensor.shape_);
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::batch_broadcast(const std::vector<std::size_t> &shape)
 {

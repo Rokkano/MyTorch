@@ -23,7 +23,7 @@ int main()
     auto fct = [](std::size_t index) {
         return index;
     };
-    Tensor<float, CppBackend<float>> tensor = Tensor<float, CppBackend<float>>::from_function(fct, {3, 5, 7});
+    Tensor<float, CppBackend> tensor = Tensor<float, CppBackend>::from_function(fct, {3, 5, 7});
     std::cout << tensor << std::endl;
     return 0;
 }
