@@ -67,6 +67,7 @@ class ETAProgress : public Progress
 public:
 
     TimePoint zeroRef;
+    TimePoint firstRef;
     TimePoint lastTimePoint;
     Duration iterationEstimation; // streaming mean
 
@@ -75,8 +76,10 @@ public:
     void update(double progress = 1) override
     {
         ETAProgress::TimePoint now = std::chrono::system_clock::now();
-        if (this->lastTimePoint != zeroRef && this->lastTimePoint != now)
-            this->iterationEstimation += ((now - this->lastTimePoint) - this->iterationEstimation) / currentProgress;
+        if (this->lastTimePoint != zeroRef)
+            this->iterationEstimation += ((now - this->lastTimePoint) - this->iterationEstimation) / this->currentProgress;
+        else
+            this->firstRef = std::chrono::system_clock::now();
         this->lastTimePoint = now;
         Progress::update(progress);
     }
@@ -94,7 +97,7 @@ public:
             if (count > 1)
                 return std::format("{}s", std::floor(count * 1000) / 1000);
             if (count > 0.001)
-                return std::format("{}ms", std::floor(count * 1000) / 1000);
+                return std::format("{}ms", std::floor(count * 1000));
             else
                 return subCount ? std::format("<1ms") : std::format("0ms");
         };
@@ -105,7 +108,10 @@ public:
 
         std::cout << "\033[K" << std::flush;
         if (this->currentProgress >= this->maxProgress)
-            std::cout << "\n" << std::flush;
+        {
+            Duration elapsedTime = this->lastTimePoint - this->firstRef;
+            std::cout << "  |  Completed in " << format((elapsedTime).count(), false) << "\n" << std::flush;
+        }
     }
 };
 
