@@ -4,25 +4,26 @@
 #include <cmath>
 #include <chrono>
 #include <ctime>
+#include <format>
 
 class Progress {
 
 public:
     std::size_t length = 50;
         
+    std::string barLeft = " ";
     std::string barOpen = "[";
     std::string barClose = "]";
     std::string barFill = "█";
-    std::string barLeft = " ";
-
+    // std::string barOpen = "<";
+    // std::string barClose = ">";
+    // std::string barFill = "=";
 
 protected:
-    double currentProgress = 0; // /max
-    double progressToChar = 1;
+    double currentProgress = 0;
     double maxProgress;
 
-    std::size_t lastPrintedProgress = 0; // /max
-
+    double progressToChar = 1;
 
 public:
     Progress(double max = 100) 
@@ -34,22 +35,25 @@ public:
     virtual void update(double progress = 1) 
     {
         this->currentProgress += progress;
-        std::size_t printedProgress = std::floor(this->currentProgress * this->progressToChar);
-        if (this->lastPrintedProgress < printedProgress)
-        {
-            this->lastPrintedProgress = printedProgress;
-            printProgress();
-        }
+        printProgress();
     }
 
     virtual void printProgress() 
     {
+        std::size_t currentProgressChar = std::round(this->currentProgress * this->progressToChar);
         std::cout << "\r" << barOpen;
-        for(std::size_t i = 0; i < this->lastPrintedProgress; i++)
+
+        // BAR
+        for(std::size_t i = 0; i < currentProgressChar; i++)
             std::cout << barFill;
-        for(std::size_t i = this->lastPrintedProgress; i < length; i++)
+        for(std::size_t i = currentProgressChar; i < length; i++)
             std::cout << barLeft;
-        std::cout << barClose << std::floor(this->currentProgress * 100 / this->maxProgress) << "%";
+        
+        // PERCENTAGE
+        std::cout << barClose << " " << std::floor(this->currentProgress * 100 / this->maxProgress) << "%";
+
+        // N° ITERATIONS
+        std::cout << " (" << this->currentProgress << "/" << this->maxProgress << ")";
         std::cout << std::flush;
     }
 };
@@ -80,8 +84,25 @@ public:
     void printProgress() override
     {
         Progress::printProgress();
-        std::cout << "  | " << std::chrono::round<std::chrono::seconds>(this->iterationEstimation) << "/it";
-        std::cout << "  | ETA " << std::chrono::round<std::chrono::seconds>(this->iterationEstimation) * (maxProgress - currentProgress);
+
+        auto format = [] (double count, bool subCount = false)
+        {
+            if (count > 3600)
+                return std::format("{}h{}m", std::floor(count / 3600), std::floor((int)std::floor(count) % 3600 / 60));
+            if (count > 60)
+                return std::format("{}m{}s", std::floor(count / 60), (int)std::floor(count) % 60);
+            if (count > 1)
+                return std::format("{}s", std::floor(count * 1000) / 1000);
+            if (count > 0.001)
+                return std::format("{}ms", std::floor(count * 1000) / 1000);
+            else
+                return subCount ? std::format("<1ms") : std::format("0ms");
+        };
+
+
+        std::cout << "  |  " << format(this->iterationEstimation.count(), true) << "/it";
+        std::cout << "  |  ETA " << format(((this->iterationEstimation) * (maxProgress - currentProgress)).count(), false);
+
         std::cout << "\033[K" << std::flush;
         if (this->currentProgress >= this->maxProgress)
             std::cout << "\n" << std::flush;
