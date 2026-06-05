@@ -1,21 +1,20 @@
 #pragma once
 
 #include "src/tensor/tensor_fwd.hh"
+#include <span>
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 class Layer
 {
 protected:
     bool training_ = false;
 
 public:
-    virtual Tensor<T, B> forward(Tensor<T, B> &...);
-    virtual Tensor<T, B> backward(Tensor<T, B> &...);
+    virtual ~Layer() {};
+    
+    virtual Tensor<T, B> forward(std::span<Tensor<T, B>> args) = 0;
+    virtual Tensor<T, B> backward(std::span<Tensor<T, B>> args) = 0;
 
     void training(bool);
+    bool training() const;
 };
-
-#include "activation.hxx"
-#include "layer.hxx"
-#include "linear.hxx"
-#include "loss.hxx"

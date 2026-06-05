@@ -22,12 +22,12 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for addition.",
-                                                      lhs.tensorShapeToStr(lhs.shape_),
-                                                      rhs.tensorShapeToStr(rhs.shape_)));
+                                                      Tensor<T, B>::shapeToStr(lhs.shape_),
+                                                      Tensor<T, B>::shapeToStr(rhs.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] + rhs.buffer_[i];
+        tensor[i] = lhs[i] + rhs[i];
     return tensor;
 }
 
@@ -37,7 +37,7 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs, const T &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] + rhs;
+        tensor[i] = lhs[i] + rhs;
     return tensor;
 }
 
@@ -47,7 +47,7 @@ Tensor<T, B> operator+(const T &lhs, const Tensor<T, B> &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs + rhs.buffer_[i];
+        tensor[i] = lhs + rhs[i];
     return tensor;
 }
 
@@ -57,7 +57,7 @@ Tensor<T, B> operator+(const Tensor<T, B> &lhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < lhs.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i];
+        tensor[i] = lhs[i];
     return tensor;
 }
 
@@ -67,12 +67,12 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for substraction.",
-                                                      lhs.tensorShapeToStr(lhs.shape_),
-                                                      rhs.tensorShapeToStr(rhs.shape_)));
+                                                      Tensor<T, B>::shapeToStr(lhs.shape_),
+                                                      Tensor<T, B>::shapeToStr(rhs.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] - rhs.buffer_[i];
+        tensor[i] = lhs[i] - rhs[i];
     return tensor;
 }
 
@@ -82,7 +82,7 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs, const T &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] - rhs;
+        tensor[i] = lhs[i] - rhs;
     return tensor;
 }
 
@@ -92,7 +92,7 @@ Tensor<T, B> operator-(const T &lhs, const Tensor<T, B> &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs - rhs.buffer_[i];
+        tensor[i] = lhs - rhs[i];
     return tensor;
 }
 
@@ -102,7 +102,7 @@ Tensor<T, B> operator-(const Tensor<T, B> &lhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < lhs.numel(); i++)
-        tensor.buffer_[i] = -(lhs.buffer_[i]);
+        tensor[i] = -(lhs[i]);
     return tensor;
 }
 
@@ -112,12 +112,12 @@ Tensor<T, B> operator*(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for multiplication.",
-                                                      lhs.tensorShapeToStr(lhs.shape_),
-                                                      rhs.tensorShapeToStr(rhs.shape_)));
+                                                      Tensor<T, B>::shapeToStr(lhs.shape_),
+                                                      Tensor<T, B>::shapeToStr(rhs.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] * rhs.buffer_[i];
+        tensor[i] = lhs[i] * rhs[i];
     return tensor;
 }
 
@@ -127,7 +127,7 @@ Tensor<T, B> operator*(const Tensor<T, B> &lhs, const T &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] * rhs;
+        tensor[i] = lhs[i] * rhs;
     return tensor;
 }
 
@@ -137,7 +137,7 @@ Tensor<T, B> operator*(const T &lhs, const Tensor<T, B> &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs * rhs.buffer_[i];
+        tensor[i] = lhs * rhs[i];
     return tensor;
 }
 
@@ -147,12 +147,12 @@ Tensor<T, B> operator/(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs)
 {
     if (!lhs.validateSameShape(rhs.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for division.",
-                                                      lhs.tensorShapeToStr(lhs.shape_),
-                                                      rhs.tensorShapeToStr(rhs.shape_)));
+                                                      Tensor<T, B>::shapeToStr(lhs.shape_),
+                                                      Tensor<T, B>::shapeToStr(rhs.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] / rhs.buffer_[i];
+        tensor[i] = lhs[i] / rhs[i];
     return tensor;
 }
 
@@ -162,7 +162,7 @@ Tensor<T, B> operator/(const Tensor<T, B> &lhs, const T &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(lhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs.buffer_[i] / rhs;
+        tensor[i] = lhs[i] / rhs;
     return tensor;
 }
 
@@ -172,6 +172,6 @@ Tensor<T, B> operator/(const T &lhs, const Tensor<T, B> &rhs)
 {
     Tensor<T, B> tensor = Tensor<T, B>(rhs.shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
-        tensor.buffer_[i] = lhs / rhs.buffer_[i];
+        tensor[i] = lhs / rhs[i];
     return tensor;
 }

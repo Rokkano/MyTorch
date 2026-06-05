@@ -2,6 +2,7 @@
 
 #include "src/exception/exception.hh"
 #include "tensor.hh"
+#include "src/tensor/tensor_io.hxx"
 
 #include <format>
 #include <iostream>
@@ -37,7 +38,7 @@ std::size_t Tensor<T, B>::coordToAbs(const std::vector<std::size_t> &coord) cons
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateCoord(coord))
         throw std::invalid_argument(std::format("Coordinates {} are invalid for tensor of shape {}.",
-                                                this->tensorShapeToStr(coord), this->tensorShapeToStr(this->shape_)));
+                                                this->shapeToStr(coord), this->shapeToStr(this->shape_)));
 
     std::size_t abs = 0;
     for (std::size_t i = 0; i < coord.size(); i++)
@@ -59,7 +60,7 @@ std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
     // [z,y,x] with [z_m,y_m,x_m] -> z * y_m * x_m + y * x_m + x
     if (!this->validateAbs(abs))
         throw std::invalid_argument(std::format("Absolute {} is invalid for tensor of shape {} ({} elements).",
-                                                std::to_string(abs), this->tensorShapeToStr(this->shape_),
+                                                std::to_string(abs), this->shapeToStr(this->shape_),
                                                 std::to_string(this->numel())));
     std::vector<std::size_t> coord = std::vector<std::size_t>();
     for (std::size_t i = 0; i < this->shape_.size(); i++)
@@ -198,8 +199,8 @@ T Tensor<T, B>::item() const
 {
     if (this->numel() != 1)
         throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}",
-                                                      this->tensorShapeToStr(this->shape_)));
-    return this->data()[0];
+                                                      this->shapeToStr(this->shape_)));
+    return (*this)[0];
 }
 
 template <typename T, template <typename> typename B>
@@ -230,14 +231,14 @@ Tensor<T, B> &Tensor<T, B>::squeeze(std::size_t dim)
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B> &Tensor<T, B>::t(std::size_t dim0, std::size_t dim1)
+Tensor<T, B> Tensor<T, B>::t(std::size_t dim0, std::size_t dim1)
 {
     return this->transpose(dim0, dim1);
 }
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B> &Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
+Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
 {
     if (this->shape_.size() < 2)
         throw TensorTransposeException("Cannot transpose tensor with less than 2 dimensions");
@@ -252,10 +253,7 @@ Tensor<T, B> &Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
         tensor[tensor.coordToAbs(target_coord)] = this->data()[i];
     }
 
-    this->shape_ = tensor.shape_;
-    this->data() = tensor.data();
-
-    return *this;
+    return tensor;
 }
 
 template <typename T, template <typename> typename B>
@@ -283,8 +281,8 @@ Tensor<T, B> &Tensor<T, B>::broadcast(const std::vector<std::size_t> &shape)
         if (tensor_shape[i] != target_shape[i] && tensor_shape[i] != 1 && target_shape[i] != 1)
             throw TensorBroadcastException(std::format("Tensor is not broadcastable to this shape : {} to "
                                                        "{} at index {}.",
-                                                       this->tensorShapeToStr(tensor_shape),
-                                                       this->tensorShapeToStr(target_shape), i));
+                                                       this->shapeToStr(tensor_shape),
+                                                       this->shapeToStr(target_shape), i));
         new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
     }
 
@@ -320,4 +318,76 @@ Tensor<T, B> &Tensor<T, B>::batch_broadcast(const std::vector<std::size_t> &shap
     if (new_shape[new_shape.size() - 2] == 2)
         new_shape[new_shape.size() - 2] = this->shape_[this->shape_.size() - 2];
     return this->broadcast(new_shape);
+}
+
+
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::string Tensor<T, B>::shapeToStr(const std::vector<std::size_t> &shape)
+{
+    std::stringstream ssShape;
+    for (std::size_t i = 0; i < shape.size(); i++)
+        ssShape << shape[i] << (i != shape.size() - 1 ? "," : "");
+    return ssShape.str();
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::string Tensor<T, B>::dataToStr(const Tensor<T, B>::TStorage &storage, const std::vector<std::size_t> &shape, std::size_t truncate)
+{
+    std::stringstream ssData;
+    using RecLambda = std::function<void(std::vector<std::size_t>, std::size_t)>;
+    RecLambda rec = [&](std::vector<std::size_t> shape, std::size_t index) 
+    { 
+        if (!shape.empty())
+        {
+            std::size_t step = std::reduce(shape.begin() + 1, shape.end(), 1, std::multiplies<int>());
+            std::vector<std::size_t> new_shape = std::vector<std::size_t>(shape.begin() + 1, shape.end());
+            ssData << "[";
+            for (std::size_t i = 0; i < shape[0]; i++)
+            {
+                rec(new_shape, index + i * step);
+                ssData << (i != shape[0] - 1 ? "," : "");
+            }
+            ssData << "]";
+        }
+        else
+        { 
+            if constexpr (std::is_same_v<T, bool>) 
+                ssData << (storage[index] ? "true" : "false");
+            else
+                ssData << storage[index];
+        }
+    };
+    
+    rec(shape, 0);
+
+    if (truncate != 0)
+        return ssData.str().substr(0, truncate) + "...";
+    else
+        return ssData.str();
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::string Tensor<T, B>::dataToStr(const Tensor<T, B>::TStorage &storage, std::size_t truncate)
+{
+    return Tensor<T, B>::dataToStr(storage, {storage.size()}, truncate);
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::string Tensor<T, B>::toStr() const
+{
+    std::string sShape = Tensor<T, B>::shapeToStr(this->shape_);
+    std::string sData = Tensor<T, B>::dataToStr(this->data_, this->shape_);
+    return "tensor(shape=(" + sShape + "); data=(" + sData + "); dtype=(" + type_name<T>() + "))";
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::ostream &operator<<(std::ostream &os, const Tensor<T, B> &t)
+{
+    return os << t.toStr();
 }

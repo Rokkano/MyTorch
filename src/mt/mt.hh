@@ -20,7 +20,7 @@ enum MTFILE_TYPE
 };
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 class MTFile
 {
 public:

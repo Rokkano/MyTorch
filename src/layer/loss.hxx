@@ -2,7 +2,7 @@
 
 #include "layer.hh"
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 class MeanSquaredErrorLoss : public Layer<T, B>
 {
 public:
@@ -16,12 +16,23 @@ public:
     }
 
     Tensor<T, B> backward(Tensor<T, B> pred, Tensor<T, B> gt) { return (pred - gt) / (float)pred.numel(); }
+
+    
+    
+    Tensor<T, B> forward(std::span<Tensor<T, B>> args) override 
+    {
+        return this->forward(args[0], args[1]);
+    };
+        Tensor<T, B> backward(std::span<Tensor<T, B>> args) override
+    {
+        return this->backward(args[0], args[1]);
+    };
 };
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 using L2Loss = MeanSquaredErrorLoss<T, B>;
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 class SoftmaxCrossEntropyLoss : public Layer<T, B>
 {
 public:
@@ -32,9 +43,19 @@ public:
     }
 
     Tensor<T, B> backward(Tensor<T, B> pred, Tensor<T, B> gt) { return Tensor<T, B>::softmax(pred) - gt; }
+
+    
+    Tensor<T, B> forward(std::span<Tensor<T, B>> args) override 
+    {
+        return this->forward(args[0], args[1]);
+    };
+        Tensor<T, B> backward(std::span<Tensor<T, B>> args) override
+    {
+        return this->backward(args[0], args[1]);
+    };
 };
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 class BinaryCrossEntropyLoss : public Layer<T, B>
 {
 public:
@@ -44,4 +65,15 @@ public:
     }
 
     Tensor<T, B> backward(Tensor<T, B> pred, Tensor<T, B> gt) { return -(gt / pred - (1.f - gt) / (1.f - pred)); }
+
+    
+    
+    Tensor<T, B> forward(std::span<Tensor<T, B>> args) override 
+    {
+        return this->forward(args[0], args[1]);
+    };
+        Tensor<T, B> backward(std::span<Tensor<T, B>> args) override
+    {
+        return this->backward(args[0], args[1]);
+    };
 };

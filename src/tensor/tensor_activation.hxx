@@ -2,6 +2,10 @@
 
 #include "tensor.hh"
 
+#include "src/tensor/tensor_backend.hxx"
+#include "src/tensor/tensor_op.hxx"
+#include "src/tensor/tensor_math.hxx"
+
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::relu(const Tensor<T, B> &tensor) requires std::is_arithmetic_v<T>

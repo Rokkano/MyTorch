@@ -2,6 +2,8 @@
 
 #include "mt.hh"
 
+#include "src/layer/linear_serialize.hxx"
+
 #include <cstddef>
 #include <cstring>
 #include <fstream>
@@ -16,7 +18,7 @@
 //  object
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 std::vector<std::byte> MTFile<T>::readFile(std::string path)
 {
     std::ifstream file(path, std::ios::binary | std::ios::ate);
@@ -34,7 +36,7 @@ std::vector<std::byte> MTFile<T>::readFile(std::string path)
 }
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 void MTFile<T>::writeFile(std::string path, std::vector<std::byte> buffer)
 {
     std::ofstream file(path, std::ios::binary);
@@ -47,7 +49,7 @@ void MTFile<T>::writeFile(std::string path, std::vector<std::byte> buffer)
 }
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 T MTFile<T>::read(std::string path)
 {
     std::vector<std::byte> buffer = MTFile<T>::readFile(path);
@@ -73,7 +75,7 @@ T MTFile<T>::read(std::string path)
     char mtType;
     read.template operator()<char>(mtType);
 
-    if (mtType == MTFILE_TYPE::TENSOR && !(is_base_of_template<Tensor, T>::value))
+    if (mtType == MTFILE_TYPE::TENSOR )//&& !(is_base_of_template<Tensor, T>::value))
         throw Exception(std::format("Expected Tensor type, got {}.", type_name<T>()));
 
     std::vector<std::byte> subBuffer;
@@ -86,7 +88,7 @@ T MTFile<T>::read(std::string path)
 }
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 void MTFile<T>::write(std::string path, T object)
 {
     std::vector<std::byte> buffer;
@@ -100,10 +102,10 @@ void MTFile<T>::write(std::string path, T object)
     write.template operator()<char>(MTFILE_VERSION_MAJOR);
     write.template operator()<char>(MTFILE_VERSION_MINOR);
 
-    if (is_base_of_template<Tensor, T>::value)
-        write.template operator()<char>(MTFILE_TYPE::TENSOR);
-    else
-        write.template operator()<char>(MTFILE_TYPE::NONE);
+    // if (is_base_of_template<Tensor, T>::value)
+    //     write.template operator()<char>(MTFILE_TYPE::TENSOR);
+    // else
+    //     write.template operator()<char>(MTFILE_TYPE::NONE);
 
     std::vector<std::byte> objectBuffer = object.serialize();
     buffer.insert(buffer.end(), objectBuffer.begin(), objectBuffer.end());
@@ -112,7 +114,7 @@ void MTFile<T>::write(std::string path, T object)
 }
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 std::size_t MTFile<T>::sizeOfFile(std::string path)
 {
     std::vector<std::byte> buffer = MTFile<T>::readFile(path);
@@ -120,7 +122,7 @@ std::size_t MTFile<T>::sizeOfFile(std::string path)
 }
 
 template <typename T>
-requires(is_base_of_template<IMTSerialize, T>::value)
+// requires(is_base_of_template<IMTSerialize, T>::value)
 std::size_t MTFile<T>::sizeOfObject(T object)
 {
     std::vector<std::byte> buffer = object.serialize();

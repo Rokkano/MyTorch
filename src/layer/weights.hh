@@ -52,10 +52,10 @@ struct std::formatter<Initialization> : std::formatter<std::string_view>
     }
 };
 
-template <typename B>
+template <template <typename> typename B>
 void initialize_weights(Tensor<int, B> &tensor, enum Initialization initialization = ZEROS);
 
-template <typename B>
+template <template <typename> typename B>
 void initialize_weights(Tensor<float, B> &tensor, enum Initialization initialization = ZEROS);
 
 #include "weights.hxx"

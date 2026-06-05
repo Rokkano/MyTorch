@@ -1,14 +1,19 @@
-// #include "dataset/dataset.hh"
-// #include "dataset/mnist.hh"
-// #include "layer/layer.hh"
-// #include "layer/block/block.hh"
+#include "dataset/dataset.hh"
+#include "dataset/mnist.hxx"
+#include "layer/layer.hh"
+#include "layer/block/block.hh"
 #include "tensor/tensor.hh"
 #include "tensor/tensor_io.hxx"
 #include "tensor/backend/backend.hh"
 #include "tensor/tensor_utils.hxx"
 #include "tensor/tensor_serialize.hxx"
-// #include "xor/xor.hh"
-// #include "mt/mt.hh"
+#include "layer/linear.hxx"
+#include "layer/activation.hxx"
+#include "layer/loss.hxx"
+#include "xor/xor.hh"
+#include "mt/mt.hh"
+#include "src/utils/progress.hh"
+
 
 #include <Eigen/Dense>
 #include <cmath>
@@ -17,41 +22,23 @@
 #include <list>
 #include <stdlib.h>
 #include <tuple>
-
-int main()
-{
-    auto fct = [](std::size_t index) {
-        return index;
-    };
-    Tensor<float, CppBackend> tensor = Tensor<float, CppBackend>::from_function(fct, {3, 5, 7});
-    std::cout << tensor << std::endl;
-    return 0;
-}
-
-// int main()
-// {
-//     Eigen::MatrixXd mat = Eigen::MatrixXd(3, 2);
-//     mat << 1, 2, 3, 4 , 5, 6;
-//     std::cout << "Here is mat*mat:\n" << mat * mat.transpose() << std::endl;
-//     constexpr bool backend_cpp = BACKEND_CPP;
-//     constexpr bool backend_eigen = BACKEND_EIGEN;
-//     std::cout << backend_cpp << std::endl;
-//     std::cout << backend_eigen << std::endl;
-// }
+#include <unistd.h>
 
 // int main()
 // {
 //     std::size_t num_epoch = 10;
 
-//     MNISTDataset mnist = MNISTDataset("./data/");
+//     MNISTDataset<CppBackend> mnist = MNISTDataset<CppBackend>("./data/");
 //     mnist.normalize();
 //     auto &&[training_60k, validation_10k] = std::make_pair(mnist, mnist.validation());
-//     training_60k.shuffle();
+//     auto &&[training_10k, _] = training_60k.split(10000);
+//     training_10k.shuffle();
 //     validation_10k.shuffle();
 
-//     std::cout << HAVE_EIGEN << std::endl;
+//     // std::cout << BACKEND_EIGEN << std::endl;
+//     // std::cout << BACKEND_CPP << std::endl;
 
-//     MultiLayerPerceptron<float> mlp = MultiLayerPerceptron<float>(
+//     MultiLayerPerceptron<float, CppBackend> mlp = MultiLayerPerceptron<float, CppBackend>(
 //         784,
 //         10,
 //         512,
@@ -60,77 +47,82 @@ int main()
 //         Initialization::XAVIER,
 //         0.01f
 //     );
-//     SoftmaxCrossEntropyLoss<float> sceloss = SoftmaxCrossEntropyLoss<float>();
+//     SoftmaxCrossEntropyLoss<float, CppBackend> sceloss = SoftmaxCrossEntropyLoss<float, CppBackend>();
 
-//     mlp.training(false);
+//     mlp.training(true);
+
+//     std::cout << mlp.layers_.size() << std::endl;
+//     std::cout << mlp.activations_.size() << std::endl;
+//     std::cout << Tensor<float, CppBackend>::shapeToStr(mlp.layers_[0].weights_.shape()) << std::endl;
+//     std::cout << Tensor<float, CppBackend>::shapeToStr(mlp.layers_[1].weights_.shape()) << std::endl;
 
 //     std::vector<float> losses = std::vector<float>();
 //     for (std::size_t epoch = 0; epoch < num_epoch; epoch++)
 //     {
 //         std::size_t i = 0;
 //         float epoch_losses = 0;
-//         for (auto &&[data, expected] : training_60k)
+//         for (auto &&[data, expected] : training_10k)
 //         {
-//             Tensor<float> t = data.to_type<float>()
+//             Tensor<float, CppBackend> t = data.to_type<float>()
 //                 .flatten()
 //                 .unsqueeze(0);
 //             t = mlp.forward(t);
 
-//             Tensor<float> expected_oh = Tensor<float>::one_hot(expected, {1, 10});
-//             Tensor<float> t_loss = sceloss.forward(t, expected_oh);
+//             Tensor<float, CppBackend> expected_oh = Tensor<float, CppBackend>::one_hot(expected, {1, 10});
+//             Tensor<float, CppBackend> t_loss = sceloss.forward(t, expected_oh);
 //             epoch_losses += t_loss.sum().item();
 
-//             Tensor<float> d = sceloss.backward(t, expected_oh);
-
-//             // d = mlp.backward(d);
+//             Tensor<float, CppBackend> d = sceloss.backward(t, expected_oh);
+//             std::cout << d << std::endl;
+//             d = mlp.backward(d);
 //             i += 1;
-//             if (i % 1000 == 0)
-//                 std::cout << i << "/60" << std::endl;
+//             if (i % 100 == 0)
+//                 std::cout << i << "/10000" << std::endl;
 //         }
-//         losses.insert(losses.end(), epoch_losses / training_60k.length());
-//         std::cout << epoch + 1 << "/" << num_epoch << " : " << epoch_losses / training_60k.length() << std::endl;
+//         losses.insert(losses.end(), epoch_losses / training_10k.length());
+//         std::cout << epoch + 1 << "/" << num_epoch << " : " << epoch_losses / training_10k.length() << std::endl;
 //     }
-//     MTFile<MultiLayerPerceptron<float>>::write("mlp-mnist-normalized.mt", mlp);
+//     MTFile<MultiLayerPerceptron<float, CppBackend>>::write("mlp-mnist-normalized.mt", mlp);
 
-//     Tensor<float> t_losses = Tensor<float>(std::vector<std::size_t>{losses.size()}, losses);
+//     Tensor<float, CppBackend> t_losses = Tensor<float, CppBackend>(std::vector<std::size_t>{losses.size()}, losses);
 //     std::cout << t_losses << std::endl;
 
-// mlp.training(false);
+//     mlp.training(false);
 
-// std::size_t res = 0;
-// for (auto &&[data, expected] : validation_10k)
-// {
-//     Tensor<float> t = data.to_type<float>().flatten().unsqueeze(0);
-//     t = mlp.forward(t);
-//     res += (expected == t.argmax().item()) ? 1 : 0;
-// }
+//     std::size_t res = 0;
+//     for (auto &&[data, expected] : validation_10k)
+//     {
+//         Tensor<float, CppBackend> t = data.to_type<float>().flatten().unsqueeze(0);
+//         t = mlp.forward(t);
+//         res += (expected == t.argmax().item()) ? 1 : 0;
+//     }
 
-// float precision = res / float(validation_10k.length()) * 100;
-// std::cout << precision << "%" << std::endl;
-// t_losses.plot("-");
+//     float precision = res / float(validation_10k.length()) * 100;
+//     std::cout << precision << "%" << std::endl;
+//     // t_losses.plot("-");
 
 // }
 
 // int main()
 // {
-//     MNISTDataset mnist = MNISTDataset("./data/");
+//     MNISTDataset<CppBackend> mnist = MNISTDataset<CppBackend>("./data/");
 //     auto &&[_, validation_10k] = std::make_pair(mnist, mnist.validation());
 //     validation_10k.shuffle();
 //     validation_10k.normalize();
 
-//     Linear<float> linear1 = MTFile<Linear<float>>::read("linear1.mt");
-//     ReLu<float> relu = ReLu<float>();
-//     Linear<float> linear2 = MTFile<Linear<float>>::read("linear2.mt");
-//     SoftmaxCrossEntropyLoss<float> sceloss = SoftmaxCrossEntropyLoss<float>();
+//     Linear<float, CppBackend> linear1 = MTFile<Linear<float, CppBackend>>::read("./data/linear1.mt");
+//     ReLu<float, CppBackend> relu = ReLu<float, CppBackend>();
+//     Linear<float, CppBackend> linear2 = MTFile<Linear<float, CppBackend>>::read("./data/linear2.mt");
+//     SoftmaxCrossEntropyLoss<float, CppBackend> sceloss = SoftmaxCrossEntropyLoss<float, CppBackend>();
 
-//     linear1.training = false;
-//     relu.training = false;
-//     linear2.training = false;
+//     linear1.training(false);
+//     relu.training(false);
+//     linear2.training(false);
 
 //     std::size_t res = 0;
 //     for (auto mnistSample : validation_10k)
 //     {
-//         Tensor<float> t = mnistSample.sample.to_type<float>().flatten().unsqueeze(0);
+//         Tensor<float, CppBackend> t = mnistSample.sample.to_type<float>().flatten().unsqueeze(0);
 //         t = linear1.forward(t);
 //         t = relu.forward(t);
 //         t = linear2.forward(t);
@@ -143,73 +135,76 @@ int main()
 //     return 0;
 // }
 
-// int main()
-// {
-//     std::size_t num_epoch = 5;
+int main()
+{
+    std::size_t num_epoch = 1;
 
-//     MNISTDataset mnist = MNISTDataset("./data/");
-//     auto &&[training_60k, validation_10k] = std::make_pair(mnist, mnist.validation());
-//     training_60k.shuffle();
-//     validation_10k.shuffle();
+    MNISTDataset<CppBackend> mnist = MNISTDataset<CppBackend>("./data/");
+    auto &&[training_60k, validation_10k] = std::make_pair(mnist, mnist.validation());
+    auto &&[training_10k, _] = training_60k.split(1000);
+    training_10k.shuffle();
+    validation_10k.shuffle();
 
-//     Linear<float> linear1 = Linear<float>(784, 512, HE, 0.01f);
-//     ReLu<float> relu = ReLu<float>();
-//     Linear<float> linear2 = Linear<float>(512, 10, XAVIER, 0.01f);
-//     SoftmaxCrossEntropyLoss<float> sceloss = SoftmaxCrossEntropyLoss<float>();
+    Linear<float, CppBackend> linear1 = Linear<float, CppBackend>(784, 512, HE, 0.01f);
+    ReLu<float, CppBackend> relu = ReLu<float, CppBackend>();
+    Linear<float, CppBackend> linear2 = Linear<float, CppBackend>(512, 10, XAVIER, 0.01f);
+    SoftmaxCrossEntropyLoss<float, CppBackend> sceloss = SoftmaxCrossEntropyLoss<float, CppBackend>();
 
-//     linear1.training = true;
-//     relu.training = true;
-//     linear2.training = true;
+    linear1.training(true);
+    relu.training(true);
+    linear2.training(true);
 
-//     std::vector<float> losses = std::vector<float>();
-//     for (std::size_t epoch = 0; epoch < num_epoch; epoch++)
-//     {
-//         float epoch_losses = 0;
-//         for (auto &&[data, expected] : training_60k)
-//         {
-//             Tensor<float> t = data.to_type<float>().flatten().unsqueeze(0);
-//             t = linear1.forward(t);
-//             t = relu.forward(t);
-//             t = linear2.forward(t);
+    std::vector<float> losses = std::vector<float>();
+    for (std::size_t epoch = 0; epoch < num_epoch; epoch++)
+    {
+        ETAProgress progress = ETAProgress(1000);
+        float epoch_losses = 0;
+        for (auto &&[data, expected] : training_10k)
+        {
+            Tensor<float, CppBackend> t = data.to_type<float>().flatten().unsqueeze(0);
+            t = linear1.forward(t);
+            t = relu.forward(t);
+            t = linear2.forward(t);
 
-//             Tensor<float> expected_oh = Tensor<float>::one_hot(expected, {1, 10});
-//             Tensor<float> t_loss = sceloss.forward(t, expected_oh);
-//             epoch_losses += t_loss.sum().item();
+            Tensor<float, CppBackend> expected_oh = Tensor<float, CppBackend>::one_hot(expected, {1, 10});
+            Tensor<float, CppBackend> t_loss = sceloss.forward(t, expected_oh);
+            epoch_losses += t_loss.sum().item();
 
-//             Tensor<float> d = sceloss.backward(t, expected_oh);
+            Tensor<float, CppBackend> d = sceloss.backward(t, expected_oh);
 
-//             d = linear2.backward(d);
-//             d = relu.backward(d);
-//             d = linear1.backward(d);
-//         }
-//         losses.insert(losses.end(), epoch_losses / training_60k.length());
-//         std::cout << epoch + 1 << "/" << num_epoch << " : " << epoch_losses / training_60k.length() << std::endl;
+            d = linear2.backward(d);
+            d = relu.backward(d);
+            d = linear1.backward(d);
+            progress.update(1);
 
-//     }
+        }
+        losses.insert(losses.end(), epoch_losses / training_10k.length());
+        std::cout << epoch + 1 << "/" << num_epoch << " : " << epoch_losses / training_10k.length() << std::endl;
+    }
 
-//     Tensor<float> t_losses = Tensor<float>(std::vector<std::size_t>{losses.size()}, losses);
-//     std::cout << t_losses << std::endl;
-//     // t_losses.plot();
+    Tensor<float, CppBackend> t_losses = Tensor<float, CppBackend>(std::vector<std::size_t>{losses.size()}, losses);
+    std::cout << t_losses << std::endl;
+    // t_losses.plot();
 
-//     linear1.training = false;
-//     relu.training = false;
-//     linear2.training = false;
+    linear1.training(false);
+    relu.training(false);
+    linear2.training(false);
 
-//     std::size_t res = 0;
-//     for (auto &&[data, expected] : validation_10k)
-//     {
-//         Tensor<float> t = data.to_type<float>().flatten().unsqueeze(0);
-//         t = linear1.forward(t);
-//         t = relu.forward(t);
-//         t = linear2.forward(t);
-//         res += (expected == t.argmax().item()) ? 1 : 0;
-//     }
+    std::size_t res = 0;
+    for (auto &&[data, expected] : validation_10k)
+    {
+        Tensor<float, CppBackend> t = data.to_type<float>().flatten().unsqueeze(0);
+        t = linear1.forward(t);
+        t = relu.forward(t);
+        t = linear2.forward(t);
+        res += (expected == t.argmax().item()) ? 1 : 0;
+    }
 
-//     float precision = res / float(validation_10k.length()) * 100;
-//     std::cout << precision << "%" << std::endl;
+    float precision = res / float(validation_10k.length()) * 100;
+    std::cout << precision << "%" << std::endl;
 
-//     MTFile<Linear<float>>::write("linear1.mt", linear1);
-//     MTFile<Linear<float>>::write("linear2.mt", linear2);
+    MTFile<Linear<float, CppBackend>>::write("linear1.mt", linear1);
+    MTFile<Linear<float, CppBackend>>::write("linear2.mt", linear2);
 
-//     return 0;
-// }
+    return 0;
+}

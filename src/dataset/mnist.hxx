@@ -3,10 +3,12 @@
 #include "mnist.hh"
 #include "src/cv/cv.hh"
 
+#include "src/tensor/tensor_op.hxx"
+
 #include <mnist/mnist_reader.hpp>
 #include <mnist/mnist_utils.hpp>
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 MNISTDataset<B>::MNISTDataset(std::string mnistDirectoryPath)
 {
@@ -33,14 +35,14 @@ MNISTDataset<B>::MNISTDataset(std::string mnistDirectoryPath)
         std::vector<std::size_t> shape = std::vector<std::size_t>{28, 28};
         unsigned char label = dataset.test_labels[i];
 
-        this->data_validation_.push_back(MNISTSample{
+        this->data_validation_.push_back(MNISTSample<B>{
             Tensor<float, B>(shape, buffer) / 255.f,
             label,
         });
     }
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 MNISTDataset<B>::MNISTDataset(std::vector<MNISTSample<B>> data)
 {
@@ -48,7 +50,7 @@ MNISTDataset<B>::MNISTDataset(std::vector<MNISTSample<B>> data)
     this->data_ = data;
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 MNISTDataset<B> MNISTDataset<B>::validation()
 {
@@ -57,7 +59,7 @@ MNISTDataset<B> MNISTDataset<B>::validation()
     return MNISTDataset<B>(this->data_validation_);
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 void MNISTDataset<B>::normalize()
 {
@@ -70,7 +72,7 @@ void MNISTDataset<B>::normalize()
     this->normalized_ = true;
 }
 
-template <typename B>
+template <template <typename> typename B>
 requires IsBackend<float, B>
 void MNISTSample<B>::show(OpenCVWindowOpts opts, bool normalized)
 {

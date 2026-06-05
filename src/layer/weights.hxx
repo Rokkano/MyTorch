@@ -2,13 +2,14 @@
 
 #include "src/tensor/tensor.hh"
 #include "src/utils/random.hh"
+#include "src/exception/tensor.hh"
 #include "weights.hh"
 
 #include <cmath>
 #include <random>
 #include <string>
 
-template <typename B>
+template <template <typename> typename B>
 void initialize_weights(Tensor<int, B> &tensor, enum Initialization initialization)
 {
     switch (initialization)
@@ -28,7 +29,7 @@ void initialize_weights(Tensor<int, B> &tensor, enum Initialization initializati
     }
 }
 
-template <typename B>
+template <template <typename> typename B>
 void initialize_weights(Tensor<float, B> &tensor, enum Initialization initialization)
 {
     switch (initialization)
@@ -56,7 +57,7 @@ void initialize_weights(Tensor<float, B> &tensor, enum Initialization initializa
     case Initialization::LECUN:
     {
         if (tensor.shape().size() != 2)
-            throw;
+            throw TensorInvalidShapeException("LeCun initialization requires 2 dim tensor.");
         std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
         float bound = std::sqrt(3 / prevLayer);
         UniformDistribution dis = Random::getInstance().uniformDistribution(-bound, +bound);
@@ -67,7 +68,7 @@ void initialize_weights(Tensor<float, B> &tensor, enum Initialization initializa
     case Initialization::XAVIER:
     {
         if (tensor.shape().size() != 2)
-            throw;
+            throw TensorInvalidShapeException("Xavier/Glorot initialization requires 2 dim tensor.");
         std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
         std::size_t nextLayer = tensor.shape()[1]; // number of nodes in the next layer
         float bound = std::sqrt(6.f / (prevLayer + nextLayer));
@@ -79,7 +80,7 @@ void initialize_weights(Tensor<float, B> &tensor, enum Initialization initializa
     case Initialization::HE:
     {
         if (tensor.shape().size() != 2)
-            throw;
+            throw TensorInvalidShapeException("HE initialization requires 2 dim tensor.");
         std::size_t prevLayer = tensor.shape()[0]; // number of nodes in the previous layer
         float std = std::sqrt(2.f / prevLayer);
         NormalDistribution dis = Random::getInstance().normalDistribution(0, std);

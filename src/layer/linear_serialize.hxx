@@ -2,7 +2,7 @@
 
 #include "layer.hh"
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 std::vector<std::byte> Linear<T, B>::serialize()
 {
     std::vector<std::byte> buffer;
@@ -24,7 +24,7 @@ std::vector<std::byte> Linear<T, B>::serialize()
     return buffer;
 }
 
-template <typename T, typename B>
+template <typename T, template <typename> typename B>
 std::size_t Linear<T, B>::deserialize(std::vector<std::byte> &bytes)
 {
     std::size_t offset = 0;
