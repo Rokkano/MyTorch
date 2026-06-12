@@ -1,6 +1,5 @@
 #pragma once
 
-#include "src/tensor/backend/backend.hh"
 #include "src/tensor/tensor_fwd.hh"
 
 #include <optional>
@@ -19,5 +18,3 @@ struct EigenBackend
     static std::vector<T>::iterator end(TStorage &s) { return s.end(); }
     static std::vector<T>::iterator const_end(TStorage &s) { return s.const_end(); }
 };
-
-#include "eigen_linear.hxx"

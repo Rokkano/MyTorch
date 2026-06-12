@@ -80,31 +80,46 @@ std::vector<std::size_t> Tensor<T, B>::absToCoord(std::size_t abs) const
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B>::Tensor() : shape_(0)
+Tensor<T, B>::Tensor()
 {
-    this->data() = B<T>::allocate(0);
+    this->shape_ = std::vector<std::size_t>(0);
+    this->stride_ = std::vector<std::size_t>(0);
+    this->numel_ = 0;
+    this->data_ = B<T>::allocate(0);
 }
 
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape) : shape_(shape)
+Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape)
 {
-    std::size_t num_e = this->numel();
-    this->data() = B<T>::allocate(num_e);
+    this->shape_ = shape;
+    this->numel_ = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<std::size_t>());
+    this->data_ = B<T>::allocate(this->numel_);
+
+    // compute strides
+    this->stride_ = std::vector<std::size_t>(shape.size(), 1);
+    for (int i = (int)shape.size() - 2; i >= 0; --i)
+        this->stride_[i] = this->stride_[i + 1] * shape[i + 1];
 }
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape, const Tensor<T, B>::TStorage &data)
 {
-    std::size_t shape_size = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<int>());
-    std::size_t buffer_size = data.size();
-    if (shape_size != buffer_size)
+    std::size_t numel = std::reduce(shape.begin(), shape.end(), 1, std::multiplies<std::size_t>());
+    std::size_t dataSize = data.size();
+    if (numel != dataSize)
         throw TensorInvalidShapeException(
-            std::format("Shape and Buffer number of elements are incompatible : {} and {}.", shape_size, buffer_size));
+            std::format("Shape and Buffer number of elements are incompatible : {} and {}.", numel, dataSize));
     this->shape_ = shape;
+    this->numel_ = numel;
     this->data_ = data;
+
+    // compute strides
+    this->stride_ = std::vector<std::size_t>(shape.size(), 1);
+    for (int i = (int)shape.size() - 2; i >= 0; --i)
+        this->stride_[i] = this->stride_[i + 1] * shape[i + 1];
 }
 
 template <typename T, template <typename> typename B>
@@ -183,14 +198,14 @@ template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::size_t Tensor<T, B>::numel() const
 {
-    if (this->shape_.empty())
-    {
-        return 0;
-    }
-    std::size_t num_e = 1;
-    for (const std::size_t &e : this->shape_)
-        num_e *= e;
-    return num_e;
+    return this->numel_;
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
+std::vector<std::size_t> Tensor<T, B>::stride() const
+{
+    return this->stride_;
 }
 
 template <typename T, template <typename> typename B>
@@ -243,14 +258,39 @@ Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
     if (this->shape_.size() < 2)
         throw TensorTransposeException("Cannot transpose tensor with less than 2 dimensions");
 
+    if (dim0 >= this->shape_.size() || dim1 >= this->shape_.size())
+        throw TensorTransposeException("Invalid dimension to transpose");
+
+    if (dim0 == dim1)
+        return *this;
+
     std::vector<std::size_t> new_shape = this->shape_;
     std::swap(new_shape[dim0], new_shape[dim1]);
     Tensor<T, B> tensor = Tensor<T, B>(new_shape);
-    for (std::size_t i = 0; i < this->numel(); i++)
-    {
-        std::vector<std::size_t> target_coord = this->absToCoord(i);
-        std::swap(target_coord[dim0], target_coord[dim1]);
-        tensor[tensor.coordToAbs(target_coord)] = this->data()[i];
+
+    std::vector<std::size_t> srcStrides = this->stride();
+    std::vector<std::size_t> dstStrides = tensor.stride();
+
+    for (size_t flatIdx = 0; flatIdx < this->numel(); flatIdx++) {
+        std::vector<size_t> dstIdx = std::vector<size_t>(this->shape_.size());
+        size_t srcIdx = 0;
+        size_t tmp = flatIdx;
+
+        for (size_t i = 0; i < this->shape_.size(); i++) {
+            dstIdx[i] = tmp / dstStrides[i];
+            tmp = tmp % dstStrides[i];
+        }
+
+        for (size_t i = 0; i < this->shape_.size(); i++) {
+            if (i == dim0) 
+                srcIdx += dstIdx[i] * srcStrides[dim1];
+            else if (i == dim1) 
+                srcIdx += dstIdx[i] * srcStrides[dim0];
+            else
+                srcIdx += dstIdx[i] * srcStrides[i];
+        }
+
+        tensor[flatIdx] = (*this)[srcIdx];
     }
 
     return tensor;

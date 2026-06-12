@@ -141,7 +141,7 @@ int main()
 
     MNISTDataset<CppBackend> mnist = MNISTDataset<CppBackend>("./data/");
     auto &&[training_60k, validation_10k] = std::make_pair(mnist, mnist.validation());
-    auto &&[training_10k, _] = training_60k.split(1000);
+    auto &&[training_10k, _] = training_60k.split(10000);
     training_10k.shuffle();
     validation_10k.shuffle();
 
@@ -157,7 +157,7 @@ int main()
     std::vector<float> losses = std::vector<float>();
     for (std::size_t epoch = 0; epoch < num_epoch; epoch++)
     {
-        ETAProgress progress = ETAProgress(1000);
+        ETAProgress progress = ETAProgress(10000);
         float epoch_losses = 0;
         for (auto &&[data, expected] : training_10k)
         {

@@ -1,5 +1,12 @@
 #pragma once
 
-#include "src/tensor/backend/cpp/cpp_backend.hh"
-#include "src/tensor/backend/eigen/eigen_backend.hh"
-#include "src/tensor/tensor_fwd.hh"
+#if BACKEND_EIGEN
+    #include "src/tensor/backend/eigen/backend.hh"
+    #include "src/tensor/backend/eigen/linear.hxx"
+#elif BACKEND_CPP
+    #include "src/tensor/backend/cpp/backend.hh"
+    #include "src/tensor/backend/cpp/linear.hxx"
+    #include "src/tensor/backend/cpp/math.hxx"
+#else
+    #error No backend available
+#endif

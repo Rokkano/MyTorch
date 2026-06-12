@@ -69,6 +69,8 @@ public:
     TimePoint zeroRef;
     TimePoint firstRef;
     TimePoint lastTimePoint;
+
+    // https://www.geeksforgeeks.org/web-tech/expression-for-mean-and-variance-in-a-running-stream/
     Duration iterationEstimation; // streaming mean
 
     ETAProgress(double max = 100) : Progress(max) {}

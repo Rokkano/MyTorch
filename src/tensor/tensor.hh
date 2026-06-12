@@ -7,12 +7,6 @@
 #include <optional>
 #include <vector>
 
-#include "src/tensor/backend/cpp/cpp_backend.hh"
-#include "src/tensor/backend/cpp/cpp_backend.hxx"
-#include "src/tensor/backend/cpp/cpp_linear.hxx"
-#include "src/tensor/backend/cpp/cpp_math.hxx"
-
-
 struct OpenCVWindowOpts;
 
 template <typename T, template <typename> typename B>
@@ -66,14 +60,20 @@ class Tensor : public IMTSerialize
 
 protected:
     std::vector<std::size_t> shape_ = std::vector<std::size_t>();
+    std::size_t numel_ = 0;
+    std::vector<std::size_t> stride_ = std::vector<std::size_t>();
+
     TStorage data_ = TStorage();
 
+    // Constructors
 public:
     Tensor();
     Tensor(const std::vector<std::size_t> &shape);
     Tensor(const std::vector<std::size_t> &shape, const TStorage &data);
     ~Tensor();
 
+    // Accessors
+public:
     std::vector<T>::iterator begin();
     std::vector<T>::iterator const_begin() const;
     std::vector<T>::iterator end();
@@ -86,8 +86,11 @@ public:
     std::vector<std::size_t> &shape();
 
     std::size_t numel() const;
+    std::vector<std::size_t> stride() const;
+
     T item() const;
     
+    // Basic operations
     Tensor<T, B> &fill(const T value);
     Tensor<T, B> &flatten();
     Tensor<T, B> &unsqueeze(std::size_t dim = 0);

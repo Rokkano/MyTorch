@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cpp_backend.hh"
+#include "backend.hh"
 #include "src/exception/tensor.hh"
 
 #include <cmath>
