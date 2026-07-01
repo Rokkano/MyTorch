@@ -13,18 +13,29 @@
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-void Tensor<T, B>::plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>
+void Tensor<T, B>::plot(TensorSpan tensors, const std::string &linespec, OpenCVWindowOpts opts) requires std::is_arithmetic_v<T>
 {
-    if (this->shape().size() != 1)
-        throw TensorInvalidShapeException(std::format(
-            "Shape {} is invalid for plot : need a single dimentional tensor.", this->tensorShapeToStr(this->shape())));
-
-    std::vector<double> x = std::vector<double>(this->shape()[0]);
-    std::iota(x.begin(), x.end(), 1);
-    std::vector<T> y = this->data();
+    if (tensors.size() < 1)
+        throw TensorInvalidArgException("No tensors to plot.");
 
     CvPlot::Axes parent = CvPlot::makePlotAxes();
-    parent.create<CvPlot::Series>(x, y, linespec);
+
+    std::size_t len = tensors[0].get().shape()[0];
+    std::vector<double> x = std::vector<double>(len);
+    std::iota(x.begin(), x.end(), 1);
+
+    for(std::size_t i = 0; i < tensors.size(); i++)
+    {
+        if (tensors[i].get().shape().size() != 1)
+            throw TensorInvalidShapeException(std::format(
+                "Shape {} is invalid for plot : need a single dimentional tensor.", Tensor<T, B>::shapeToStr(tensors[i].get().shape())));
+        if (tensors[i].get().shape()[0] != len)
+            throw TensorInvalidShapeException(std::format(
+                "Plot tensors must all have the same length."));
+
+        std::vector<T> y = tensors[i].get().vector();
+        parent.create<CvPlot::Series>(x, y, linespec);
+    }
 
     ::show(parent, opts);
 }

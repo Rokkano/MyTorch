@@ -1,12 +1,18 @@
 #pragma once
 
-#if BACKEND_EIGEN
+#if BACKEND_EIGEN_AVAILABLE
     #include "src/tensor/backend/eigen/backend.hh"
     #include "src/tensor/backend/eigen/linear.hxx"
-#elif BACKEND_CPP
+#endif
+
+#if BACKEND_CUDA_AVAILABLE
+    // ...
+#endif
+
+#if BACKEND_CPP_AVAILABLE
     #include "src/tensor/backend/cpp/backend.hh"
     #include "src/tensor/backend/cpp/linear.hxx"
     #include "src/tensor/backend/cpp/math.hxx"
 #else
-    #error No backend available
+    #error Backend CPP should be available at all time.
 #endif

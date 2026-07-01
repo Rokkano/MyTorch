@@ -4,6 +4,13 @@
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
+std::vector<T> Tensor<T, B>::vector() const
+{
+    return B<T>::vector(this->data_);
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::affine(const Tensor<T, B> &tensor, std::optional<T> a, std::optional<T> b)
 requires std::is_arithmetic_v<T>
 {

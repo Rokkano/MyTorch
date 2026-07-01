@@ -187,6 +187,13 @@ std::vector<size_t> &Tensor<T, B>::shape()
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
+std::vector<size_t> Tensor<T, B>::shape() const
+{
+    return this->shape_;
+}
+
+template <typename T, template <typename> typename B>
+requires IsBackend<T, B>
 Tensor<T, B> &Tensor<T, B>::fill(T value)
 {
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -246,14 +253,14 @@ Tensor<T, B> &Tensor<T, B>::squeeze(std::size_t dim)
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B> Tensor<T, B>::t(std::size_t dim0, std::size_t dim1)
+Tensor<T, B> Tensor<T, B>::t(std::size_t dim0, std::size_t dim1) const
 {
     return this->transpose(dim0, dim1);
 }
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
+Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1) const
 {
     if (this->shape_.size() < 2)
         throw TensorTransposeException("Cannot transpose tensor with less than 2 dimensions");
@@ -271,8 +278,8 @@ Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1)
     std::vector<std::size_t> srcStrides = this->stride();
     std::vector<std::size_t> dstStrides = tensor.stride();
 
+    std::vector<size_t> dstIdx = std::vector<size_t>(this->shape_.size());
     for (size_t flatIdx = 0; flatIdx < this->numel(); flatIdx++) {
-        std::vector<size_t> dstIdx = std::vector<size_t>(this->shape_.size());
         size_t srcIdx = 0;
         size_t tmp = flatIdx;
 

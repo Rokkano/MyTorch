@@ -5,7 +5,7 @@
 inline float MNIST_MEAN = 0.1307f;
 inline float MNIST_STD = 0.3081f;
 
-template <template <typename> typename B>
+template <template <typename> typename B = DefaultBackend>
 requires IsBackend<float, B>
 class MNISTSample : public SupervisedDatasetItem<Tensor<float, B>, unsigned char>
 {
@@ -13,7 +13,7 @@ public:
     void show(OpenCVWindowOpts opts = {}, bool normalized = false);
 };
 
-template <template <typename> typename B>
+template <template <typename> typename B = DefaultBackend>
 requires IsBackend<float, B>
 class MNISTDataset : public Dataset<MNISTSample<B>>
 {

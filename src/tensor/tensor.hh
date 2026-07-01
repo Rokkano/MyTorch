@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tensor_fwd.hh"
+#include "backend/backend_fwd.hh"
 
 #include <functional>
 #include <iostream>
@@ -52,11 +53,15 @@ template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> operator/(const T &lhs, const Tensor<T, B> &rhs);
 
-template <typename T, template <typename> typename B>
+template <typename T, template <typename> typename B = DefaultBackend>
 requires IsBackend<T, B>
 class Tensor : public IMTSerialize
 {
     using TStorage = typename B<T>::TStorage;
+
+    // TensorSpan represents a list of Tensor pointers.
+    // To be used in case of variadic length function parameters.
+    using TensorSpan = std::vector<std::reference_wrapper<const Tensor<T, B>>>;
 
 protected:
     std::vector<std::size_t> shape_ = std::vector<std::size_t>();
@@ -79,11 +84,14 @@ public:
     std::vector<T>::iterator end();
     std::vector<T>::iterator const_end() const;
 
+    std::vector<T> vector() const;
+
     T &operator[](std::size_t);
     const T &operator[](std::size_t) const;
 
     TStorage &data();
     std::vector<std::size_t> &shape();
+    std::vector<std::size_t> shape() const;
 
     std::size_t numel() const;
     std::vector<std::size_t> stride() const;
@@ -100,8 +108,8 @@ public:
     Tensor<T, B> &batch_broadcast(const std::vector<std::size_t> &shape);
     Tensor<T, B> &batch_broadcast(Tensor<T, B> &tensor);
 
-    Tensor<T, B> t(std::size_t dim0 = 0, std::size_t dim1 = 1);
-    Tensor<T, B> transpose(std::size_t dim0 = 0, std::size_t dim1 = 1);
+    Tensor<T, B> t(std::size_t dim0 = 0, std::size_t dim1 = 1) const;
+    Tensor<T, B> transpose(std::size_t dim0 = 0, std::size_t dim1 = 1) const;
 
 private:
     std::size_t coordToAbs(const std::vector<std::size_t> &coord) const;
@@ -198,7 +206,7 @@ public:
 
 public:
     std::string toStr() const;
-    void plot(const std::string &linespec, OpenCVWindowOpts opts) const requires std::is_arithmetic_v<T>;
+    static void plot(TensorSpan tensors, const std::string &linespec = "-", OpenCVWindowOpts opts = {}) requires std::is_arithmetic_v<T>;
 
     template <typename T2, template <typename> typename B2>
     friend std::ostream &operator<<(std::ostream &, const Tensor<T2, B2> &);
