@@ -25,34 +25,37 @@ include(cmake/opencv.cmake)
 include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
 
+# CREATE TARGETS
+add_executable(main)
+add_executable(benchmark)
+add_executable(test)
+
 # BUILD CONFIG
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "No build type selected, default to Debug")
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OPT_FLAGS}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPT_FLAGS} -g3 -g -rdynamic -fsanitize=address -ldl -Wall -Werror -Wextra -fconcepts-diagnostics-depth=200 -pedantic -O3 -pg")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OPT_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPT_FLAGS} -g3 -g -rdynamic -ldl -Wall -Werror -Wextra -fconcepts-diagnostics-depth=200 -pedantic -O3 -pg")
 
+# add fsanatize with custom configuration for asan/lsan
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+    target_sources(main PRIVATE scripts/sanitizer/asan_config.cpp scripts/sanitizer/lsan_config.cpp)
+endif()
 
 # TARGET : main
-add_executable(main-cpp)
-target_sources(main-cpp PRIVATE "${PROJECT_SOURCE_DIR}/src/main.cc" ${SRC})
-target_link_libraries(main-cpp PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
-target_compile_definitions(main-cpp PRIVATE BACKEND_CPP=1 BACKEND_EIGEN=0)
-
-add_executable(main-eigen)
-target_sources(main-eigen PRIVATE "${PROJECT_SOURCE_DIR}/src/main.cc" ${SRC})
-target_link_libraries(main-eigen PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
-target_compile_definitions(main-eigen PRIVATE BACKEND_EIGEN=1 BACKEND_CPP=0)
+target_sources(main PRIVATE "${PROJECT_SOURCE_DIR}/src/main.cc" ${SRC})
+target_link_libraries(main PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
+target_compile_definitions(main PRIVATE BACKEND_CPP_AVAILABLE=1 BACKEND_EIGEN_AVAILABLE=1 BACKEND_CUDA_AVAILABLE=0)
 
 # TARGET : benchmark
-add_executable(benchmark)
 target_sources(benchmark PRIVATE "scripts/benchmark.cc" ${SRC})
 target_link_libraries(benchmark PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
 
 # TARGET : test
-add_executable(test)
 target_sources(test PRIVATE ${SRC} ${SRC_TST})
 target_link_libraries(test PRIVATE ${LIBRARIES} ${OpenCV_LIBS})
 
