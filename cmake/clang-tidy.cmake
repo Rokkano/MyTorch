@@ -13,8 +13,7 @@ if(CLANG_TIDY)
         # "${PROJECT_SOURCE_DIR}/tests/*.hh" 
         # "${PROJECT_SOURCE_DIR}/tests/*.hxx" 
     )
-    add_custom_target(clang-tidy COMMAND /usr/bin/clang-tidy ${CLANG_TIDY_TARGETS} --fix -checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus* -- -std=c++20 -Iinclude -I./)
-
+    add_custom_target(clang-tidy COMMAND /usr/bin/clang-tidy ${CLANG_TIDY_TARGETS} --fix -checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus* -- -std=c++20 -Iinclude -I./ -DBACKEND_CPP_AVAILABLE=1 -DBACKEND_EIGEN_AVAILABLE=1 -DBACKEND_CUDA_AVAILABLE=1)
 else ()
     message(STATUS "${BoldYellow}clang-tidy not found${ColorReset}")
 endif()
