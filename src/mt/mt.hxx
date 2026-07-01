@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mt.hh"
-
 #include "src/layer/linear_serialize.hxx"
 
 #include <cstddef>
@@ -75,7 +74,7 @@ T MTFile<T>::read(std::string path)
     char mtType;
     read.template operator()<char>(mtType);
 
-    if (mtType == MTFILE_TYPE::TENSOR )//&& !(is_base_of_template<Tensor, T>::value))
+    if (mtType == MTFILE_TYPE::TENSOR) //&& !(is_base_of_template<Tensor, T>::value))
         throw Exception(std::format("Expected Tensor type, got {}.", type_name<T>()));
 
     std::vector<std::byte> subBuffer;

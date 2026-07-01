@@ -2,13 +2,12 @@
 
 #include "layer.hh"
 #include "layer.hxx"
+#include "src/exception/layer.hh"
 #include "src/mt/imt.hh"
-#include "weights.hh"
-
+#include "src/tensor/backend/backend_fwd.hh"
 #include "src/tensor/tensor_backend.hxx"
 #include "src/tensor/tensor_op.hxx"
-#include "src/tensor/backend/backend_fwd.hh"
-#include "src/exception/layer.hh"
+#include "weights.hh"
 
 #include <optional>
 
@@ -25,7 +24,7 @@ private:
 public:
     Linear();
     Linear(std::size_t in, std::size_t out, enum Initialization initialization = ZEROS, float learning_rate = 0.001);
-    
+
     Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override;
     Tensor<T, B> backward(Tensor<T, B>::TensorSpan args) override;
 
@@ -74,8 +73,8 @@ Tensor<T, B> Linear<T, B>::backward(Tensor<T, B>::TensorSpan args)
 {
     if (args.size() != 1)
         throw TensorInvalidArgException("Backward argument does not match this layer.");
-    const Tensor<T, B> &gradient = args[0].get();    
-    
+    const Tensor<T, B> &gradient = args[0].get();
+
     Tensor<T, B> res = Tensor<T, B>::matmul(gradient, this->weights_.transpose());
     if (this->training_)
     {

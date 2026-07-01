@@ -2,7 +2,6 @@
 
 #include <vector>
 
-
 // template<typename T>
 // concept CMTSerialize = requires(T t, std::vector<std::byte>& bytes)
 // {
@@ -16,7 +15,6 @@
 // template <typename T>
 // requires CMTSerialize<T>
 // class IMTSerialize{};
-
 
 // template <class E>
 class IMTSerialize

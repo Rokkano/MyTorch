@@ -1,16 +1,17 @@
-#include <cstddef>
-#include <string>
-#include <iostream>
-#include <cmath>
 #include <chrono>
+#include <cmath>
+#include <cstddef>
 #include <ctime>
 #include <format>
+#include <iostream>
+#include <string>
 
-class Progress {
+class Progress
+{
 
 public:
     std::size_t length = 50;
-        
+
     std::string barLeft = " ";
     std::string barOpen = "[";
     std::string barClose = "]";
@@ -26,29 +27,29 @@ protected:
     double progressToChar = 1;
 
 public:
-    Progress(double max = 100) 
+    Progress(double max = 100)
     {
         this->maxProgress = max;
         this->progressToChar = length / max;
     };
 
-    virtual void update(double progress = 1) 
+    virtual void update(double progress = 1)
     {
         this->currentProgress += progress;
         printProgress();
     }
 
-    virtual void printProgress() 
+    virtual void printProgress()
     {
         std::size_t currentProgressChar = std::round(this->currentProgress * this->progressToChar);
         std::cout << "\r" << barOpen;
 
         // BAR
-        for(std::size_t i = 0; i < currentProgressChar; i++)
+        for (std::size_t i = 0; i < currentProgressChar; i++)
             std::cout << barFill;
-        for(std::size_t i = currentProgressChar; i < length; i++)
+        for (std::size_t i = currentProgressChar; i < length; i++)
             std::cout << barLeft;
-        
+
         // PERCENTAGE
         std::cout << barClose << " " << std::floor(this->currentProgress * 100 / this->maxProgress) << "%";
 
@@ -58,14 +59,12 @@ public:
     }
 };
 
-
 class ETAProgress : public Progress
 {
     typedef std::chrono::time_point<std::chrono::system_clock> TimePoint;
     typedef std::chrono::duration<double> Duration;
 
 public:
-
     TimePoint zeroRef;
     TimePoint firstRef;
     TimePoint lastTimePoint;
@@ -79,7 +78,8 @@ public:
     {
         ETAProgress::TimePoint now = std::chrono::system_clock::now();
         if (this->lastTimePoint != zeroRef)
-            this->iterationEstimation += ((now - this->lastTimePoint) - this->iterationEstimation) / this->currentProgress;
+            this->iterationEstimation +=
+                ((now - this->lastTimePoint) - this->iterationEstimation) / this->currentProgress;
         else
             this->firstRef = std::chrono::system_clock::now();
         this->lastTimePoint = now;
@@ -90,7 +90,7 @@ public:
     {
         Progress::printProgress();
 
-        auto format = [] (double count, bool subCount = false)
+        auto format = [](double count, bool subCount = false)
         {
             if (count > 3600)
                 return std::format("{}h{}m", std::floor(count / 3600), std::floor((int)std::floor(count) % 3600 / 60));
@@ -104,9 +104,9 @@ public:
                 return subCount ? std::format("<1ms") : std::format("0ms");
         };
 
-
         std::cout << "  |  " << format(this->iterationEstimation.count(), true) << "/it";
-        std::cout << "  |  ETA " << format(((this->iterationEstimation) * (maxProgress - currentProgress)).count(), false);
+        std::cout << "  |  ETA "
+                  << format(((this->iterationEstimation) * (maxProgress - currentProgress)).count(), false);
 
         std::cout << "\033[K" << std::flush;
         if (this->currentProgress >= this->maxProgress)
@@ -116,4 +116,3 @@ public:
         }
     }
 };
-

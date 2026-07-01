@@ -12,7 +12,7 @@ std::vector<T> Tensor<T, B>::vector() const
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::affine(const Tensor<T, B> &tensor, std::optional<T> a, std::optional<T> b)
-requires std::is_arithmetic_v<T>
+    requires std::is_arithmetic_v<T>
 {
     return Tensor<T, B>(tensor.shape_, B<T>::affine(tensor.data_, tensor.shape_, a, b));
 }
@@ -71,7 +71,8 @@ template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B> Tensor<T, B>::bmm(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs) requires std::is_arithmetic_v<T>
 {
-    return Tensor<T, B>({rhs.shape_[0], lhs.shape_[1], rhs.shape_[2]}, B<T>::bmm(lhs.data_, lhs.shape_, rhs.data_, rhs.shape_));
+    return Tensor<T, B>({rhs.shape_[0], lhs.shape_[1], rhs.shape_[2]},
+                        B<T>::bmm(lhs.data_, lhs.shape_, rhs.data_, rhs.shape_));
 }
 
 template <typename T, template <typename> typename B>

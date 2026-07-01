@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstddef>
 #include <concepts>
+#include <cstddef>
 #include <vector>
 
 template <typename T, template <typename> typename B>

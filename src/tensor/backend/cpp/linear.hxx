@@ -9,8 +9,9 @@
 #include <typeinfo>
 
 template <typename T>
-CppBackend<T>::TStorage CppBackend<T>::dot(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage &rhsStorage, const TShape &rhsShape)
-requires std::is_arithmetic_v<T>
+CppBackend<T>::TStorage CppBackend<T>::dot(const TStorage &lhsStorage, const TShape &lhsShape,
+                                           const TStorage &rhsStorage, const TShape &rhsShape)
+    requires std::is_arithmetic_v<T>
 {
     if (lhsShape.size() != 1)
         throw TensorInvalidShapeException(std::format("Dot product only applies for 1-dimensional tensors : {}.",
@@ -30,10 +31,10 @@ requires std::is_arithmetic_v<T>
     return newStorage;
 }
 
-
 template <typename T>
-CppBackend<T>::TStorage CppBackend<T>::mvm(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage &rhsStorage, const TShape &rhsShape) 
-requires std::is_arithmetic_v<T>
+CppBackend<T>::TStorage CppBackend<T>::mvm(const TStorage &lhsStorage, const TShape &lhsShape,
+                                           const TStorage &rhsStorage, const TShape &rhsShape)
+    requires std::is_arithmetic_v<T>
 {
     // matrix vector multiplication
     if (lhsShape.size() != 2)
@@ -56,8 +57,9 @@ requires std::is_arithmetic_v<T>
 }
 
 template <typename T>
-CppBackend<T>::TStorage CppBackend<T>::mm(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage &rhsStorage, const TShape &rhsShape) 
-requires std::is_arithmetic_v<T>
+CppBackend<T>::TStorage CppBackend<T>::mm(const TStorage &lhsStorage, const TShape &lhsShape,
+                                          const TStorage &rhsStorage, const TShape &rhsShape)
+    requires std::is_arithmetic_v<T>
 {
     // matrix multiplication (2d tensors)
     if (lhsShape.size() != 2)
@@ -69,26 +71,24 @@ requires std::is_arithmetic_v<T>
     if (lhsShape[1] != rhsShape[0])
         throw TensorInvalidShapeException(
             std::format("Tensors are not compatible for matrix multiplication : {} and {}.",
-                        Tensor<T, CppBackend>::shapeToStr(lhsShape),
-                        Tensor<T, CppBackend>::shapeToStr(rhsShape)));
+                        Tensor<T, CppBackend>::shapeToStr(lhsShape), Tensor<T, CppBackend>::shapeToStr(rhsShape)));
 
     std::size_t numel = lhsShape[0] * rhsShape[1];
     std::vector<std::size_t> newShape = {lhsShape[0], rhsShape[1]};
     CppBackend<T>::TStorage newStorage = CppBackend<T>::allocate(numel);
-    for(std::size_t i = 0; i < numel; i++)
+    for (std::size_t i = 0; i < numel; i++)
         newStorage[i] = 0;
 
     for (std::size_t y = 0; y < newShape[1]; y++)
         for (std::size_t x = 0; x < newShape[0]; x++)
             for (std::size_t k = 0; k < lhsShape[1]; k++)
-                newStorage[x * newShape[1] + y] +=
-                    lhsStorage[x * lhsShape[1] + k] * rhsStorage[k * rhsShape[1] + y];
+                newStorage[x * newShape[1] + y] += lhsStorage[x * lhsShape[1] + k] * rhsStorage[k * rhsShape[1] + y];
     return newStorage;
 }
 
 // template <typename T>
-// CppBackend<T>::TStorage CppBackend<T>::omm(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage &rhsStorage, const TShape &rhsShape) 
-// requires std::is_arithmetic_v<T>
+// CppBackend<T>::TStorage CppBackend<T>::omm(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage
+// &rhsStorage, const TShape &rhsShape) requires std::is_arithmetic_v<T>
 // {
 //     // optimized matrix multiplication (2d tensors) with rhs transpose for
 //     // quicker data reading
@@ -116,8 +116,9 @@ requires std::is_arithmetic_v<T>
 // }
 
 template <typename T>
-CppBackend<T>::TStorage CppBackend<T>::bmm(const TStorage &lhsStorage, const TShape &lhsShape, const TStorage &rhsStorage, const TShape &rhsShape) 
-requires std::is_arithmetic_v<T>
+CppBackend<T>::TStorage CppBackend<T>::bmm(const TStorage &lhsStorage, const TShape &lhsShape,
+                                           const TStorage &rhsStorage, const TShape &rhsShape)
+    requires std::is_arithmetic_v<T>
 {
     if (lhsShape.size() < 3)
         throw TensorInvalidShapeException(std::format("bmm only applies for 3 or + dimensional tensors (batched): {}.",
@@ -148,6 +149,6 @@ requires std::is_arithmetic_v<T>
     for (std::size_t i = 0; i < numel; i++)
         for (std::size_t k = 0; k < lhsShape[lhsShape.size() - 1]; k++)
             newStorage[i] += lhsStorage[k + (i / rhsShape[2]) * lhsShape[lhsShape.size() - 1]] *
-                                 rhsStorage[(i % rhsShape[2]) + k * rhsShape[rhsShape.size() - 1]];
+                             rhsStorage[(i % rhsShape[2]) + k * rhsShape[rhsShape.size() - 1]];
     return newStorage;
 }

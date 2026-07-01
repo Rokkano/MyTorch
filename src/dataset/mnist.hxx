@@ -2,7 +2,6 @@
 
 #include "mnist.hh"
 #include "src/cv/cv.hh"
-
 #include "src/tensor/tensor_op.hxx"
 
 #include <mnist/mnist_reader.hpp>

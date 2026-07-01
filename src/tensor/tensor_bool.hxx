@@ -12,8 +12,7 @@ Tensor<bool, B> Tensor<T, B>::operator==(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -37,8 +36,7 @@ Tensor<bool, B> Tensor<T, B>::operator<(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -62,8 +60,7 @@ Tensor<bool, B> Tensor<T, B>::operator<=(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -87,8 +84,7 @@ Tensor<bool, B> Tensor<T, B>::operator>(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)
@@ -112,8 +108,7 @@ Tensor<bool, B> Tensor<T, B>::operator>=(const Tensor<T, B> &other)
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<bool, B> tensor = Tensor<bool, B>(this->shape_);
     for (std::size_t i = 0; i < tensor.numel(); i++)

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "tensor.hh"
-
 #include "src/tensor/tensor_backend.hxx"
-#include "src/tensor/tensor_op.hxx"
 #include "src/tensor/tensor_math.hxx"
+#include "src/tensor/tensor_op.hxx"
+#include "tensor.hh"
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>

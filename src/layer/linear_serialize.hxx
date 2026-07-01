@@ -1,6 +1,6 @@
 #pragma once
 
-#include "layer.hh"
+#include "linear.hxx"
 
 template <typename T, template <typename> typename B>
 std::vector<std::byte> Linear<T, B>::serialize()

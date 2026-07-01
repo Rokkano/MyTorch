@@ -1,57 +1,13 @@
 #pragma once
 
-#include "tensor_fwd.hh"
 #include "backend/backend_fwd.hh"
+#include "src/cv/cv.hh"
+#include "tensor_fwd.hh"
 
 #include <functional>
 #include <iostream>
 #include <optional>
 #include <vector>
-
-struct OpenCVWindowOpts;
-
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator+(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator+(const Tensor<T, B> &lhs, const T &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator+(const T &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator+(const Tensor<T, B> &lhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator-(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator-(const Tensor<T, B> &lhs, const T &rhs);
-template <typename T, template <typename> typename B >
-requires IsBackend<T, B>
-Tensor<T, B> operator-(const T &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator-(const Tensor<T, B> &lhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator*(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator*(const Tensor<T, B> &lhs, const T &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator*(const T &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator/(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator/(const Tensor<T, B> &lhs, const T &rhs);
-template <typename T, template <typename> typename B>
-requires IsBackend<T, B>
-Tensor<T, B> operator/(const T &lhs, const Tensor<T, B> &rhs);
 
 template <typename T, template <typename> typename B = DefaultBackend>
 requires IsBackend<T, B>
@@ -97,7 +53,7 @@ public:
     std::vector<std::size_t> stride() const;
 
     T item() const;
-    
+
     // Basic operations
     Tensor<T, B> &fill(const T value);
     Tensor<T, B> &flatten();
@@ -116,22 +72,23 @@ private:
     std::vector<std::size_t> absToCoord(std::size_t abs) const;
 
     // ###### TENSOR OP ######
-    // See : https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading/4421729#4421729
+    // See :
+    // https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading/4421729#4421729
 public:
-    friend Tensor<T, B> operator+<T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator+<T, B>(const Tensor<T, B> &lhs, const T &rhs);
-    friend Tensor<T, B> operator+<T, B>(const T &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator+<T, B>(const Tensor<T, B> &lhs);
-    friend Tensor<T, B> operator-<T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator-<T, B>(const Tensor<T, B> &lhs, const T &rhs);
-    friend Tensor<T, B> operator-<T, B>(const T &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator-<T, B>(const Tensor<T, B> &lhs);
-    friend Tensor<T, B> operator*<T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator*<T, B>(const Tensor<T, B> &lhs, const T &rhs);
-    friend Tensor<T, B> operator*<T, B>(const T &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator/<T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
-    friend Tensor<T, B> operator/<T, B>(const Tensor<T, B> &lhs, const T &rhs);
-    friend Tensor<T, B> operator/<T, B>(const T &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator+ <T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator+ <T, B>(const Tensor<T, B> &lhs, const T &rhs);
+    friend Tensor<T, B> operator+ <T, B>(const T &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator+ <T, B>(const Tensor<T, B> &lhs);
+    friend Tensor<T, B> operator- <T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator- <T, B>(const Tensor<T, B> &lhs, const T &rhs);
+    friend Tensor<T, B> operator- <T, B>(const T &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator- <T, B>(const Tensor<T, B> &lhs);
+    friend Tensor<T, B> operator* <T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator* <T, B>(const Tensor<T, B> &lhs, const T &rhs);
+    friend Tensor<T, B> operator* <T, B>(const T &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator/ <T, B>(const Tensor<T, B> &lhs, const Tensor<T, B> &rhs);
+    friend Tensor<T, B> operator/ <T, B>(const Tensor<T, B> &lhs, const T &rhs);
+    friend Tensor<T, B> operator/ <T, B>(const T &lhs, const Tensor<T, B> &rhs);
 
 private:
     bool validateSameShape(const std::vector<std::size_t> &shape) const;
@@ -206,15 +163,16 @@ public:
 
 public:
     std::string toStr() const;
-    static void plot(TensorSpan tensors, const std::string &linespec = "-", OpenCVWindowOpts opts = {}) requires std::is_arithmetic_v<T>;
+    static void plot(TensorSpan tensors, const std::string &linespec = "-", OpenCVWindowOpts opts = {})
+        requires std::is_arithmetic_v<T>;
 
     template <typename T2, template <typename> typename B2>
     friend std::ostream &operator<<(std::ostream &, const Tensor<T2, B2> &);
 
     static std::string shapeToStr(const std::vector<std::size_t> &shape);
-    static std::string dataToStr(const TStorage &storage, const std::vector<std::size_t> &shape, std::size_t truncate = 50);
+    static std::string dataToStr(const TStorage &storage, const std::vector<std::size_t> &shape,
+                                 std::size_t truncate = 50);
     static std::string dataToStr(const TStorage &storage, std::size_t truncate = 50);
-
 
     // ###### TENSOR MT SERIALIZE ######
 public:

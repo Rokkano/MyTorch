@@ -5,5 +5,4 @@
 #include <exception>
 #include <string>
 
-
 DEFINE_EXCEPTION(MissingInputForBackwardException);

@@ -1,12 +1,11 @@
 #pragma once
 
 #include "layer.hh"
+#include "src/exception/layer.hh"
+#include "src/tensor/backend/backend_fwd.hh"
 #include "src/tensor/tensor.hh"
 #include "src/tensor/tensor_activation.hxx"
 #include "src/tensor/tensor_op.hxx"
-
-#include "src/exception/layer.hh"
-#include "src/tensor/backend/backend_fwd.hh"
 
 #include <optional>
 
@@ -16,7 +15,7 @@ class Sigmoid : public Layer<T, B>
     std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override 
+    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override
     {
         if (args.size() != 1)
             throw TensorInvalidArgException("Forward argument does not match this layer.");
@@ -74,7 +73,7 @@ class ReLu : public Layer<T, B>
     std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override 
+    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override
     {
         if (args.size() != 1)
             throw TensorInvalidArgException("Forward argument does not match this layer.");
@@ -103,7 +102,7 @@ class Softmax : public Layer<T, B>
     std::optional<Tensor<T, B>> inp_;
 
 public:
-    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override 
+    Tensor<T, B> forward(Tensor<T, B>::TensorSpan args) override
     {
         if (args.size() != 1)
             throw TensorInvalidArgException("Forward argument does not match this layer.");

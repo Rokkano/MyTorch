@@ -1,8 +1,8 @@
 #pragma once
 
 #include "dataset.hh"
-#include "src/tensor/tensor_fwd.hh"
 #include "src/tensor/backend/backend_fwd.hh"
+#include "src/tensor/tensor_fwd.hh"
 
 template <typename T, typename U>
 struct SupervisedDatasetItem

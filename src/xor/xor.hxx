@@ -2,7 +2,7 @@
 
 #include "xor.hh"
 
-template <typename B>
+template <template <typename> typename B>
 XorDataset<B>::XorDataset(std::size_t num_samples)
 {
     this->name_ = "Xor";
@@ -21,7 +21,7 @@ XorDataset<B>::XorDataset(std::size_t num_samples)
     }
 };
 
-template <typename B>
+template <template <typename> typename B>
 OrDataset<B>::OrDataset(std::size_t num_samples)
 {
     this->name_ = "Or";

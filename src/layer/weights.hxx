@@ -1,8 +1,8 @@
 #pragma once
 
+#include "src/exception/tensor.hh"
 #include "src/tensor/tensor.hh"
 #include "src/utils/random.hh"
-#include "src/exception/tensor.hh"
 #include "weights.hh"
 
 #include <cmath>

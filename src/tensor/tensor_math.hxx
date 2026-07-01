@@ -54,8 +54,7 @@ Tensor<T, B> Tensor<T, B>::min(const Tensor<T, B> &other) const requires std::is
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)
@@ -90,8 +89,7 @@ Tensor<T, B> Tensor<T, B>::max(const Tensor<T, B> &other) const requires std::is
 {
     if (!this->validateSameShape(other.shape_))
         throw TensorInvalidShapeException(std::format("Shape {} and {} are invalid for comparison.",
-                                                      this->tensorShapeToStr(this->shape_),
-                                                      other.tensorShapeToStr(other.shape_)));
+                                                      this->shapeToStr(this->shape_), other.shapeToStr(other.shape_)));
 
     Tensor<T, B> tensor = Tensor<T, B>(this->shape_);
     for (std::size_t i = 0; i < this->numel(); i++)

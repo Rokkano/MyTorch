@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/exception/exception.hh"
-#include "tensor.hh"
 #include "src/tensor/tensor_io.hxx"
+#include "tensor.hh"
 
 #include <format>
 #include <iostream>
@@ -88,7 +88,6 @@ Tensor<T, B>::Tensor()
     this->data_ = B<T>::allocate(0);
 }
 
-
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 Tensor<T, B>::Tensor(const std::vector<std::size_t> &shape)
@@ -163,7 +162,6 @@ T &Tensor<T, B>::operator[](std::size_t pos)
     return this->data_[pos];
 }
 
-
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 const T &Tensor<T, B>::operator[](std::size_t pos) const
@@ -220,8 +218,8 @@ requires IsBackend<T, B>
 T Tensor<T, B>::item() const
 {
     if (this->numel() != 1)
-        throw TensorInvalidShapeException(std::format("Tensor .item() only works on single-element tensor : {}",
-                                                      this->shapeToStr(this->shape_)));
+        throw TensorInvalidShapeException(
+            std::format("Tensor .item() only works on single-element tensor : {}", this->shapeToStr(this->shape_)));
     return (*this)[0];
 }
 
@@ -279,19 +277,22 @@ Tensor<T, B> Tensor<T, B>::transpose(std::size_t dim0, std::size_t dim1) const
     std::vector<std::size_t> dstStrides = tensor.stride();
 
     std::vector<size_t> dstIdx = std::vector<size_t>(this->shape_.size());
-    for (size_t flatIdx = 0; flatIdx < this->numel(); flatIdx++) {
+    for (size_t flatIdx = 0; flatIdx < this->numel(); flatIdx++)
+    {
         size_t srcIdx = 0;
         size_t tmp = flatIdx;
 
-        for (size_t i = 0; i < this->shape_.size(); i++) {
+        for (size_t i = 0; i < this->shape_.size(); i++)
+        {
             dstIdx[i] = tmp / dstStrides[i];
             tmp = tmp % dstStrides[i];
         }
 
-        for (size_t i = 0; i < this->shape_.size(); i++) {
-            if (i == dim0) 
+        for (size_t i = 0; i < this->shape_.size(); i++)
+        {
+            if (i == dim0)
                 srcIdx += dstIdx[i] * srcStrides[dim1];
-            else if (i == dim1) 
+            else if (i == dim1)
                 srcIdx += dstIdx[i] * srcStrides[dim0];
             else
                 srcIdx += dstIdx[i] * srcStrides[i];
@@ -328,8 +329,8 @@ Tensor<T, B> &Tensor<T, B>::broadcast(const std::vector<std::size_t> &shape)
         if (tensor_shape[i] != target_shape[i] && tensor_shape[i] != 1 && target_shape[i] != 1)
             throw TensorBroadcastException(std::format("Tensor is not broadcastable to this shape : {} to "
                                                        "{} at index {}.",
-                                                       this->shapeToStr(tensor_shape),
-                                                       this->shapeToStr(target_shape), i));
+                                                       this->shapeToStr(tensor_shape), this->shapeToStr(target_shape),
+                                                       i));
         new_shape.insert(new_shape.end(), tensor_shape[i] >= target_shape[i] ? tensor_shape[i] : target_shape[i]);
     }
 
@@ -367,8 +368,6 @@ Tensor<T, B> &Tensor<T, B>::batch_broadcast(const std::vector<std::size_t> &shap
     return this->broadcast(new_shape);
 }
 
-
-
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
 std::string Tensor<T, B>::shapeToStr(const std::vector<std::size_t> &shape)
@@ -381,12 +380,13 @@ std::string Tensor<T, B>::shapeToStr(const std::vector<std::size_t> &shape)
 
 template <typename T, template <typename> typename B>
 requires IsBackend<T, B>
-std::string Tensor<T, B>::dataToStr(const Tensor<T, B>::TStorage &storage, const std::vector<std::size_t> &shape, std::size_t truncate)
+std::string Tensor<T, B>::dataToStr(const Tensor<T, B>::TStorage &storage, const std::vector<std::size_t> &shape,
+                                    std::size_t truncate)
 {
     std::stringstream ssData;
     using RecLambda = std::function<void(std::vector<std::size_t>, std::size_t)>;
-    RecLambda rec = [&](std::vector<std::size_t> shape, std::size_t index) 
-    { 
+    RecLambda rec = [&](std::vector<std::size_t> shape, std::size_t index)
+    {
         if (!shape.empty())
         {
             std::size_t step = std::reduce(shape.begin() + 1, shape.end(), 1, std::multiplies<int>());
@@ -400,14 +400,14 @@ std::string Tensor<T, B>::dataToStr(const Tensor<T, B>::TStorage &storage, const
             ssData << "]";
         }
         else
-        { 
-            if constexpr (std::is_same_v<T, bool>) 
+        {
+            if constexpr (std::is_same_v<T, bool>)
                 ssData << (storage[index] ? "true" : "false");
             else
                 ssData << storage[index];
         }
     };
-    
+
     rec(shape, 0);
 
     if (truncate != 0)

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "src/layer/layer.hh"
 #include "src/layer/activation.hxx"
+#include "src/layer/layer.hh"
 #include "src/layer/linear.hxx"
 #include "src/tensor/backend/backend_fwd.hh"
 
-#include <optional>
 #include <cstring>
+#include <optional>
 
 template <typename T, template <typename> typename B = DefaultBackend>
 class MultiLayerPerceptron : public Layer<T, B>

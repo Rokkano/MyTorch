@@ -1,6 +1,5 @@
 #pragma once
 
-
 // int main()
 // {
 //     Eigen::MatrixXd mat = Eigen::MatrixXd(3, 2);
