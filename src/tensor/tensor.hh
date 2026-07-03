@@ -1,6 +1,6 @@
 #pragma once
 
-#include "backend/backend_fwd.hh"
+#include "backend/backend.hh"
 #include "src/cv/cv.hh"
 #include "tensor_fwd.hh"
 
